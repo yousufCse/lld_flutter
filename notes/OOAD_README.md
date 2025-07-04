@@ -1,5 +1,4 @@
-
-
+# Head First Object Oriented Analysis and Desing books notes
 
 
 Give them what the want
@@ -24,6 +23,30 @@ Ans: Looking at the nouns (and verbs) in your use case to figure out classes and
 A good use case clearly and accurately explains what a system does, in language that's easily understood.
 
 With a good use case complete, textual analysis is a quick and easy way to figure out the classess in your system.
+
+
+## Chapter 5 (part 1):
+**good desing = flexible software**
+
+***Change is inevitable***
+
+* Abstract classes are placeholders for actual implementation classess.
+
+* The abstract class defined behavior, and the subclasses implement that behavior.
+
+* Whenever you find common behaviour in two or more places, look to abstract that behaviour into a class, and then reuse that behaviour in the common classes.
+
+* Coading to an interface, rather than to an implementation, makes your software easier to extends.
+
+* By coading to an interface, your code will word with all of ther interface's subclasses - even ones that haven't been created yet.
+
+* Inherit common behavior.
+
+* We used encapsulation to prevent duplicate code. But encapsulation also helps you protect your classes form unnecessary changes.
+    - Encapsulate what varies
+
+* Change: Make sure each class has only one reason to change.
+
 
 
 
