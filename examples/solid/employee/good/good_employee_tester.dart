@@ -1,55 +1,76 @@
-// Violations of DRY, OCP, and Single Responsibility Principle
-// Problem: Employee Management System
-//
-// The system manages employees and calculates their salaries based on their roles.
-// There are three roles: Developer, Manager, and Intern.
-//
-// The current implementation violates the DRY, OCP, and Single Responsibility Principle.
-// Your task is to identify the issues and refactor the code to adhere to these principles.
-
 // ignore_for_file: avoid_print
 
-// Employee class
-class Employee {
-  String name;
-  String role;
-  double baseSalary;
+abstract class SalaryCalculator {
+  double calculate(double baseSalary);
+}
 
-  Employee(this.name, this.role, this.baseSalary);
-
-  double calculateSalary() {
-    if (role == 'Developer') {
-      return baseSalary + (baseSalary * 0.20); // 20% bonus
-    } else if (role == 'Manager') {
-      return baseSalary + (baseSalary * 0.30); // 30% bonus
-    } else if (role == 'Intern') {
-      return baseSalary; // No bonus
-    } else {
-      throw Exception('Invalid role');
-    }
-  }
-
-  void printDetails() {
-    print('Name: $name, Role: $role, Salary: ${calculateSalary()}');
+class DeveloperSalaryCalculator implements SalaryCalculator {
+  @override
+  double calculate(double baseSalary) {
+    return baseSalary + (baseSalary * 0.20); // 20% bonus
   }
 }
 
-// Main function to demonstrate the problem
+class ManagerSalaryCalculator implements SalaryCalculator {
+  @override
+  double calculate(double baseSalary) {
+    return baseSalary + (baseSalary * 0.30); // 30% bonus
+  }
+}
+
+class Developer extends Employee {
+  Developer(super.name, super.baseSalary, this.salaryCalculator);
+
+  final SalaryCalculator salaryCalculator;
+
+  @override
+  double getTotalSalary() {
+    return salaryCalculator.calculate(baseSalary);
+  }
+
+  @override
+  void showDetails() {
+    print('Name: $name, Role: $runtimeType, Salary: ${getTotalSalary()}');
+  }
+}
+
+class Manager extends Employee {
+  Manager(super.name, super.baseSalary, this.salaryCalculator);
+
+  final SalaryCalculator salaryCalculator;
+
+  @override
+  double getTotalSalary() {
+    return salaryCalculator.calculate(baseSalary);
+  }
+
+  @override
+  void showDetails() {
+    print('Name: $name, Role: $runtimeType, Salary: ${getTotalSalary()}');
+  }
+}
+
+abstract class Employee {
+  Employee(this.name, this.baseSalary);
+
+  final String name;
+  final double baseSalary;
+
+  double getTotalSalary();
+  void showDetails();
+}
+
 void main() {
-  List<Employee> employees = [
-    Employee('Alice', 'Developer', 5000),
-    Employee('Bob', 'Manager', 7000),
-    Employee('Charlie', 'Intern', 2000),
+  final developerSalaryCalculator = DeveloperSalaryCalculator();
+  final managerSalaryCalulator = ManagerSalaryCalculator();
+
+  final List<Employee> employees = [
+    Developer('Alice', 5000, developerSalaryCalculator),
+    Manager('Bob', 7000, managerSalaryCalulator),
+    Developer('Charlie', 2000, developerSalaryCalculator),
   ];
 
   for (var employee in employees) {
-    employee.printDetails();
+    employee.showDetails();
   }
 }
-
-// Problem:
-// 1. The `calculateSalary` method violates the Open-Closed Principle because adding a new role requires modifying this method.
-// 2. The `calculateSalary` method and `printDetails` method violate the Single Responsibility Principle because they handle multiple responsibilities.
-// 3. The bonus calculation logic is duplicated for each role, violating the DRY principle.
-//
-// Task: Refactor the code to adhere to DRY, OCP, and Single Responsibility Principle.
