@@ -18,58 +18,62 @@ class ManagerSalaryCalculator implements SalaryCalculator {
   }
 }
 
+class InternSalaryCalculator implements SalaryCalculator {
+  @override
+  double calculate(double baseSalary) {
+    return baseSalary; // Interns do not get bonuses
+  }
+}
+
 class Developer extends Employee {
-  Developer(super.name, super.baseSalary, this.salaryCalculator);
-
-  final SalaryCalculator salaryCalculator;
-
-  @override
-  double getTotalSalary() {
-    return salaryCalculator.calculate(baseSalary);
-  }
-
-  @override
-  void showDetails() {
-    print('Name: $name, Role: $runtimeType, Salary: ${getTotalSalary()}');
-  }
+  Developer(super.salaryCalculator, super.name, super.baseSalary);
 }
 
 class Manager extends Employee {
-  Manager(super.name, super.baseSalary, this.salaryCalculator);
+  Manager(super.salaryCalculator, super.name, super.baseSalary);
+}
+
+class Intern extends Employee {
+  Intern(super.salaryCalculator, super.name, super.baseSalary);
+}
+
+abstract class Employee {
+  Employee(this.salaryCalculator, this.name, this.baseSalary);
 
   final SalaryCalculator salaryCalculator;
+  final String name;
+  final double baseSalary;
 
-  @override
   double getTotalSalary() {
     return salaryCalculator.calculate(baseSalary);
   }
 
-  @override
   void showDetails() {
-    print('Name: $name, Role: $runtimeType, Salary: ${getTotalSalary()}');
+    print('''
+|${name.padRight(18)}| ${runtimeType.toString().padRight(12)} | ${baseSalary.toString().padLeft(13)} | ${getTotalSalary().toString().padLeft(12)}
+|------------------|--------------|---------------|--------------|
+''');
   }
-}
-
-abstract class Employee {
-  Employee(this.name, this.baseSalary);
-
-  final String name;
-  final double baseSalary;
-
-  double getTotalSalary();
-  void showDetails();
 }
 
 void main() {
   final developerSalaryCalculator = DeveloperSalaryCalculator();
   final managerSalaryCalulator = ManagerSalaryCalculator();
+  final internSalaryCalculator = InternSalaryCalculator();
 
   final List<Employee> employees = [
-    Developer('Alice', 5000, developerSalaryCalculator),
-    Manager('Bob', 7000, managerSalaryCalulator),
-    Developer('Charlie', 2000, developerSalaryCalculator),
+    Developer(developerSalaryCalculator, 'Yousuf', 5000),
+    Manager(managerSalaryCalulator, 'Rana', 7000),
+    Developer(developerSalaryCalculator, 'Md. Sohel', 2000),
+    Developer(developerSalaryCalculator, 'Akash', 3000),
+    Intern(internSalaryCalculator, 'Saif', 1000),
   ];
 
+  print('''
+|-----------------|---------------|---------------|--------------|
+| Name            | Type          | Base Salary   | Total Salary |
+|-----------------|---------------|---------------|--------------|
+''');
   for (var employee in employees) {
     employee.showDetails();
   }
