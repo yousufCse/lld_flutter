@@ -25,7 +25,7 @@ A good use case clearly and accurately explains what a system does, in language 
 With a good use case complete, textual analysis is a quick and easy way to figure out the classess in your system.
 
 
-## Chapter 5 (part 1):
+### Chapter 5 (part 1):
 **good desing = flexible software**
 
 ***Change is inevitable***
@@ -46,6 +46,23 @@ With a good use case complete, textual analysis is a quick and easy way to figur
     - Encapsulate what varies
 
 * Change: Make sure each class has only one reason to change.
+
+### Design Principle
+***A desing principle** is a basic tool or technique that can be applied to designing or wirting code to make that code more maintainble, flexible, or extensible.*
+
+### OOP Principles
+- Encapsulate what varies.
+- Code to an interface rather that to an implemntation.
+- Each class in your application should have only one reason to change.
+- Classes are all about behaviour and functionality.
+
+
+1. OCP - Open Closed Principle: Classes should be open for extension, and closed for modification.
+2. DRY - Don't Repeat Yourself: Avoid duplicate code by abstracting out things that are common and placing those things in a single location.
+
+
+
+
 
 
 
