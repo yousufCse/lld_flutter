@@ -57,8 +57,14 @@ With a good use case complete, textual analysis is a quick and easy way to figur
 - Classes are all about behaviour and functionality.
 
 
-1. OCP - Open Closed Principle: Classes should be open for extension, and closed for modification.
-2. DRY - Don't Repeat Yourself: Avoid duplicate code by abstracting out things that are common and placing those things in a single location.
+1. **OCP - Open Closed Principle**: Classes should be open for extension, and closed for modification.
+2. **DRY - Don't Repeat Yourself**: Avoid duplicate code by abstracting out things that are common and
+ placing those things in a single location.
+    - DRY is about avoiding duplicate code.
+    - DRY is about having each piece of information and
+     behavior in your systeom in a single, sensible place.
+
+3. 
 
 
 
