@@ -55,6 +55,10 @@ With a good use case complete, textual analysis is a quick and easy way to figur
 - Code to an interface rather that to an implemntation.
 - Each class in your application should have only one reason to change.
 - Classes are all about behaviour and functionality.
+- Classes should be open for extension, but closed for modification (the OCP).
+- Avoid duplicate code by abstracting out things that are common and placing them in a single location (the DRY principle)
+- Every object in your system should have a single responsibility, and all the object's service should be focused on carrying out that single responsibility (the SRP).
+- Subclasses should be suitable for their base classes (the LSP).
 
 
 1. **OCP - Open Closed Principle**: Classes should be open for extension, and closed for modification.
@@ -63,8 +67,20 @@ With a good use case complete, textual analysis is a quick and easy way to figur
     - DRY is about avoiding duplicate code.
     - DRY is about having each piece of information and
      behavior in your systeom in a single, sensible place.
+3. **SRP - Single Responsibility Principle**: 
+    *If yes then it fits with the class, if no then it need to be fitted in the other class*
+    - Automobile start[s]() itself? **YES**
+    - Automobile stop[s]() itself? **YES**
+    - Automobile changeTire[s]() itself? **NO**
+    - Automobile drive[s]() itself? **NO**
 
-3. 
+4. **Association**:
+    - Composition = Strong Realtionship = A strong 'HAS-A'
+    - Aggregation = Soft Relationship = A weak 'HAS-A'
+
+5. **Delegation**: Delegate behaviour to another class when you don't want to change the behaviour, but
+it's not your object's responsibility to implement that behavior on its own.
+
 
 
 
