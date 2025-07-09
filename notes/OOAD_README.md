@@ -1,5 +1,10 @@
 # Head First Object Oriented Analysis and Desing books notes
 
+### Three steps of software development
+1. Make sure your software does what the customer wants it to do.
+2. Apply basic OO principles to add flexibility.
+3. Strive for a maintainable, reusable desing.
+
 
 Give them what the want
 
@@ -15,7 +20,7 @@ Ans: A complete path through a use case, from the frist step to the last, is cal
 
 
 Sometimes a change in requirements reveals probelms with your system that you didn't even know were there.
-Change is constant, and your system shoul always improve every time your work on it.
+Change is constant, and your system should always improve every time your work on it.
 
 4. Textual Analysis
 Ans: Looking at the nouns (and verbs) in your use case to figure out classes and methods is called textual analysis.
@@ -38,7 +43,7 @@ With a good use case complete, textual analysis is a quick and easy way to figur
 
 * Coading to an interface, rather than to an implementation, makes your software easier to extends.
 
-* By coading to an interface, your code will word with all of ther interface's subclasses - even ones that haven't been created yet.
+* By coading to an interface, your code will work with all of ther interface's subclasses - even ones that haven't been created yet.
 
 * Inherit common behavior.
 
