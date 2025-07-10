@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lld_flutter/features/auth/presentation/pages/login_page.dart';
-import 'package:lld_flutter/features/dashboard/domain/entities/user.dart';
-import 'package:lld_flutter/features/dashboard/presentation/cubit/dashboard_cubit.dart';
-import 'package:lld_flutter/features/dashboard/presentation/cubit/dashboard_state.dart';
+import "package:flutter/material.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
+import "package:lld_flutter/features/vital_signs/presentation/pages/vital_signs_page.dart";
 
-import '../../../auth/data/models/token_model.dart';
-import '../../../auth/presentation/cubit/auth_cubit.dart';
-import '../../../auth/presentation/cubit/auth_state.dart';
+import "../../../auth/data/models/token_model.dart";
+import "../../../auth/presentation/cubit/auth_cubit.dart";
+import "../../../auth/presentation/cubit/auth_state.dart";
+import "../../../auth/presentation/pages/login_page.dart";
+import "../../domain/entities/user.dart";
+import "../cubit/dashboard_cubit.dart";
+import "../cubit/dashboard_state.dart";
 
 class DashboardPage extends StatefulWidget {
   final TokenModel token;
@@ -20,7 +21,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   User? user;
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -34,106 +35,100 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<DashboardCubit, DashboardState>(
-      listener: (context, state) {
-        state.whenOrNull(
-          loading: () => setState(() {
-            isLoading = true;
-          }),
-          loaded: (user) => setState(() {
-            this.user = user;
-            isLoading = false;
-          }),
-          error: (message) => setState(() {
-            isLoading = false;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message), backgroundColor: Colors.red),
-            );
-          }),
-        );
-      },
-      child: BlocBuilder<DashboardCubit, DashboardState>(
-        builder: (context, state) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Dashboard'),
-              actions: [
-                BlocConsumer<AuthCubit, AuthState>(
-                  listener: (context, state) {
-                    state.maybeMap(
-                      initial: (_) {
-                        // After logout, we go back to initial state
-                        // Navigator.pushReplacement(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => const LoginPage()),
-                        // );
-                      },
-
-                      failure: (state) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.message),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      },
-                      orElse: () {},
-                    );
-                  },
-                  builder: (context, state) {
-                    return IconButton(
-                      icon: const Icon(Icons.logout),
-                      onPressed: () {
-                        context.read<AuthCubit>().logout();
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginPage(),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'User Profile',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          _buildUserInfoCard(),
-                        ],
-                      ),
-              ),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Dashboard"),
+        actions: [
+          BlocConsumer<AuthCubit, AuthState>(
+            listener: (context, state) {
+              state.maybeMap(
+                initial: (_) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
+                orElse: () {},
+              );
+            },
+            builder: (context, state) {
+              return IconButton(
+                icon: const Icon(Icons.logout),
+                onPressed: () {
+                  context.read<AuthCubit>().logout();
+                },
+              );
+            },
+          ),
+        ],
+      ),
+      body: BlocListener<DashboardCubit, DashboardState>(
+        listener: (context, state) {
+          state.whenOrNull(
+            loading: () => setState(() {
+              isLoading = true;
+            }),
+            loaded: (user) => setState(() {
+              this.user = user;
+              isLoading = false;
+            }),
+            error: (message) => setState(() {
+              isLoading = false;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(message), backgroundColor: Colors.red),
+              );
+            }),
           );
         },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (isLoading)
+                const Center(child: CircularProgressIndicator())
+              else if (user != null)
+                _buildUserProfileCard(),
+
+              // Add vital signs button at the bottom
+              if (user != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 24.0),
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        foregroundColor: Colors.white,
+                      ),
+                      icon: const Icon(Icons.favorite),
+                      label: const Text(
+                        "VIEW VITAL SIGNS",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        // Use a simple placeholder for demonstration
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                VitalSignsPage(userId: user!.id),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildUserInfoCard() {
-    if (user == null) {
-      return const Center(
-        child: Text(
-          'User data not available',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
-        ),
-      );
-    }
-
+  Widget _buildUserProfileCard() {
     return Card(
       elevation: 4,
       child: Padding(
@@ -141,69 +136,50 @@ class _DashboardPageState extends State<DashboardPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Text(
+              "User Profile",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
             _buildInfoRow(
               icon: Icons.person,
-              title: 'Name',
-              value: user?.fullName ?? 'Not provided',
+              title: "Name",
+              value: user?.fullName ?? "Not provided",
             ),
             const Divider(),
             _buildInfoRow(
               icon: Icons.email,
-              title: 'Email',
-              value: user?.email ?? 'Not provided',
+              title: "Email",
+              value: user?.email ?? "Not provided",
             ),
             const Divider(),
             _buildInfoRow(
               icon: Icons.phone,
-              title: 'Mobile',
-              value: user?.mobile ?? 'Not provided',
+              title: "Mobile",
+              value: user?.mobile ?? "Not provided",
             ),
             if (user?.dateOfBirth != null) ...[
               const Divider(),
               _buildInfoRow(
                 icon: Icons.cake,
-                title: 'Date of Birth',
-                value: user?.dateOfBirth ?? 'Not provided',
+                title: "Date of Birth",
+                value: user!.dateOfBirth!,
               ),
             ],
             if (user?.gender != null) ...[
               const Divider(),
               _buildInfoRow(
                 icon: Icons.person_outline,
-                title: 'Gender',
-                value: user?.gender ?? 'Not provided',
-              ),
-            ],
-            if (user?.profession != null) ...[
-              const Divider(),
-              _buildInfoRow(
-                icon: Icons.work,
-                title: 'Profession',
-                value: user?.profession ?? 'Not provided',
-              ),
-            ],
-            if (user?.relationship != null) ...[
-              const Divider(),
-              _buildInfoRow(
-                icon: Icons.people,
-                title: 'Relationship',
-                value: user?.relationship ?? 'Not provided',
+                title: "Gender",
+                value: user!.gender!,
               ),
             ],
             if (user?.bloodGroup != null) ...[
               const Divider(),
               _buildInfoRow(
                 icon: Icons.bloodtype,
-                title: 'Blood Group',
-                value: user?.bloodGroup ?? 'Not provided',
-              ),
-            ],
-            if (user?.umrId != null) ...[
-              const Divider(),
-              _buildInfoRow(
-                icon: Icons.badge,
-                title: 'UMR ID',
-                value: user?.umrId ?? 'Not provided',
+                title: "Blood Group",
+                value: user!.bloodGroup!,
               ),
             ],
           ],

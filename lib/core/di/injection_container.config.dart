@@ -42,6 +42,16 @@ import '../../features/random_face/domain/repositories/face_repository.dart'
 import '../../features/random_face/domain/usecases/get_random_face.dart'
     as _i345;
 import '../../features/random_face/presentation/bloc/face_cubit.dart' as _i1007;
+import '../../features/vital_signs/data/datasources/vital_sign_remote_data_source.dart'
+    as _i841;
+import '../../features/vital_signs/data/repositories/vital_sign_repository_impl.dart'
+    as _i30;
+import '../../features/vital_signs/domain/repositories/vital_sign_repository.dart'
+    as _i809;
+import '../../features/vital_signs/domain/usecases/get_latest_vital_sign_usecase.dart'
+    as _i1038;
+import '../../features/vital_signs/presentation/cubit/vital_sign_cubit.dart'
+    as _i677;
 import '../network/api_client.dart' as _i557;
 import '../network/network_info.dart' as _i932;
 import 'injection_container.dart' as _i809;
@@ -80,6 +90,15 @@ Future<_i174.GetIt> init(
       networkInfo: gh<_i932.NetworkInfo>(),
     ),
   );
+  gh.lazySingleton<_i841.VitalSignRemoteDataSource>(
+    () => _i841.VitalSignRemoteDataSourceImpl(gh<_i557.ApiClient>()),
+  );
+  gh.lazySingleton<_i809.VitalSignRepository>(
+    () => _i30.VitalSignRepositoryImpl(
+      remoteDataSource: gh<_i841.VitalSignRemoteDataSource>(),
+      networkInfo: gh<_i932.NetworkInfo>(),
+    ),
+  );
   gh.lazySingleton<_i970.AuthDataSource>(
     () => _i970.AuthDataSourceImpl(
       gh<_i557.ApiClient>(),
@@ -104,6 +123,9 @@ Future<_i174.GetIt> init(
       gh<_i932.NetworkInfo>(),
     ),
   );
+  gh.lazySingleton<_i1038.GetLatestVitalSignUseCase>(
+    () => _i1038.GetLatestVitalSignUseCase(gh<_i809.VitalSignRepository>()),
+  );
   gh.lazySingleton<_i345.GetRandomFace>(
     () => _i345.GetRandomFace(gh<_i67.FaceRepository>()),
   );
@@ -115,6 +137,11 @@ Future<_i174.GetIt> init(
   );
   gh.lazySingleton<_i276.GetCurrentUserUseCase>(
     () => _i276.GetCurrentUserUseCase(gh<_i665.DashboardRepository>()),
+  );
+  gh.factory<_i677.VitalSignCubit>(
+    () => _i677.VitalSignCubit(
+      getLatestVitalSignUseCase: gh<_i1038.GetLatestVitalSignUseCase>(),
+    ),
   );
   gh.factory<_i24.DashboardCubit>(
     () => _i24.DashboardCubit(

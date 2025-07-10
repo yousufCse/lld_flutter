@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'login_request_model.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(createToJson: false)
 class LoginRequestModel {
   final String loginId;
   final String pin;

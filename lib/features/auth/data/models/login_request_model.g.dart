@@ -17,15 +17,3 @@ LoginRequestModel _$LoginRequestModelFromJson(Map<String, dynamic> json) =>
       osversion: json['osversion'] as String?,
       osplatform: json['osplatform'] as String?,
     );
-
-Map<String, dynamic> _$LoginRequestModelToJson(LoginRequestModel instance) =>
-    <String, dynamic>{
-      'loginId': instance.loginId,
-      'pin': instance.pin,
-      'latitude': instance.latitude,
-      'longitude': instance.longitude,
-      'deviceId': instance.deviceId,
-      'deviceName': instance.deviceName,
-      'osversion': instance.osversion,
-      'osplatform': instance.osplatform,
-    };

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lld_flutter/features/dashboard/presentation/cubit/dashboard_cubit.dart';
+import 'package:lld_flutter/features/vital_signs/presentation/cubit/vital_sign_cubit.dart';
 
 import 'core/di/injection_container.dart' as di;
 import 'features/auth/presentation/cubit/auth_cubit.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<AuthCubit>(create: (_) => di.sl<AuthCubit>()),
         BlocProvider<DashboardCubit>(create: (_) => di.sl<DashboardCubit>()),
+        BlocProvider<VitalSignCubit>(create: (_) => di.sl<VitalSignCubit>()),
       ],
       child: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
