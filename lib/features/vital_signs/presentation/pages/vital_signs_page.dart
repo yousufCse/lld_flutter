@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/error/failures.dart';
+import '../../../../core/utils/failure_utils.dart';
 import '../../domain/entities/vital_sign.dart';
 import '../cubit/vital_sign_cubit.dart';
 import '../cubit/vital_sign_state.dart';
@@ -44,7 +44,7 @@ class _VitalSignsPageState extends State<VitalSignsPage> {
                   const Icon(Icons.error_outline, size: 48, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(
-                    'Error: ${_getFailureMessage(failure)}',
+                    'Error: ${FailureUtils.getFailureMessage(failure)}',
                     style: const TextStyle(color: Colors.red),
                     textAlign: TextAlign.center,
                   ),
@@ -343,16 +343,5 @@ class _VitalSignsPageState extends State<VitalSignsPage> {
     return text[0].toUpperCase() + text.substring(1);
   }
 
-  String _getFailureMessage(Failure failure) {
-    if (failure is ServerFailure) {
-      return failure.message;
-    } else if (failure is NetworkFailure) {
-      return failure.message;
-    } else if (failure is CacheFailure) {
-      return failure.message;
-    } else if (failure is UnknownFailure) {
-      return failure.message;
-    }
-    return 'An unexpected error occurred';
-  }
+  // Now using the centralized FailureUtils instead
 }
