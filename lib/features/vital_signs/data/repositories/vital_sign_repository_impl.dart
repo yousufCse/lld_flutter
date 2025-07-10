@@ -19,7 +19,7 @@ class VitalSignRepositoryImpl extends BaseRepository
 
   @override
   Future<Either<Failure, VitalSign>> getLatestVitalSign(String userId) async {
-    return await safeApiCall(() async {
+    return await safeRepositoryCall(() async {
       final result = await remoteDataSource.getLatestVitalSign(userId);
       return result;
     });

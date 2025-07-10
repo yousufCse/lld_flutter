@@ -21,7 +21,7 @@ class AuthRepositoryImpl extends BaseRepository implements AuthRepository {
   Future<Either<Failure, TokenModel>> login(
     LoginRequestModel loginRequest,
   ) async {
-    return await safeApiCall(() async {
+    return await safeRepositoryCall(() async {
       final result = await authDataSource.login(loginRequest);
       return result;
     });

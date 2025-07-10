@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/data/base_remote_data_source.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/api_client.dart';
 import '../models/face_model.dart';
@@ -12,16 +13,15 @@ abstract class FaceRemoteDataSource {
 }
 
 @LazySingleton(as: FaceRemoteDataSource)
-class FaceRemoteDataSourceImpl implements FaceRemoteDataSource {
-  final ApiClient client;
-
-  FaceRemoteDataSourceImpl(this.client);
+class FaceRemoteDataSourceImpl extends BaseRemoteDataSource
+    implements FaceRemoteDataSource {
+  FaceRemoteDataSourceImpl(ApiClient client) : super(client);
 
   @override
   Future<FaceModel> getRandomFace() async {
-    final response = await client.get('https://randomuser.me/api/');
+    return safeApiCall(() async {
+      final response = await client.get('https://randomuser.me/api/');
 
-    try {
       final results = response['results'] as List;
       if (results.isNotEmpty) {
         final userData = results.first;
@@ -39,10 +39,6 @@ class FaceRemoteDataSourceImpl implements FaceRemoteDataSource {
       } else {
         throw ServerException(message: 'No face data found');
       }
-    } catch (e) {
-      throw ServerException(
-        message: 'Failed to parse face data: ${e.toString()}',
-      );
-    }
+    });
   }
 }

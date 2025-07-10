@@ -8,7 +8,7 @@ abstract class BaseRepository {
 
   BaseRepository({required this.networkInfo});
 
-  Future<Either<Failure, T>> safeApiCall<T>(
+  Future<Either<Failure, T>> safeRepositoryCall<T>(
     Future<T> Function() apiCall,
   ) async {
     if (await networkInfo.isConnected) {

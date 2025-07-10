@@ -1,7 +1,6 @@
 import '../models/user_model.dart';
 import 'package:injectable/injectable.dart';
-import 'package:dio/dio.dart';
-import '../../../../core/error/exceptions.dart';
+import '../../../../core/data/base_remote_data_source.dart';
 import '../../../../core/network/api_client.dart';
 
 abstract class DashboardRemoteDataSource {
@@ -9,51 +8,17 @@ abstract class DashboardRemoteDataSource {
 }
 
 @LazySingleton(as: DashboardRemoteDataSource)
-class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
-  final ApiClient client;
-
-  DashboardRemoteDataSourceImpl(this.client);
+class DashboardRemoteDataSourceImpl extends BaseRemoteDataSource
+    implements DashboardRemoteDataSource {
+  DashboardRemoteDataSourceImpl(ApiClient client) : super(client);
 
   @override
   Future<UserModel> getCurrentUser() async {
-    try {
-      // Get token from shared preferences
-      final token = client.sharedPreferences.getString('access_token');
-
-      if (token == null || token.isEmpty) {
-        throw ServerException(message: 'Authorization token not found');
-      }
-
-      // Set options with authorization header explicitly
-      final options = Options(headers: {'Authorization': 'Bearer $token'});
-
-      // Call the endpoint with explicit authorization
-      final response = await client.dio.get(
+    return safeApiCall(() async {
+      return await getRequest(
         '/user/GetCurrentUser',
-        options: options,
+        (json) => UserModel.fromJson(json),
       );
-
-      if (response.statusCode == 200 && response.data != null) {
-        return UserModel.fromJson(response.data);
-      } else {
-        throw ServerException(
-          message: 'Error occurred with status code: ${response.statusCode}',
-        );
-      }
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.sendTimeout) {
-        throw NetworkException(message: 'Connection timeout');
-      } else if (e.type == DioExceptionType.connectionError) {
-        throw NetworkException(message: 'No internet connection');
-      } else {
-        throw ServerException(message: e.message ?? 'Unknown error occurred');
-      }
-    } catch (e) {
-      throw ServerException(
-        message: 'Failed to fetch user data: ${e.toString()}',
-      );
-    }
+    });
   }
 }
