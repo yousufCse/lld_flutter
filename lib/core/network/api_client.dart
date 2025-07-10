@@ -2,15 +2,17 @@ import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import '../error/exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'token_refresh_interceptor.dart';
 
 @lazySingleton
 class ApiClient {
   final Dio dio;
   final SharedPreferences sharedPreferences;
+  static const String baseUrl = 'https://umrtest.com/DhanvantariAuthApi/api/v1';
 
   ApiClient(this.dio, this.sharedPreferences) {
     // Set the base URL for the API
-    dio.options.baseUrl = 'https://umrtest.com/DhanvantariAuthApi/api/v1';
+    dio.options.baseUrl = baseUrl;
 
     // Add interceptor for authentication
     dio.interceptors.add(
@@ -22,12 +24,15 @@ class ApiClient {
           }
           return handler.next(options);
         },
-        onError: (DioException error, handler) {
-          if (error.response?.statusCode == 401) {
-            // TODO: Implement token refresh logic if needed
-          }
-          return handler.next(error);
-        },
+      ),
+    );
+
+    // Add token refresh interceptor
+    dio.interceptors.add(
+      TokenRefreshInterceptor(
+        dio: dio,
+        sharedPreferences: sharedPreferences,
+        baseUrl: baseUrl,
       ),
     );
   }
