@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../data/models/token_model.dart';
-import '../../../dashboard/data/models/user_model.dart';
 
 part 'auth_state.freezed.dart';
 

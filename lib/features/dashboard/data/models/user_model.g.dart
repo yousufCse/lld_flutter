@@ -17,7 +17,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
   profession: json['profession'] as String?,
   relationship: json['relationship'] as String?,
   bloodGroup: json['bloodGroup'] as String?,
-  umrId: json['umrid'] as String?,
+  umrIdJson: json['umrid'] as String?,
 );
 
 Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
@@ -31,5 +31,5 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
   'profession': instance.profession,
   'relationship': instance.relationship,
   'bloodGroup': instance.bloodGroup,
-  'umrid': instance.umrId,
+  'umrid': instance.umrIdJson,
 };

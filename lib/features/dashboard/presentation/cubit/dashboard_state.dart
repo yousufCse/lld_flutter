@@ -1,6 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-
-import '../../data/models/user_model.dart';
+import 'package:lld_flutter/features/dashboard/domain/entities/user.dart';
 
 part 'dashboard_state.freezed.dart';
 
@@ -8,8 +7,7 @@ part 'dashboard_state.freezed.dart';
 class DashboardState with _$DashboardState {
   const factory DashboardState.initial() = DashboardInitial;
   const factory DashboardState.loading() = DashboardLoading;
-  const factory DashboardState.loaded({required UserModel user}) =
-      DashboardLoaded;
+  const factory DashboardState.loaded({required User user}) = DashboardLoaded;
   const factory DashboardState.error({required String message}) =
       DashboardError;
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -9,7 +11,7 @@ import '../cubit/auth_state.dart';
 import '../../../../features/dashboard/presentation/pages/dashboard_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();

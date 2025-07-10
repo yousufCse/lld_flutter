@@ -1,41 +1,29 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:json_annotation/json_annotation.dart';
+import '../../domain/entities/user.dart';
 
 part 'user_model.g.dart';
 
 @JsonSerializable()
-class UserModel {
-  final String id;
-  final String? firstName;
-  final String? lastName;
-  final String? mobile;
-  final String? email;
-  final String? dateOfBirth;
-  final String? gender;
-  final String? profession;
-  final String? relationship;
-  final String? bloodGroup;
-
+class UserModel extends User {
   @JsonKey(name: 'umrid')
-  final String? umrId;
+  final String? umrIdJson;
 
-  UserModel({
-    required this.id,
-    this.firstName,
-    this.lastName,
-    this.mobile,
-    this.email,
-    this.dateOfBirth,
-    this.gender,
-    this.profession,
-    this.relationship,
-    this.bloodGroup,
-    this.umrId,
-  });
+  const UserModel({
+    required super.id,
+    super.firstName,
+    super.lastName,
+    super.mobile,
+    super.email,
+    super.dateOfBirth,
+    super.gender,
+    super.profession,
+    super.relationship,
+    super.bloodGroup,
+    this.umrIdJson,
+  }) : super(umrId: umrIdJson);
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
-
-  String get fullName => '$firstName ${lastName ?? ""}';
 }

@@ -128,7 +128,7 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( UserModel user)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( User user)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case DashboardInitial() when initial != null:
 return initial();case DashboardLoading() when loading != null:
@@ -152,7 +152,7 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( UserModel user)  loaded,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( User user)  loaded,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case DashboardInitial():
 return initial();case DashboardLoading():
@@ -175,7 +175,7 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( UserModel user)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( User user)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case DashboardInitial() when initial != null:
 return initial();case DashboardLoading() when loading != null:
@@ -260,7 +260,7 @@ class DashboardLoaded implements DashboardState {
   const DashboardLoaded({required this.user});
   
 
- final  UserModel user;
+ final  User user;
 
 /// Create a copy of DashboardState
 /// with the given fields replaced by the non-null parameter values.
@@ -292,7 +292,7 @@ abstract mixin class $DashboardLoadedCopyWith<$Res> implements $DashboardStateCo
   factory $DashboardLoadedCopyWith(DashboardLoaded value, $Res Function(DashboardLoaded) _then) = _$DashboardLoadedCopyWithImpl;
 @useResult
 $Res call({
- UserModel user
+ User user
 });
 
 
@@ -312,7 +312,7 @@ class _$DashboardLoadedCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? user = null,}) {
   return _then(DashboardLoaded(
 user: null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
-as UserModel,
+as User,
   ));
 }
 

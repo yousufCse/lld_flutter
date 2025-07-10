@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
-import '../../data/models/user_model.dart';
+import '../entities/user.dart';
 
 abstract class DashboardRepository {
-  Future<Either<Failure, UserModel>> getCurrentUser();
+  Future<Either<Failure, User>> getCurrentUser();
 }

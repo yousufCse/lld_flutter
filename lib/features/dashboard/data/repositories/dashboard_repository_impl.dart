@@ -4,9 +4,9 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/network/network_info.dart';
+import '../../domain/entities/user.dart';
 import '../../domain/repositories/dashboard_repository.dart';
 import '../datasources/dashboard_remote_data_source.dart';
-import '../models/user_model.dart';
 
 @LazySingleton(as: DashboardRepository)
 class DashboardRepositoryImpl implements DashboardRepository {
@@ -19,7 +19,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
   });
 
   @override
-  Future<Either<Failure, UserModel>> getCurrentUser() async {
+  Future<Either<Failure, User>> getCurrentUser() async {
     if (await networkInfo.isConnected) {
       try {
         final userModel = await remoteDataSource.getCurrentUser();

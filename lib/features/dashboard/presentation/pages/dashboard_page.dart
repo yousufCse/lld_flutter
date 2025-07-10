@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lld_flutter/features/auth/presentation/pages/login_page.dart';
+import 'package:lld_flutter/features/dashboard/domain/entities/user.dart';
 import 'package:lld_flutter/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:lld_flutter/features/dashboard/presentation/cubit/dashboard_state.dart';
 
 import '../../../auth/data/models/token_model.dart';
-import '../../data/models/user_model.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../auth/presentation/cubit/auth_state.dart';
 
 class DashboardPage extends StatefulWidget {
   final TokenModel token;
 
-  const DashboardPage({Key? key, required this.token}) : super(key: key);
+  const DashboardPage({super.key, required this.token});
 
   @override
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
 class _DashboardPageState extends State<DashboardPage> {
-  UserModel? user;
+  User? user;
   bool isLoading = false;
 
   @override
@@ -84,6 +85,12 @@ class _DashboardPageState extends State<DashboardPage> {
                       icon: const Icon(Icons.logout),
                       onPressed: () {
                         context.read<AuthCubit>().logout();
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
                       },
                     );
                   },
