@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/error/failures.dart';
 import '../bloc/face_cubit.dart';
 import '../bloc/face_state.dart';
 import '../widgets/face_display_widget.dart';
@@ -24,7 +25,8 @@ class RandomFacePage extends StatelessWidget {
             ),
             loading: () => const LoadingWidget(),
             loaded: (face) => FaceDisplayWidget(face: face),
-            error: (message) => MessageDisplayWidget(message: message),
+            error: (failure) =>
+                MessageDisplayWidget(message: _getFailureMessage(failure)),
           );
         },
       ),
@@ -35,5 +37,18 @@ class RandomFacePage extends StatelessWidget {
         child: const Icon(Icons.refresh),
       ),
     );
+  }
+
+  String _getFailureMessage(Failure failure) {
+    if (failure is ServerFailure) {
+      return failure.message;
+    } else if (failure is NetworkFailure) {
+      return failure.message;
+    } else if (failure is CacheFailure) {
+      return failure.message;
+    } else if (failure is UnknownFailure) {
+      return failure.message;
+    }
+    return 'An unexpected error occurred';
   }
 }

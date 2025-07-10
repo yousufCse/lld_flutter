@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../domain/entities/vital_sign.dart';
 
 part 'vital_sign_state.freezed.dart';
@@ -10,6 +11,6 @@ class VitalSignState with _$VitalSignState {
   const factory VitalSignState.loading() = VitalSignLoading;
   const factory VitalSignState.loaded({required VitalSign vitalSign}) =
       VitalSignLoaded;
-  const factory VitalSignState.error({required String message}) =
+  const factory VitalSignState.error({required Failure failure}) =
       VitalSignError;
 }

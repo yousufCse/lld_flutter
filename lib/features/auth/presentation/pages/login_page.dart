@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../data/models/login_request_model.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
@@ -84,6 +85,19 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  String _getFailureMessage(Failure failure) {
+    if (failure is ServerFailure) {
+      return failure.message;
+    } else if (failure is NetworkFailure) {
+      return failure.message;
+    } else if (failure is CacheFailure) {
+      return failure.message;
+    } else if (failure is UnknownFailure) {
+      return failure.message;
+    }
+    return 'An unexpected error occurred';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,9 +121,12 @@ class _LoginPageState extends State<LoginPage> {
               );
             },
 
-            failure: (message) {
+            failure: (failure) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(message), backgroundColor: Colors.red),
+                SnackBar(
+                  content: Text(_getFailureMessage(failure)),
+                  backgroundColor: Colors.red,
+                ),
               );
             },
           );

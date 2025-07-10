@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../domain/entities/vital_sign.dart';
 import '../cubit/vital_sign_cubit.dart';
 import '../cubit/vital_sign_state.dart';
@@ -36,14 +37,14 @@ class _VitalSignsPageState extends State<VitalSignsPage> {
                 const Center(child: Text('No vital sign data available')),
             loading: () => const Center(child: CircularProgressIndicator()),
             loaded: (vitalSign) => _buildVitalSignContent(vitalSign),
-            error: (message) => Center(
+            error: (failure) => Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Icon(Icons.error_outline, size: 48, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(
-                    'Error: $message',
+                    'Error: ${_getFailureMessage(failure)}',
                     style: const TextStyle(color: Colors.red),
                     textAlign: TextAlign.center,
                   ),
@@ -340,5 +341,18 @@ class _VitalSignsPageState extends State<VitalSignsPage> {
   String _capitalize(String text) {
     if (text.isEmpty) return text;
     return text[0].toUpperCase() + text.substring(1);
+  }
+
+  String _getFailureMessage(Failure failure) {
+    if (failure is ServerFailure) {
+      return failure.message;
+    } else if (failure is NetworkFailure) {
+      return failure.message;
+    } else if (failure is CacheFailure) {
+      return failure.message;
+    } else if (failure is UnknownFailure) {
+      return failure.message;
+    }
+    return 'An unexpected error occurred';
   }
 }

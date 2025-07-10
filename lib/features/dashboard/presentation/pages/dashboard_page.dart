@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
 import "package:lld_flutter/features/vital_signs/presentation/pages/vital_signs_page.dart";
 
+import "../../../../core/error/failures.dart";
 import "../../../auth/data/models/token_model.dart";
 import "../../../auth/presentation/cubit/auth_cubit.dart";
 import "../../../auth/presentation/cubit/auth_state.dart";
@@ -72,10 +73,13 @@ class _DashboardPageState extends State<DashboardPage> {
               this.user = user;
               isLoading = false;
             }),
-            error: (message) => setState(() {
+            error: (failure) => setState(() {
               isLoading = false;
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(message), backgroundColor: Colors.red),
+                SnackBar(
+                  content: Text(_getFailureMessage(failure)),
+                  backgroundColor: Colors.red,
+                ),
               );
             }),
           );
@@ -219,5 +223,18 @@ class _DashboardPageState extends State<DashboardPage> {
         ],
       ),
     );
+  }
+
+  String _getFailureMessage(Failure failure) {
+    if (failure is ServerFailure) {
+      return failure.message;
+    } else if (failure is NetworkFailure) {
+      return failure.message;
+    } else if (failure is CacheFailure) {
+      return failure.message;
+    } else if (failure is UnknownFailure) {
+      return failure.message;
+    }
+    return 'An unexpected error occurred';
   }
 }

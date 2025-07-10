@@ -24,7 +24,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const AuthState.loading());
     final result = await _loginUseCase(loginRequest);
     result.fold(
-      (failure) => emit(AuthState.failure(message: failure.toString())),
+      (failure) => emit(AuthState.failure(failure: failure)),
       (token) => emit(AuthState.loginSuccess(token: token)),
     );
   }
@@ -34,7 +34,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const AuthState.loading());
     final result = await _logoutUseCase(NoParams());
     result.fold(
-      (failure) => emit(AuthState.failure(message: failure.toString())),
+      (failure) => emit(AuthState.failure(failure: failure)),
       (_) => emit(const AuthState.initial()),
     );
   }

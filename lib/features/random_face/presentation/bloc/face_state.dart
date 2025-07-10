@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../../core/error/failures.dart';
 import '../../domain/entities/face.dart';
 
 part 'face_state.freezed.dart';
@@ -14,5 +15,5 @@ sealed class FaceState with _$FaceState {
 
   const factory FaceState.loaded({required Face face}) = FaceLoaded;
 
-  const factory FaceState.error({required String message}) = FaceError;
+  const factory FaceState.error({required Failure failure}) = FaceError;
 }

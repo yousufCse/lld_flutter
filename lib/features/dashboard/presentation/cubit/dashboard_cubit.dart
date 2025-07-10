@@ -16,7 +16,7 @@ class DashboardCubit extends Cubit<DashboardState> {
     emit(const DashboardState.loading());
     final result = await getCurrentUserUseCase(NoParams());
     result.fold(
-      (failure) => emit(DashboardState.error(message: failure.toString())),
+      (failure) => emit(DashboardState.error(failure: failure)),
       (user) => emit(DashboardState.loaded(user: user)),
     );
   }

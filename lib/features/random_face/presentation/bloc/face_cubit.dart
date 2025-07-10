@@ -17,7 +17,7 @@ class FaceCubit extends Cubit<FaceState> {
     final result = await getRandomFace(NoParams());
 
     result.fold(
-      (failure) => emit(FaceState.error(message: failure.toString())),
+      (failure) => emit(FaceState.error(failure: failure)),
       (face) => emit(FaceState.loaded(face: face)),
     );
   }

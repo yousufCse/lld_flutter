@@ -128,13 +128,13 @@ return failure(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( TokenModel token)?  loginSuccess,TResult Function( String message)?  failure,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( TokenModel token)?  loginSuccess,TResult Function( Failure failure)?  failure,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
 return initial();case AuthLoading() when loading != null:
 return loading();case AuthLoginSuccess() when loginSuccess != null:
 return loginSuccess(_that.token);case AuthFailure() when failure != null:
-return failure(_that.message);case _:
+return failure(_that.failure);case _:
   return orElse();
 
 }
@@ -152,13 +152,13 @@ return failure(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( TokenModel token)  loginSuccess,required TResult Function( String message)  failure,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( TokenModel token)  loginSuccess,required TResult Function( Failure failure)  failure,}) {final _that = this;
 switch (_that) {
 case AuthInitial():
 return initial();case AuthLoading():
 return loading();case AuthLoginSuccess():
 return loginSuccess(_that.token);case AuthFailure():
-return failure(_that.message);case _:
+return failure(_that.failure);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +175,13 @@ return failure(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( TokenModel token)?  loginSuccess,TResult? Function( String message)?  failure,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( TokenModel token)?  loginSuccess,TResult? Function( Failure failure)?  failure,}) {final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
 return initial();case AuthLoading() when loading != null:
 return loading();case AuthLoginSuccess() when loginSuccess != null:
 return loginSuccess(_that.token);case AuthFailure() when failure != null:
-return failure(_that.message);case _:
+return failure(_that.failure);case _:
   return null;
 
 }
@@ -323,10 +323,10 @@ as TokenModel,
 
 
 class AuthFailure implements AuthState {
-  const AuthFailure({required this.message});
+  const AuthFailure({required this.failure});
   
 
- final  String message;
+ final  Failure failure;
 
 /// Create a copy of AuthState
 /// with the given fields replaced by the non-null parameter values.
@@ -338,16 +338,16 @@ $AuthFailureCopyWith<AuthFailure> get copyWith => _$AuthFailureCopyWithImpl<Auth
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthFailure&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthFailure&&(identical(other.failure, failure) || other.failure == failure));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,failure);
 
 @override
 String toString() {
-  return 'AuthState.failure(message: $message)';
+  return 'AuthState.failure(failure: $failure)';
 }
 
 
@@ -358,7 +358,7 @@ abstract mixin class $AuthFailureCopyWith<$Res> implements $AuthStateCopyWith<$R
   factory $AuthFailureCopyWith(AuthFailure value, $Res Function(AuthFailure) _then) = _$AuthFailureCopyWithImpl;
 @useResult
 $Res call({
- String message
+ Failure failure
 });
 
 
@@ -375,10 +375,10 @@ class _$AuthFailureCopyWithImpl<$Res>
 
 /// Create a copy of AuthState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? failure = null,}) {
   return _then(AuthFailure(
-message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+failure: null == failure ? _self.failure : failure // ignore: cast_nullable_to_non_nullable
+as Failure,
   ));
 }
 

@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:lld_flutter/features/dashboard/domain/entities/user.dart';
+
+import '../../../../core/error/failures.dart';
+import '../../domain/entities/user.dart';
 
 part 'dashboard_state.freezed.dart';
 
@@ -8,6 +10,6 @@ class DashboardState with _$DashboardState {
   const factory DashboardState.initial() = DashboardInitial;
   const factory DashboardState.loading() = DashboardLoading;
   const factory DashboardState.loaded({required User user}) = DashboardLoaded;
-  const factory DashboardState.error({required String message}) =
+  const factory DashboardState.error({required Failure failure}) =
       DashboardError;
 }
