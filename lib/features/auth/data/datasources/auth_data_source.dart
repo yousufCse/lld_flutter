@@ -2,7 +2,6 @@ import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/data/base_remote_data_source.dart';
-import '../../../../core/network/api_client.dart';
 import '../models/login_request_model.dart';
 import '../models/token_model.dart';
 
@@ -16,8 +15,7 @@ class AuthDataSourceImpl extends BaseRemoteDataSource
     implements AuthDataSource {
   final SharedPreferences sharedPreferences;
 
-  AuthDataSourceImpl(ApiClient apiClient, this.sharedPreferences)
-    : super(apiClient);
+  AuthDataSourceImpl(super.apiClient, this.sharedPreferences);
 
   @override
   Future<TokenModel> login(LoginRequestModel loginRequest) async {

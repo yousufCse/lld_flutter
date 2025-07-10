@@ -2,7 +2,6 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/data/base_remote_data_source.dart';
 import '../../../../core/error/exceptions.dart';
-import '../../../../core/network/api_client.dart';
 import '../models/face_model.dart';
 
 abstract class FaceRemoteDataSource {
@@ -15,7 +14,7 @@ abstract class FaceRemoteDataSource {
 @LazySingleton(as: FaceRemoteDataSource)
 class FaceRemoteDataSourceImpl extends BaseRemoteDataSource
     implements FaceRemoteDataSource {
-  FaceRemoteDataSourceImpl(ApiClient client) : super(client);
+  FaceRemoteDataSourceImpl(super.client);
 
   @override
   Future<FaceModel> getRandomFace() async {
