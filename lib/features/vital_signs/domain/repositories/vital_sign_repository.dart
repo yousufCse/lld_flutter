@@ -4,5 +4,7 @@ import '../../../../core/error/failures.dart';
 import '../../domain/entities/vital_sign.dart';
 
 abstract class VitalSignRepository {
+  VitalSignRepository();
+
   Future<Either<Failure, VitalSign>> getLatestVitalSign(String userId);
 }

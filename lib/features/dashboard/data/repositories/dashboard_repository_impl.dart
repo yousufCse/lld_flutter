@@ -1,36 +1,27 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
+import 'package:lld_flutter/core/repositories/base_repository.dart';
 
-import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
-import '../../../../core/network/network_info.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/dashboard_repository.dart';
 import '../datasources/dashboard_remote_data_source.dart';
 
 @LazySingleton(as: DashboardRepository)
-class DashboardRepositoryImpl implements DashboardRepository {
+class DashboardRepositoryImpl extends BaseRepository
+    implements DashboardRepository {
   final DashboardRemoteDataSource remoteDataSource;
-  final NetworkInfo networkInfo;
 
   DashboardRepositoryImpl({
     required this.remoteDataSource,
-    required this.networkInfo,
+    required super.networkInfo,
   });
 
   @override
   Future<Either<Failure, User>> getCurrentUser() async {
-    if (await networkInfo.isConnected) {
-      try {
-        final userModel = await remoteDataSource.getCurrentUser();
-        return Right(userModel);
-      } on ServerException catch (e) {
-        return Left(ServerFailure(message: e.message));
-      } on NetworkException catch (e) {
-        return Left(NetworkFailure(message: e.message));
-      }
-    } else {
-      return Left(NetworkFailure(message: 'No internet connection'));
-    }
+    return await safeApiCall(() async {
+      final result = await remoteDataSource.getCurrentUser();
+      return result;
+    });
   }
 }

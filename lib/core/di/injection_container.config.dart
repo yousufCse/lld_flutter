@@ -105,18 +105,6 @@ Future<_i174.GetIt> init(
       gh<_i460.SharedPreferences>(),
     ),
   );
-  gh.lazySingleton<_i787.AuthRepository>(
-    () => _i153.AuthRepositoryImpl(
-      gh<_i970.AuthDataSource>(),
-      gh<_i932.NetworkInfo>(),
-    ),
-  );
-  gh.lazySingleton<_i188.LoginUseCase>(
-    () => _i188.LoginUseCase(gh<_i787.AuthRepository>()),
-  );
-  gh.lazySingleton<_i48.LogoutUseCase>(
-    () => _i48.LogoutUseCase(gh<_i787.AuthRepository>()),
-  );
   gh.lazySingleton<_i67.FaceRepository>(
     () => _i38.FaceRepositoryImpl(
       gh<_i1030.FaceRemoteDataSource>(),
@@ -129,14 +117,20 @@ Future<_i174.GetIt> init(
   gh.lazySingleton<_i345.GetRandomFace>(
     () => _i345.GetRandomFace(gh<_i67.FaceRepository>()),
   );
-  gh.factory<_i117.AuthCubit>(
-    () => _i117.AuthCubit(
-      loginUseCase: gh<_i188.LoginUseCase>(),
-      logoutUseCase: gh<_i48.LogoutUseCase>(),
-    ),
-  );
   gh.lazySingleton<_i276.GetCurrentUserUseCase>(
     () => _i276.GetCurrentUserUseCase(gh<_i665.DashboardRepository>()),
+  );
+  gh.lazySingleton<_i787.AuthRepository>(
+    () => _i153.AuthRepositoryImpl(
+      authDataSource: gh<_i970.AuthDataSource>(),
+      networkInfo: gh<_i932.NetworkInfo>(),
+    ),
+  );
+  gh.lazySingleton<_i188.LoginUseCase>(
+    () => _i188.LoginUseCase(gh<_i787.AuthRepository>()),
+  );
+  gh.lazySingleton<_i48.LogoutUseCase>(
+    () => _i48.LogoutUseCase(gh<_i787.AuthRepository>()),
   );
   gh.factory<_i677.VitalSignCubit>(
     () => _i677.VitalSignCubit(
@@ -150,6 +144,12 @@ Future<_i174.GetIt> init(
   );
   gh.factory<_i1007.FaceCubit>(
     () => _i1007.FaceCubit(gh<_i345.GetRandomFace>()),
+  );
+  gh.factory<_i117.AuthCubit>(
+    () => _i117.AuthCubit(
+      loginUseCase: gh<_i188.LoginUseCase>(),
+      logoutUseCase: gh<_i48.LogoutUseCase>(),
+    ),
   );
   return getIt;
 }
