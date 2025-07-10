@@ -16,6 +16,23 @@ import 'package:internet_connection_checker/internet_connection_checker.dart'
     as _i973;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
+import '../../features/auth/data/datasources/auth_data_source.dart' as _i970;
+import '../../features/auth/data/repositories/auth_repository_impl.dart'
+    as _i153;
+import '../../features/auth/domain/repositories/auth_repository.dart' as _i787;
+import '../../features/auth/domain/usecases/login_usecase.dart' as _i188;
+import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
+import '../../features/auth/presentation/cubit/auth_cubit.dart' as _i117;
+import '../../features/dashboard/data/datasources/dashboard_remote_data_source.dart'
+    as _i258;
+import '../../features/dashboard/data/repositories/dashboard_repository_impl.dart'
+    as _i509;
+import '../../features/dashboard/domain/repositories/dashboard_repository.dart'
+    as _i665;
+import '../../features/dashboard/domain/usecases/get_current_user_usecase.dart'
+    as _i276;
+import '../../features/dashboard/presentation/cubit/dashboard_cubit.dart'
+    as _i24;
 import '../../features/random_face/data/datasources/face_remote_data_source.dart'
     as _i1030;
 import '../../features/random_face/data/repositories/face_repository_impl.dart'
@@ -45,12 +62,41 @@ Future<_i174.GetIt> init(
   gh.lazySingleton<_i973.InternetConnectionChecker>(
     () => registerModule.internetConnectionChecker,
   );
-  gh.lazySingleton<_i557.ApiClient>(() => _i557.ApiClient(gh<_i361.Dio>()));
   gh.lazySingleton<_i932.NetworkInfo>(
     () => _i932.NetworkInfoImpl(gh<_i973.InternetConnectionChecker>()),
   );
+  gh.lazySingleton<_i557.ApiClient>(
+    () => _i557.ApiClient(gh<_i361.Dio>(), gh<_i460.SharedPreferences>()),
+  );
+  gh.lazySingleton<_i258.DashboardRemoteDataSource>(
+    () => _i258.DashboardRemoteDataSourceImpl(gh<_i557.ApiClient>()),
+  );
   gh.lazySingleton<_i1030.FaceRemoteDataSource>(
     () => _i1030.FaceRemoteDataSourceImpl(gh<_i557.ApiClient>()),
+  );
+  gh.lazySingleton<_i665.DashboardRepository>(
+    () => _i509.DashboardRepositoryImpl(
+      remoteDataSource: gh<_i258.DashboardRemoteDataSource>(),
+      networkInfo: gh<_i932.NetworkInfo>(),
+    ),
+  );
+  gh.lazySingleton<_i970.AuthDataSource>(
+    () => _i970.AuthDataSourceImpl(
+      gh<_i557.ApiClient>(),
+      gh<_i460.SharedPreferences>(),
+    ),
+  );
+  gh.lazySingleton<_i787.AuthRepository>(
+    () => _i153.AuthRepositoryImpl(
+      gh<_i970.AuthDataSource>(),
+      gh<_i932.NetworkInfo>(),
+    ),
+  );
+  gh.lazySingleton<_i188.LoginUseCase>(
+    () => _i188.LoginUseCase(gh<_i787.AuthRepository>()),
+  );
+  gh.lazySingleton<_i48.LogoutUseCase>(
+    () => _i48.LogoutUseCase(gh<_i787.AuthRepository>()),
   );
   gh.lazySingleton<_i67.FaceRepository>(
     () => _i38.FaceRepositoryImpl(
@@ -60,6 +106,20 @@ Future<_i174.GetIt> init(
   );
   gh.lazySingleton<_i345.GetRandomFace>(
     () => _i345.GetRandomFace(gh<_i67.FaceRepository>()),
+  );
+  gh.factory<_i117.AuthCubit>(
+    () => _i117.AuthCubit(
+      loginUseCase: gh<_i188.LoginUseCase>(),
+      logoutUseCase: gh<_i48.LogoutUseCase>(),
+    ),
+  );
+  gh.lazySingleton<_i276.GetCurrentUserUseCase>(
+    () => _i276.GetCurrentUserUseCase(gh<_i665.DashboardRepository>()),
+  );
+  gh.factory<_i24.DashboardCubit>(
+    () => _i24.DashboardCubit(
+      getCurrentUserUseCase: gh<_i276.GetCurrentUserUseCase>(),
+    ),
   );
   gh.factory<_i1007.FaceCubit>(
     () => _i1007.FaceCubit(gh<_i345.GetRandomFace>()),
