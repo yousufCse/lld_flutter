@@ -19,7 +19,7 @@ class DashboardRepositoryImpl extends BaseRepository
 
   @override
   Future<Either<Failure, User>> getCurrentUser() async {
-    return await safeRepositoryCall(() async {
+    return await runWithFailureCapture(() async {
       final result = await remoteDataSource.getCurrentUser();
       return result;
     });

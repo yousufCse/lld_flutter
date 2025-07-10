@@ -128,7 +128,7 @@ return failure(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( TokenModel token)?  loginSuccess,TResult Function( Failure failure)?  failure,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( Token token)?  loginSuccess,TResult Function( Failure failure)?  failure,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
 return initial();case AuthLoading() when loading != null:
@@ -152,7 +152,7 @@ return failure(_that.failure);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( TokenModel token)  loginSuccess,required TResult Function( Failure failure)  failure,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( Token token)  loginSuccess,required TResult Function( Failure failure)  failure,}) {final _that = this;
 switch (_that) {
 case AuthInitial():
 return initial();case AuthLoading():
@@ -175,7 +175,7 @@ return failure(_that.failure);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( TokenModel token)?  loginSuccess,TResult? Function( Failure failure)?  failure,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( Token token)?  loginSuccess,TResult? Function( Failure failure)?  failure,}) {final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
 return initial();case AuthLoading() when loading != null:
@@ -260,7 +260,7 @@ class AuthLoginSuccess implements AuthState {
   const AuthLoginSuccess({required this.token});
   
 
- final  TokenModel token;
+ final  Token token;
 
 /// Create a copy of AuthState
 /// with the given fields replaced by the non-null parameter values.
@@ -292,7 +292,7 @@ abstract mixin class $AuthLoginSuccessCopyWith<$Res> implements $AuthStateCopyWi
   factory $AuthLoginSuccessCopyWith(AuthLoginSuccess value, $Res Function(AuthLoginSuccess) _then) = _$AuthLoginSuccessCopyWithImpl;
 @useResult
 $Res call({
- TokenModel token
+ Token token
 });
 
 
@@ -312,7 +312,7 @@ class _$AuthLoginSuccessCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') $Res call({Object? token = null,}) {
   return _then(AuthLoginSuccess(
 token: null == token ? _self.token : token // ignore: cast_nullable_to_non_nullable
-as TokenModel,
+as Token,
   ));
 }
 

@@ -3,7 +3,7 @@ import "package:flutter_bloc/flutter_bloc.dart";
 import "package:lld_flutter/features/vital_signs/presentation/pages/vital_signs_page.dart";
 
 import "../../../../core/utils/failure_utils.dart";
-import "../../../auth/data/models/token_model.dart";
+import "../../../auth/domain/entities/token.dart";
 import "../../../auth/presentation/cubit/auth_cubit.dart";
 import "../../../auth/presentation/cubit/auth_state.dart";
 import "../../../auth/presentation/pages/login_page.dart";
@@ -12,7 +12,7 @@ import "../cubit/dashboard_cubit.dart";
 import "../cubit/dashboard_state.dart";
 
 class DashboardPage extends StatefulWidget {
-  final TokenModel token;
+  final Token token;
 
   const DashboardPage({super.key, required this.token});
 

@@ -1,13 +1,11 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../../domain/entities/token.dart';
 
 part 'token_model.g.dart';
 
 @JsonSerializable()
-class TokenModel {
-  final String? accessToken;
-  final String? refreshToken;
-
-  TokenModel({required this.accessToken, required this.refreshToken});
+class TokenModel extends Token {
+  const TokenModel({required super.accessToken, required super.refreshToken});
 
   factory TokenModel.fromJson(Map<String, dynamic> json) =>
       _$TokenModelFromJson(json);
