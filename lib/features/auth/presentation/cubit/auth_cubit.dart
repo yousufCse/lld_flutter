@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../../core/utils/usecase.dart';
 import '../../data/models/login_request_model.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
@@ -31,7 +32,7 @@ class AuthCubit extends Cubit<AuthState> {
   // Logout method
   Future<void> logout() async {
     emit(const AuthState.loading());
-    final result = await _logoutUseCase();
+    final result = await _logoutUseCase(NoParams());
     result.fold(
       (failure) => emit(AuthState.failure(message: failure.toString())),
       (_) => emit(const AuthState.initial()),

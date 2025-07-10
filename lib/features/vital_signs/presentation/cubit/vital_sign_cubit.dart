@@ -14,7 +14,9 @@ class VitalSignCubit extends Cubit<VitalSignState> {
 
   Future<void> getLatestVitalSign(String userId) async {
     emit(const VitalSignState.loading());
-    final result = await getLatestVitalSignUseCase(userId);
+    final result = await getLatestVitalSignUseCase(
+      GetLatestVitalSignParams(userId: userId),
+    );
     result.fold((failure) {
       // Handle different types of failures
       if (failure is ServerFailure) {
