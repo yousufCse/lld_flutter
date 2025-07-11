@@ -48,3 +48,6 @@ app.*.map.json
 *.freezed.dart
 *.g.dart
 *.config.dart
+
+# Ignore pubspec.lock (lock file for dependencies)
+pubspec.lock
