@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import '../../res/visual_strings/app_strings.dart';
 import '../error/exceptions.dart';
 import '../network/api_client.dart';
 
@@ -16,14 +17,16 @@ abstract class BaseRemoteDataSource {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.receiveTimeout ||
           e.type == DioExceptionType.sendTimeout) {
-        throw NetworkException(message: 'Connection timeout');
+        throw NetworkException(message: ErrorStrings.connectionTimeout);
       } else if (e.type == DioExceptionType.connectionError) {
-        throw NetworkException(message: 'No internet connection');
+        throw NetworkException(message: ErrorStrings.noInternetConnection);
       } else {
-        throw ServerException(message: e.message ?? 'Unknown error occurred');
+        throw ServerException(message: e.message ?? ErrorStrings.unknownError);
       }
     } catch (e) {
-      throw ServerException(message: 'Failed to fetch data: ${e.toString()}');
+      throw ServerException(
+        message: '${ErrorStrings.failedToFetchData}: ${e.toString()}',
+      );
     }
   }
 
@@ -38,7 +41,7 @@ abstract class BaseRemoteDataSource {
       return fromJson(response.data);
     } else {
       throw ServerException(
-        message: 'Error occurred with status code: ${response.statusCode}',
+        message: '${ErrorStrings.statusCodeError}: ${response.statusCode}',
       );
     }
   }
@@ -55,7 +58,7 @@ abstract class BaseRemoteDataSource {
       return fromJson(response.data);
     } else {
       throw ServerException(
-        message: 'Error occurred with status code: ${response.statusCode}',
+        message: '${ErrorStrings.statusCodeError}: ${response.statusCode}',
       );
     }
   }
@@ -72,7 +75,7 @@ abstract class BaseRemoteDataSource {
       return fromJson(response.data);
     } else {
       throw ServerException(
-        message: 'Error occurred with status code: ${response.statusCode}',
+        message: '${ErrorStrings.statusCodeError}: ${response.statusCode}',
       );
     }
   }
@@ -88,7 +91,7 @@ abstract class BaseRemoteDataSource {
       return fromJson(response.data);
     } else {
       throw ServerException(
-        message: 'Error occurred with status code: ${response.statusCode}',
+        message: '${ErrorStrings.statusCodeError}: ${response.statusCode}',
       );
     }
   }

@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../res/visual_strings/app_strings.dart';
+import '../constants/api_endpoints.dart';
 import '../error/exceptions.dart';
 
 /// Interceptor to handle token refresh when a 401 Unauthorized response is received
@@ -28,7 +30,7 @@ class TokenRefreshInterceptor extends Interceptor {
       final options = err.requestOptions;
 
       // Don't retry the refresh token endpoint itself to avoid infinite loops
-      if (options.path.contains('/Auth/RefreshToken')) {
+      if (options.path.contains(ApiEndpoints.refreshToken)) {
         return handler.next(err);
       }
 
@@ -64,7 +66,7 @@ class TokenRefreshInterceptor extends Interceptor {
   Future<void> _refreshToken() async {
     final refreshToken = sharedPreferences.getString('refresh_token');
     if (refreshToken == null || refreshToken.isEmpty) {
-      throw ServerException(message: 'No refresh token available');
+      throw ServerException(message: ErrorStrings.noRefreshToken);
     }
 
     // Create a new Dio instance to avoid interceptors loop
@@ -72,7 +74,7 @@ class TokenRefreshInterceptor extends Interceptor {
 
     try {
       final response = await refreshDio.post(
-        '/Auth/RefreshToken',
+        ApiEndpoints.refreshToken,
         data: {'refreshToken': refreshToken},
       );
 
@@ -96,7 +98,7 @@ class TokenRefreshInterceptor extends Interceptor {
             await sharedPreferences.setString('refresh_token', newRefreshToken);
           }
         } else {
-          throw ServerException(message: 'Invalid token response');
+          throw ServerException(message: ErrorStrings.invalidTokenResponse);
         }
       } else {
         throw ServerException(message: 'Failed to refresh token');

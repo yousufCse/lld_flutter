@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import '../../res/visual_strings/app_strings.dart';
 import '../error/exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'token_refresh_interceptor.dart';
@@ -69,18 +70,18 @@ class ApiClient {
       case 200:
         return response.data;
       case 400:
-        throw ServerException(message: 'Bad request');
+        throw ServerException(message: ErrorStrings.badRequest);
       case 401:
-        throw ServerException(message: 'Unauthorized');
+        throw ServerException(message: ErrorStrings.unauthorized);
       case 403:
-        throw ServerException(message: 'Forbidden');
+        throw ServerException(message: ErrorStrings.forbidden);
       case 404:
-        throw ServerException(message: 'Not found');
+        throw ServerException(message: ErrorStrings.notFound);
       case 500:
-        throw ServerException(message: 'Internal server error');
+        throw ServerException(message: ErrorStrings.internalServerError);
       default:
         throw ServerException(
-          message: 'Error occurred with status code: ${response.statusCode}',
+          message: '${ErrorStrings.statusCodeError}: ${response.statusCode}',
         );
     }
   }
@@ -89,11 +90,13 @@ class ApiClient {
     if (error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.receiveTimeout ||
         error.type == DioExceptionType.sendTimeout) {
-      throw NetworkException(message: 'Connection timeout');
+      throw NetworkException(message: ErrorStrings.connectionTimeout);
     } else if (error.type == DioExceptionType.connectionError) {
-      throw NetworkException(message: 'No internet connection');
+      throw NetworkException(message: ErrorStrings.noInternetConnection);
     } else {
-      throw ServerException(message: error.message ?? 'Unknown error occurred');
+      throw ServerException(
+        message: error.message ?? ErrorStrings.unknownError,
+      );
     }
   }
 }

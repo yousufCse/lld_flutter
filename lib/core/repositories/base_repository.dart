@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:lld_flutter/core/error/exceptions.dart';
 import 'package:lld_flutter/core/error/failures.dart';
 import 'package:lld_flutter/core/network/network_info.dart';
+import 'package:lld_flutter/res/visual_strings/app_strings.dart';
 
 abstract class BaseRepository {
   final NetworkInfo networkInfo;
@@ -23,7 +24,7 @@ abstract class BaseRepository {
         return Left(UnknownFailure(message: e.toString()));
       }
     } else {
-      return const Left(NetworkFailure(message: 'No internet connection'));
+      return Left(NetworkFailure(message: ErrorStrings.noInternetConnection));
     }
   }
 }
