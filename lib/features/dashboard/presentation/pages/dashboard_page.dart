@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
+import "package:lld_flutter/core/di/injection_container.dart" as di;
 
 import "../../../../core/router/router.dart";
 import "../../../../core/utils/failure_utils.dart";
@@ -44,7 +45,7 @@ class _DashboardPageState extends State<DashboardPage> {
               state.maybeMap(
                 initial: (_) {
                   // Navigate to login using the router
-                  NavigationService.navigateAndRemoveUntil(
+                  di.sl<NavigationService>().navigateAndRemoveUntil(
                     context,
                     AppRoutes.login,
                   );
@@ -115,7 +116,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         // Use a simple placeholder for demonstration
 
                         // Navigate to vital signs using the router
-                        NavigationService.navigateTo(
+                        di.sl<NavigationService>().navigateTo(
                           context,
                           AppRoutes.vitalSigns,
                           arguments: user!.id,

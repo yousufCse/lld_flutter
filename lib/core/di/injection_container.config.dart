@@ -54,6 +54,7 @@ import '../../features/vital_signs/presentation/cubit/vital_sign_cubit.dart'
     as _i677;
 import '../network/api_client.dart' as _i557;
 import '../network/network_info.dart' as _i932;
+import '../router/navigation/navigation_service.dart' as _i661;
 import '../storage/token_storage.dart' as _i973;
 import 'injection_container.dart' as _i809;
 
@@ -72,6 +73,9 @@ Future<_i174.GetIt> init(
   );
   gh.lazySingleton<_i973.InternetConnectionChecker>(
     () => registerModule.internetConnectionChecker,
+  );
+  gh.lazySingleton<_i661.NavigationService>(
+    () => registerModule.navigationService,
   );
   gh.lazySingleton<_i973.TokenStorage>(() => _i973.SharedPrefsTokenStorage());
   gh.lazySingleton<_i932.NetworkInfo>(

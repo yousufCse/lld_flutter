@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:lld_flutter/core/di/injection_container.dart' as di;
 
 import '../../../../core/router/router.dart';
 import '../../../../core/utils/failure_utils.dart';
@@ -102,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
             },
             loginSuccess: (token) {
               // Navigate to dashboard with token using the router
-              NavigationService.navigateAndRemoveUntil(
+              di.sl<NavigationService>().navigateAndRemoveUntil(
                 context,
                 AppRoutes.dashboard,
                 arguments: token,
