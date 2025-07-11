@@ -1,4 +1,4 @@
-export 'package:lld_flutter/core/utils/validators/validator_strategy.dart';
-export 'package:lld_flutter/core/utils/validators/validator_context.dart';
-export 'package:lld_flutter/core/utils/validators/email_validator.dart';
-export 'package:lld_flutter/core/utils/validators/password_validator.dart';
+export 'validator_strategy.dart';
+export 'validator_context.dart';
+export 'email_validator.dart';
+export 'password_validator.dart';

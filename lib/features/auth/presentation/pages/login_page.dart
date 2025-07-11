@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lld_flutter/core/di/injection_container.dart' as di;
 import 'package:lld_flutter/core/utils/validators/validators.dart';
@@ -12,20 +12,29 @@ import '../../../../core/utils/failure_utils.dart';
 import '../../data/models/login_request_model.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
+import '../cubit/login_form_cubit.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  Widget build(BuildContext context) {
+    return BlocProvider<LoginFormCubit>(
+      create: (_) => di.sl<LoginFormCubit>(),
+      child: const LoginPageBody(),
+    );
+  }
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
+class LoginPageBody extends StatefulWidget {
+  const LoginPageBody({super.key});
 
+  @override
+  State<LoginPageBody> createState() => _LoginPageBodyState();
+}
+
+class _LoginPageBodyState extends State<LoginPageBody> {
+  final _formKey = GlobalKey<FormState>();
   final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
   String? _deviceId;
   String? _deviceName;
@@ -35,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
 
   late ValidatorContext emailValidatorContext;
   late ValidatorContext passwordValidatorContext;
+  late LoginFormCubit _loginFormCubit;
 
   @override
   void initState() {
@@ -42,6 +52,8 @@ class _LoginPageState extends State<LoginPage> {
     _getCurrentPosition();
     emailValidatorContext = ValidatorContext(EmailValidator());
     passwordValidatorContext = ValidatorContext(PasswordValidator());
+
+    _loginFormCubit = context.read<LoginFormCubit>();
 
     super.initState();
   }
@@ -88,8 +100,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    // No need to dispose controllers
     super.dispose();
   }
 
@@ -116,7 +127,6 @@ class _LoginPageState extends State<LoginPage> {
                 arguments: token,
               );
             },
-
             failure: (failure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -132,7 +142,6 @@ class _LoginPageState extends State<LoginPage> {
             loading: () => true,
             orElse: () => false,
           );
-
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Form(
@@ -149,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 40),
                   TextFormField(
-                    controller: _emailController,
+                    // initialValue: formState.email,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'Email',
@@ -157,29 +166,27 @@ class _LoginPageState extends State<LoginPage> {
                       prefixIcon: Icon(Icons.email),
                     ),
                     validator: emailValidatorContext.validate,
+                    onChanged: _loginFormCubit.emailChanged,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
-                    controller: _passwordController,
-                    obscureText: !_isPasswordVisible,
+                    // initialValue: formState.password,
+                    obscureText: !true,
                     decoration: InputDecoration(
                       labelText: 'Password',
                       border: const OutlineInputBorder(),
                       prefixIcon: const Icon(Icons.lock),
                       suffixIcon: IconButton(
                         icon: Icon(
-                          _isPasswordVisible
+                          _loginFormCubit.state.isPasswordVisible
                               ? Icons.visibility
                               : Icons.visibility_off,
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _isPasswordVisible = !_isPasswordVisible;
-                          });
-                        },
+                        onPressed: _loginFormCubit.togglePasswordVisibility,
                       ),
                     ),
                     validator: passwordValidatorContext.validate,
+                    onChanged: _loginFormCubit.passwordChanged,
                   ),
                   const SizedBox(height: 24),
                   SizedBox(
@@ -190,8 +197,8 @@ class _LoginPageState extends State<LoginPage> {
                           : () {
                               if (_formKey.currentState!.validate()) {
                                 final loginRequest = LoginRequestModel(
-                                  loginId: _emailController.text.trim(),
-                                  pin: _passwordController.text,
+                                  loginId: '',
+                                  pin: '',
                                   latitude: _position?.latitude.toString(),
                                   longitude: _position?.longitude.toString(),
                                   deviceId: _deviceId,
