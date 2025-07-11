@@ -54,6 +54,7 @@ import '../../features/vital_signs/presentation/cubit/vital_sign_cubit.dart'
     as _i677;
 import '../network/api_client.dart' as _i557;
 import '../network/network_info.dart' as _i932;
+import '../storage/token_storage.dart' as _i973;
 import 'injection_container.dart' as _i809;
 
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -72,11 +73,12 @@ Future<_i174.GetIt> init(
   gh.lazySingleton<_i973.InternetConnectionChecker>(
     () => registerModule.internetConnectionChecker,
   );
+  gh.lazySingleton<_i973.TokenStorage>(() => _i973.SharedPrefsTokenStorage());
   gh.lazySingleton<_i932.NetworkInfo>(
     () => _i932.NetworkInfoImpl(gh<_i973.InternetConnectionChecker>()),
   );
   gh.lazySingleton<_i557.ApiClient>(
-    () => _i557.ApiClient(gh<_i361.Dio>(), gh<_i460.SharedPreferences>()),
+    () => _i557.ApiClient(gh<_i361.Dio>(), gh<_i973.TokenStorage>()),
   );
   gh.lazySingleton<_i258.DashboardRemoteDataSource>(
     () => _i258.DashboardRemoteDataSourceImpl(gh<_i557.ApiClient>()),
@@ -100,9 +102,13 @@ Future<_i174.GetIt> init(
     ),
   );
   gh.lazySingleton<_i970.AuthDataSource>(
-    () => _i970.AuthDataSourceImpl(
-      gh<_i557.ApiClient>(),
-      gh<_i460.SharedPreferences>(),
+    () => _i970.AuthDataSourceImpl(gh<_i557.ApiClient>()),
+  );
+  gh.lazySingleton<_i787.AuthRepository>(
+    () => _i153.AuthRepositoryImpl(
+      authDataSource: gh<_i970.AuthDataSource>(),
+      tokenStorage: gh<_i973.TokenStorage>(),
+      networkInfo: gh<_i932.NetworkInfo>(),
     ),
   );
   gh.lazySingleton<_i67.FaceRepository>(
@@ -119,12 +125,6 @@ Future<_i174.GetIt> init(
   );
   gh.lazySingleton<_i276.GetCurrentUserUseCase>(
     () => _i276.GetCurrentUserUseCase(gh<_i665.DashboardRepository>()),
-  );
-  gh.lazySingleton<_i787.AuthRepository>(
-    () => _i153.AuthRepositoryImpl(
-      authDataSource: gh<_i970.AuthDataSource>(),
-      networkInfo: gh<_i932.NetworkInfo>(),
-    ),
   );
   gh.lazySingleton<_i188.LoginUseCase>(
     () => _i188.LoginUseCase(gh<_i787.AuthRepository>()),

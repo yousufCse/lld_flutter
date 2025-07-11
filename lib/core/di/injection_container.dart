@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'injection_container.config.dart';
 
@@ -13,7 +13,9 @@ final sl = GetIt.instance;
   preferRelativeImports: true, // default
   asExtension: false, // default
 )
-Future<void> configureDependencies() => init(sl);
+Future<void> configureDependencies() async {
+  await init(sl);
+}
 
 @module
 abstract class RegisterModule {

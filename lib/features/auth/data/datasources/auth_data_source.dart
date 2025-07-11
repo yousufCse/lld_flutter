@@ -1,5 +1,5 @@
 import 'package:injectable/injectable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lld_flutter/core/constants/api_endpoints.dart';
 
 import '../../../../core/data/base_remote_data_source.dart';
 import '../models/login_request_model.dart';
@@ -13,41 +13,29 @@ abstract class AuthDataSource {
 @LazySingleton(as: AuthDataSource)
 class AuthDataSourceImpl extends BaseRemoteDataSource
     implements AuthDataSource {
-  final SharedPreferences sharedPreferences;
-
-  AuthDataSourceImpl(super.apiClient, this.sharedPreferences);
+  AuthDataSourceImpl(super.apiClient);
 
   @override
   Future<TokenModel> login(LoginRequestModel loginRequest) async {
     return safeApiCall(() async {
       final response = await client.post(
-        '/auth/login',
+        ApiEndpoints.login,
         data: loginRequest.toJson(),
       );
 
       final tokenModel = TokenModel.fromJson(response);
-
-      // Save token to shared preferences
-      if (tokenModel.accessToken != null) {
-        await sharedPreferences.setString(
-          'access_token',
-          tokenModel.accessToken!,
-        );
-      }
-      if (tokenModel.refreshToken != null) {
-        await sharedPreferences.setString(
-          'refresh_token',
-          tokenModel.refreshToken!,
-        );
-      }
-
       return tokenModel;
     });
   }
 
   @override
   Future<void> logout() async {
-    await sharedPreferences.remove('access_token');
-    await sharedPreferences.remove('refresh_token');
+    // Just perform a logout API call if needed
+    // Token clearing will be handled by the repository
+    return safeApiCall(() async {
+      // If there's an actual logout endpoint, call it here
+      // await client.post('/auth/logout');
+      return;
+    });
   }
 }

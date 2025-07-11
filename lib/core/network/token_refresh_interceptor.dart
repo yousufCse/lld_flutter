@@ -1,13 +1,14 @@
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../res/visual_strings/app_strings.dart';
 import '../constants/api_endpoints.dart';
 import '../error/exceptions.dart';
+import '../storage/token_storage.dart';
 
 /// Interceptor to handle token refresh when a 401 Unauthorized response is received
 class TokenRefreshInterceptor extends Interceptor {
   final Dio dio;
-  final SharedPreferences sharedPreferences;
+  final TokenStorage tokenStorage;
   final String baseUrl;
 
   // Flag to prevent multiple simultaneous refresh attempts
@@ -18,7 +19,7 @@ class TokenRefreshInterceptor extends Interceptor {
 
   TokenRefreshInterceptor({
     required this.dio,
-    required this.sharedPreferences,
+    required this.tokenStorage,
     required this.baseUrl,
   });
 
@@ -64,7 +65,8 @@ class TokenRefreshInterceptor extends Interceptor {
 
   /// Attempts to refresh the access token using the refresh token
   Future<void> _refreshToken() async {
-    final refreshToken = sharedPreferences.getString('refresh_token');
+    final token = await tokenStorage.getToken();
+    final refreshToken = token?.refreshToken;
     if (refreshToken == null || refreshToken.isEmpty) {
       throw ServerException(message: ErrorStrings.noRefreshToken);
     }
@@ -90,13 +92,12 @@ class TokenRefreshInterceptor extends Interceptor {
         final newRefreshToken = data['refreshToken'];
 
         if (newAccessToken != null) {
-          // Save the new access token
-          await sharedPreferences.setString('access_token', newAccessToken);
-
-          // Save the new refresh token if provided
-          if (newRefreshToken != null) {
-            await sharedPreferences.setString('refresh_token', newRefreshToken);
-          }
+          // Create and save the new token using the TokenStorage service
+          final newToken = token!.copyWith(
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken ?? refreshToken,
+          );
+          await tokenStorage.saveToken(newToken);
         } else {
           throw ServerException(message: ErrorStrings.invalidTokenResponse);
         }
@@ -117,8 +118,10 @@ class TokenRefreshInterceptor extends Interceptor {
 
     for (var request in requests) {
       try {
-        // Get the new token
-        final accessToken = sharedPreferences.getString('access_token');
+        // Get the new token from TokenStorage
+        final token = await tokenStorage.getToken();
+        final accessToken = token?.accessToken;
+
         if (accessToken == null) {
           request.handler.reject(
             DioException(
@@ -149,9 +152,8 @@ class TokenRefreshInterceptor extends Interceptor {
 
   /// Handle refresh token failure - clear tokens and reject pending requests
   Future<void> _handleRefreshFailure() async {
-    // Clear tokens from storage
-    await sharedPreferences.remove('access_token');
-    await sharedPreferences.remove('refresh_token');
+    // Clear tokens using TokenStorage
+    await tokenStorage.clearToken();
 
     // Reject all pending requests
     final requests = List<_RequestQueueItem>.from(_pendingRequests);

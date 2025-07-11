@@ -1,27 +1,28 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+
 import '../../res/visual_strings/app_strings.dart';
 import '../error/exceptions.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../storage/token_storage.dart';
 import 'token_refresh_interceptor.dart';
 
 @lazySingleton
 class ApiClient {
   final Dio dio;
-  final SharedPreferences sharedPreferences;
+  final TokenStorage tokenStorage;
   static const String baseUrl = 'https://umrtest.com/DhanvantariAuthApi/api/v1';
 
-  ApiClient(this.dio, this.sharedPreferences) {
+  ApiClient(this.dio, this.tokenStorage) {
     // Set the base URL for the API
     dio.options.baseUrl = baseUrl;
 
     // Add interceptor for authentication
     dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) {
-          final token = sharedPreferences.getString('access_token');
-          if (token != null) {
-            options.headers['Authorization'] = 'Bearer $token';
+        onRequest: (options, handler) async {
+          final token = await tokenStorage.getToken();
+          if (token?.accessToken != null) {
+            options.headers['Authorization'] = 'Bearer ${token!.accessToken}';
           }
           return handler.next(options);
         },
@@ -32,7 +33,7 @@ class ApiClient {
     dio.interceptors.add(
       TokenRefreshInterceptor(
         dio: dio,
-        sharedPreferences: sharedPreferences,
+        tokenStorage: tokenStorage,
         baseUrl: baseUrl,
       ),
     );
