@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lld_flutter/core/di/injection_container.dart' as di;
+import 'package:lld_flutter/core/utils/validators/validators.dart';
 
 import '../../../../core/router/router.dart';
 import '../../../../core/utils/failure_utils.dart';
@@ -32,11 +33,17 @@ class _LoginPageState extends State<LoginPage> {
   String? _osPlatform;
   Position? _position;
 
+  late ValidatorContext emailValidatorContext;
+  late ValidatorContext passwordValidatorContext;
+
   @override
   void initState() {
-    super.initState();
     _getDeviceInfo();
     _getCurrentPosition();
+    emailValidatorContext = ValidatorContext(EmailValidator());
+    passwordValidatorContext = ValidatorContext(PasswordValidator());
+
+    super.initState();
   }
 
   Future<void> _getDeviceInfo() async {
@@ -149,17 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.email),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      if (!RegExp(
-                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                      ).hasMatch(value)) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;
-                    },
+                    validator: emailValidatorContext.validate,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -182,12 +179,7 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                     ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      }
-                      return null;
-                    },
+                    validator: passwordValidatorContext.validate,
                   ),
                   const SizedBox(height: 24),
                   SizedBox(
