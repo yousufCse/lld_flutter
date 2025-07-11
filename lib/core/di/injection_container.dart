@@ -35,5 +35,5 @@ abstract class RegisterModule {
       InternetConnectionChecker();
 
   @lazySingleton
-  NavigationService get navigationService => createNavigationService();
+  NavigationService get navigationService => NavigationServiceFactory.create();
 }
