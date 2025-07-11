@@ -1,12 +1,11 @@
 import "package:flutter/material.dart";
 import "package:flutter_bloc/flutter_bloc.dart";
-import "package:lld_flutter/features/vital_signs/presentation/pages/vital_signs_page.dart";
 
+import "../../../../core/router/router.dart";
 import "../../../../core/utils/failure_utils.dart";
 import "../../../auth/domain/entities/token.dart";
 import "../../../auth/presentation/cubit/auth_cubit.dart";
 import "../../../auth/presentation/cubit/auth_state.dart";
-import "../../../auth/presentation/pages/login_page.dart";
 import "../../domain/entities/user.dart";
 import "../cubit/dashboard_cubit.dart";
 import "../cubit/dashboard_state.dart";
@@ -44,9 +43,10 @@ class _DashboardPageState extends State<DashboardPage> {
             listener: (context, state) {
               state.maybeMap(
                 initial: (_) {
-                  Navigator.pushReplacement(
+                  // Navigate to login using the router
+                  NavigationService.navigateAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    AppRoutes.login,
                   );
                 },
                 orElse: () {},
@@ -114,12 +114,11 @@ class _DashboardPageState extends State<DashboardPage> {
                       onPressed: () {
                         // Use a simple placeholder for demonstration
 
-                        Navigator.push(
+                        // Navigate to vital signs using the router
+                        NavigationService.navigateTo(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                VitalSignsPage(userId: user!.id),
-                          ),
+                          AppRoutes.vitalSigns,
+                          arguments: user!.id,
                         );
                       },
                     ),

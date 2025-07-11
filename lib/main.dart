@@ -6,9 +6,10 @@ import 'package:lld_flutter/features/dashboard/presentation/cubit/dashboard_cubi
 import 'package:lld_flutter/features/vital_signs/presentation/cubit/vital_sign_cubit.dart';
 
 import 'core/di/injection_container.dart' as di;
+import 'core/router/app_router.dart';
+import 'core/router/app_routes.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/auth/presentation/cubit/auth_state.dart';
-import 'features/auth/presentation/pages/login_page.dart';
 
 void main() async {
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -53,7 +54,8 @@ class MyApp extends StatelessWidget {
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
               useMaterial3: true,
             ),
-            home: LoginPage(),
+            initialRoute: AppRoutes.login,
+            onGenerateRoute: AppRouter.generateRoute,
           );
         },
       ),

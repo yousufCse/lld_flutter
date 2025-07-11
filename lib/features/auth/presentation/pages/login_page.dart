@@ -5,11 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../../../core/router/router.dart';
 import '../../../../core/utils/failure_utils.dart';
 import '../../data/models/login_request_model.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
-import '../../../../features/dashboard/presentation/pages/dashboard_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -101,12 +101,11 @@ class _LoginPageState extends State<LoginPage> {
               // No action needed for loading state
             },
             loginSuccess: (token) {
-              // Navigate to dashboard with token
-              Navigator.pushReplacement(
+              // Navigate to dashboard with token using the router
+              NavigationService.navigateAndRemoveUntil(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => DashboardPage(token: token),
-                ),
+                AppRoutes.dashboard,
+                arguments: token,
               );
             },
 
