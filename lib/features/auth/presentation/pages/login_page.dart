@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lld_flutter/core/di/injection_container.dart' as di;
+import 'package:lld_flutter/core/env/env.dart';
 import 'package:lld_flutter/core/utils/validators/validators.dart';
 
 import '../../../../core/router/router.dart';
@@ -108,8 +109,11 @@ class _LoginPageBodyState extends State<LoginPageBody> {
 
   @override
   Widget build(BuildContext context) {
+    final colorValue = int.parse(Env.themeColor.replaceFirst('#', '0xFF'));
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      backgroundColor: Color(colorValue),
+      appBar: AppBar(title: Text(Env.appName)),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           state.when(

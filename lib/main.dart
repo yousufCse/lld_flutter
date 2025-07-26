@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'Dhanvantari Auth App',
             theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
               useMaterial3: true,
             ),
             initialRoute: AppRoutes.login,

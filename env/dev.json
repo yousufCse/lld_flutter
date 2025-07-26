@@ -1,0 +1,6 @@
+{
+    "env": "dev",
+    "appName": "MedLife(DEV)",
+    "baseUrl": "https://dev.example.com",
+    "themeColor": "#4CAF50"
+}

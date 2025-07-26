@@ -1,0 +1,6 @@
+{
+    "env": "prod",
+    "appName": "MedLife(PROD)",
+    "baseUrl": "https://prod.example.com",
+    "themeColor": "#FF0000"
+}

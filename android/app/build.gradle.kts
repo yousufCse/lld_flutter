@@ -37,6 +37,20 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    flavorDimensions += "app"
+
+    productFlavors {
+        create("dev") {
+            dimension = "app"
+             applicationIdSuffix = ".dev"
+            resValue("string", "app_name", "MedLife(DEV)")
+        }
+        create("prod") {
+             dimension = "app"
+             resValue("string", "app_name", "MedLife(PROD)")
+        }
+}
 }
 
 flutter {
