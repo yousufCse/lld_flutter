@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
@@ -15,8 +17,8 @@ final sl = GetIt.instance;
   preferRelativeImports: true, // default
   asExtension: false, // default
 )
-Future<void> configureDependencies() async {
-  await init(sl);
+Future<void> configureDependencies({String? environment}) async {
+  await init(sl, environment: environment);
 }
 
 @module

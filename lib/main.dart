@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lld_flutter/core/env/app_env.dart';
 import 'package:lld_flutter/features/dashboard/presentation/cubit/dashboard_cubit.dart';
 import 'package:lld_flutter/features/vital_signs/presentation/cubit/vital_sign_cubit.dart';
 
@@ -12,18 +13,11 @@ import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/auth/presentation/cubit/auth_state.dart';
 
 void main() async {
-  FlutterError.onError = (FlutterErrorDetails details) {
-    print('Flutter error: ${details.exception}');
-    print('Stack trace: ${details.stack}');
-  };
-
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await di.configureDependencies();
-    print('Dependencies configured successfully');
-  } catch (e) {
-    print('Error configuring dependencies: $e');
-  }
+
+  final currentEnv = AppEnv.currentEnv;
+  await di.configureDependencies(environment: currentEnv);
+
   runApp(const MyApp());
 }
 

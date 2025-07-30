@@ -1,11 +1,9 @@
 // ignore_for_file: avoid_print
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lld_flutter/core/di/injection_container.dart' as di;
-import 'package:lld_flutter/core/env/env.dart';
 import 'package:lld_flutter/core/utils/validators/validators.dart';
 
 import '../../../../core/router/router.dart';
@@ -14,6 +12,7 @@ import '../../data/models/login_request_model.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_state.dart';
 import '../cubit/login_form_cubit.dart';
+import 'print_data.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -36,7 +35,6 @@ class LoginPageBody extends StatefulWidget {
 
 class _LoginPageBodyState extends State<LoginPageBody> {
   final _formKey = GlobalKey<FormState>();
-  final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
   String? _deviceId;
   String? _deviceName;
   String? _osVersion;
@@ -49,54 +47,12 @@ class _LoginPageBodyState extends State<LoginPageBody> {
 
   @override
   void initState() {
-    _getDeviceInfo();
-    _getCurrentPosition();
     emailValidatorContext = ValidatorContext(EmailValidator());
     passwordValidatorContext = ValidatorContext(PasswordValidator());
 
     _loginFormCubit = context.read<LoginFormCubit>();
 
     super.initState();
-  }
-
-  Future<void> _getDeviceInfo() async {
-    try {
-      if (Theme.of(context).platform == TargetPlatform.iOS) {
-        final iosInfo = await _deviceInfo.iosInfo;
-        setState(() {
-          _deviceId = iosInfo.identifierForVendor;
-          _deviceName = iosInfo.name;
-          _osVersion = iosInfo.systemVersion;
-          _osPlatform = 'iOS';
-        });
-      } else if (Theme.of(context).platform == TargetPlatform.android) {
-        final androidInfo = await _deviceInfo.androidInfo;
-        setState(() {
-          _deviceId = androidInfo.id;
-          _deviceName = androidInfo.model;
-          _osVersion = androidInfo.version.release;
-          _osPlatform = 'Android';
-        });
-      }
-    } catch (e) {
-      print('Failed to get device info: $e');
-    }
-  }
-
-  Future<void> _getCurrentPosition() async {
-    try {
-      final permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        await Geolocator.requestPermission();
-      }
-
-      final position = await Geolocator.getCurrentPosition();
-      setState(() {
-        _position = position;
-      });
-    } catch (e) {
-      print('Failed to get location: $e');
-    }
   }
 
   @override
@@ -109,11 +65,14 @@ class _LoginPageBodyState extends State<LoginPageBody> {
 
   @override
   Widget build(BuildContext context) {
-    final colorValue = int.parse(Env.themeColor.replaceFirst('#', '0xFF'));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final printData = di.sl<PrintData>();
+      printData.printData();
+    });
 
     return Scaffold(
-      backgroundColor: Color(colorValue),
-      appBar: AppBar(title: Text(Env.appName)),
+      backgroundColor: Colors.amber,
+      appBar: AppBar(title: const Text('Login')),
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           state.when(
