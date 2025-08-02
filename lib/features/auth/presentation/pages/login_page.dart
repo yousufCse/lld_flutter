@@ -1,10 +1,13 @@
 // ignore_for_file: avoid_print
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lld_flutter/core/di/injection_container.dart' as di;
 import 'package:lld_flutter/core/utils/validators/validators.dart';
+import 'package:lld_flutter/features/auth/presentation/cubit/login_form_state.dart';
 import 'package:lld_flutter/features/auth/presentation/pages/user_view_model.dart';
 
 import '../../../../core/router/router.dart';
@@ -35,7 +38,6 @@ class LoginPageBody extends StatefulWidget {
 }
 
 class _LoginPageBodyState extends State<LoginPageBody> {
-  final _formKey = GlobalKey<FormState>();
   String? _deviceId;
   String? _deviceName;
   String? _osVersion;
@@ -74,7 +76,7 @@ class _LoginPageBodyState extends State<LoginPageBody> {
     return Scaffold(
       backgroundColor: Colors.amber,
       appBar: AppBar(title: const Text('Login')),
-      body: BlocConsumer<AuthCubit, AuthState>(
+      body: BlocListener<AuthCubit, AuthState>(
         listener: (context, state) {
           state.when(
             initial: () {
@@ -101,119 +103,183 @@ class _LoginPageBodyState extends State<LoginPageBody> {
             },
           );
         },
-        builder: (context, state) {
-          bool isLoading = state.maybeWhen(
-            loading: () => true,
-            orElse: () => false,
-          );
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 20),
-                  const Text(
-                    'Welcome Back',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 40),
-
-                  TextButton(
-                    onPressed: () {
-                      _userViewModel.fetchTestUser();
-                    },
-                    child: Text('Fetch Test User'),
-                  ),
-                  const SizedBox(height: 40),
-
-                  ValueListenableBuilder(
-                    valueListenable: _userViewModel.user,
-                    builder: (context, value, child) {
-                      if (value == null) {
-                        return Center(child: const CircularProgressIndicator());
-                      }
-                      return Text('${value.name} ${value.age}');
-                    },
-                  ),
-
-                  const SizedBox(height: 40),
-                  TextFormField(
-                    // initialValue: formState.email,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
-                    ),
-                    validator: emailValidatorContext.validate,
-                    onChanged: _loginFormCubit.emailChanged,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    // initialValue: formState.password,
-                    obscureText: !true,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _loginFormCubit.state.isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
-                        onPressed: _loginFormCubit.togglePasswordVisibility,
-                      ),
-                    ),
-                    validator: passwordValidatorContext.validate,
-                    onChanged: _loginFormCubit.passwordChanged,
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: isLoading
-                          ? null
-                          : () {
-                              if (_formKey.currentState!.validate()) {
-                                final loginRequest = LoginRequestModel(
-                                  loginId: '',
-                                  pin: '',
-                                  latitude: _position?.latitude.toString(),
-                                  longitude: _position?.longitude.toString(),
-                                  deviceId: _deviceId,
-                                  deviceName: _deviceName,
-                                  osversion: _osVersion,
-                                  osplatform: _osPlatform,
-                                );
-                                context.read<AuthCubit>().login(loginRequest);
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Colors.white,
-                      ),
-                      child: isLoading
-                          ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text(
-                              'LOGIN',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ),
-                  ),
-                ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 20),
+              const Text(
+                'Welcome Back',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
-            ),
-          );
-        },
+              const SizedBox(height: 40),
+
+              TextButton(
+                onPressed: () {
+                  _userViewModel.fetchTestUser();
+                },
+                child: Text('Fetch Test User'),
+              ),
+              const SizedBox(height: 40),
+
+              ValueListenableBuilder(
+                valueListenable: _userViewModel.user,
+                builder: (context, value, child) {
+                  if (value == null) {
+                    return Center(child: const CircularProgressIndicator());
+                  }
+                  return Text('${value.name} ${value.age}');
+                },
+              ),
+
+              const SizedBox(height: 40),
+              _buildFormField(),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget _buildFormField() {
+    return Column(
+      children: [
+        EmailTextField(
+          vailidatorContext: emailValidatorContext,
+          loginFormCubit: _loginFormCubit,
+        ),
+        const SizedBox(height: 16),
+        PasswordTextField(
+          vailidatorContext: passwordValidatorContext,
+          loginFormCubit: _loginFormCubit,
+        ),
+
+        const SizedBox(height: 24),
+
+        BlocBuilder<AuthCubit, AuthState>(
+          builder: (context, state) {
+            final isLoading = state is AuthLoading;
+            return SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        final loginRequest = LoginRequestModel(
+                          loginId: '',
+                          pin: '',
+                          latitude: _position?.latitude.toString(),
+                          longitude: _position?.longitude.toString(),
+                          deviceId: _deviceId,
+                          deviceName: _deviceName,
+                          osversion: _osVersion,
+                          osplatform: _osPlatform,
+                        );
+                        context.read<AuthCubit>().login(loginRequest);
+                      },
+
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
+                ),
+                child: isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                        'LOGIN',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class EmailTextField extends StatelessWidget {
+  const EmailTextField({
+    super.key,
+
+    required ValidatorContext vailidatorContext,
+    required LoginFormCubit loginFormCubit,
+  }) : _validatorContext = vailidatorContext,
+       _loginFormCubit = loginFormCubit;
+
+  final ValidatorContext _validatorContext;
+  final LoginFormCubit _loginFormCubit;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocSelector<LoginFormCubit, LoginFormState, String>(
+      selector: (state) {
+        return state.email;
+      },
+      builder: (context, email) {
+        log('EmailTextField: email: $email');
+        return TextFormField(
+          initialValue: email,
+          keyboardType: TextInputType.emailAddress,
+          decoration: const InputDecoration(
+            labelText: 'Email',
+            border: OutlineInputBorder(),
+            prefixIcon: Icon(Icons.email),
+          ),
+          validator: _validatorContext.validate,
+          onChanged: _loginFormCubit.emailChanged,
+        );
+      },
+    );
+  }
+}
+
+class PasswordTextField extends StatelessWidget {
+  const PasswordTextField({
+    super.key,
+    required ValidatorContext vailidatorContext,
+    required LoginFormCubit loginFormCubit,
+  }) : _validatorContext = vailidatorContext,
+       _loginFormCubit = loginFormCubit;
+
+  final ValidatorContext _validatorContext;
+  final LoginFormCubit _loginFormCubit;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<LoginFormCubit, LoginFormState>(
+      buildWhen: (previous, current) {
+        return previous.password != current.password ||
+            previous.isPasswordVisible != current.isPasswordVisible;
+      },
+      builder: (context, state) {
+        log('PasswordTextField: state password: ${state.password}');
+        log('PasswordTextField: isPasswordVisible: ${state.isPasswordVisible}');
+        return TextFormField(
+          initialValue: state.password,
+          obscureText: !state.isPasswordVisible,
+          decoration: InputDecoration(
+            labelText: 'Password',
+            border: const OutlineInputBorder(),
+            prefixIcon: const Icon(Icons.lock),
+            suffixIcon: IconButton(
+              icon: Icon(
+                state.isPasswordVisible
+                    ? Icons.visibility
+                    : Icons.visibility_off,
+              ),
+              onPressed: _loginFormCubit.togglePasswordVisibility,
+            ),
+          ),
+          validator: _validatorContext.validate,
+          onChanged: _loginFormCubit.passwordChanged,
+        );
+      },
     );
   }
 }
