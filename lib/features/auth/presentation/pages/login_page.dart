@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lld_flutter/core/di/injection_container.dart' as di;
 import 'package:lld_flutter/core/utils/validators/validators.dart';
+import 'package:lld_flutter/features/auth/presentation/pages/user_view_model.dart';
 
 import '../../../../core/router/router.dart';
 import '../../../../core/utils/failure_utils.dart';
@@ -61,7 +62,7 @@ class _LoginPageBodyState extends State<LoginPageBody> {
     super.dispose();
   }
 
-  // Now using the centralized FailureUtils instead
+  final _userViewModel = UserViewModel();
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +120,26 @@ class _LoginPageBodyState extends State<LoginPageBody> {
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
+                  const SizedBox(height: 40),
+
+                  TextButton(
+                    onPressed: () {
+                      _userViewModel.fetchTestUser();
+                    },
+                    child: Text('Fetch Test User'),
+                  ),
+                  const SizedBox(height: 40),
+
+                  ValueListenableBuilder(
+                    valueListenable: _userViewModel.user,
+                    builder: (context, value, child) {
+                      if (value == null) {
+                        return Center(child: const CircularProgressIndicator());
+                      }
+                      return Text('${value.name} ${value.age}');
+                    },
+                  ),
+
                   const SizedBox(height: 40),
                   TextFormField(
                     // initialValue: formState.email,
