@@ -6,10 +6,11 @@ import '../../domain/entities/user.dart';
 part 'dashboard_state.freezed.dart';
 
 @freezed
-class DashboardState with _$DashboardState {
-  const factory DashboardState.initial() = DashboardInitial;
-  const factory DashboardState.loading() = DashboardLoading;
-  const factory DashboardState.loaded({required User user}) = DashboardLoaded;
+sealed class DashboardState with _$DashboardState {
+  const DashboardState._();
+  const factory DashboardState.initial() = _DashboardInitial;
+  const factory DashboardState.loading() = _DashboardLoading;
+  const factory DashboardState.loaded({required User user}) = _DashboardLoaded;
   const factory DashboardState.error({required Failure failure}) =
-      DashboardError;
+      _DashboardError;
 }

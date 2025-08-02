@@ -13,7 +13,7 @@ class DashboardCubit extends Cubit<DashboardState> {
     : super(const DashboardState.initial());
 
   Future<void> fetchCurrentUser() async {
-    emit(const DashboardState.loading());
+    emit(DashboardState.loading());
     final result = await getCurrentUserUseCase(NoParams());
     result.fold(
       (failure) => emit(DashboardState.error(failure: failure)),
