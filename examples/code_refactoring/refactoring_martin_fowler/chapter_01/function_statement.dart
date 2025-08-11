@@ -14,7 +14,7 @@ class Chapter01 {
     var result = 'Statement for ${invoice['customer']}\n';
 
     for (var perf in invoice['performances']) {
-      var thisAmount = amountFor(perf, playFor(perf));
+      var thisAmount = amountFor(perf);
 
       volumeCredits += max((perf['audience'] as int) - 30, 0);
 
@@ -32,10 +32,7 @@ class Chapter01 {
     return result;
   }
 
-  double amountFor(
-    Map<String, dynamic> aPerformance,
-    Map<String, dynamic> play,
-  ) {
+  double amountFor(Map<String, dynamic> aPerformance) {
     var result = 0.0;
     switch (playFor(aPerformance)['type']) {
       case 'tragedy':
