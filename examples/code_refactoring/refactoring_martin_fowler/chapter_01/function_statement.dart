@@ -37,7 +37,7 @@ class Chapter01 {
     Map<String, dynamic> play,
   ) {
     var result = 0.0;
-    switch (play['type']) {
+    switch (playFor(aPerformance)['type']) {
       case 'tragedy':
         result = 40000;
         if (aPerformance['audience'] > 30) {
@@ -52,7 +52,7 @@ class Chapter01 {
         result += 300 * aPerformance['audience'];
         break;
       default:
-        throw Exception('Unknown type: ${play['type']}');
+        throw Exception('Unknown type: ${playFor(aPerformance)['type']}');
     }
 
     return result;
