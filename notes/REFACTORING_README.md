@@ -21,8 +21,14 @@ write code that humans can understand.
 **Others**
 1. The compiler doesn’t care whether the code is ugly or clean, but human do.
     A poorly designed system is hard to change.
+
 2.  If I’m writing a program that will never change again, this kind of
     copy­and­paste is fine. But if it’s a long­lived program, then duplication is a menace.
 
+3. When refactoring a long function like this, I mentally try to identify points that separate
+    different parts of the overall behavior.
 
-Again, I compile, test, and commit.
+4. Mentally to Code
+
+
+**Again, I compile, test, and commit.**
