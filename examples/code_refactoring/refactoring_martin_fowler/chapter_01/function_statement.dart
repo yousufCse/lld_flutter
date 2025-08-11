@@ -14,8 +14,6 @@ class Chapter01 {
     var result = 'Statement for ${invoice['customer']}\n';
 
     for (var perf in invoice['performances']) {
-      var thisAmount = amountFor(perf);
-
       volumeCredits += max((perf['audience'] as int) - 30, 0);
 
       if (playFor(perf)['type'] == 'comedy') {
@@ -23,8 +21,8 @@ class Chapter01 {
       }
 
       result +=
-          ' ${playFor(perf)['name']}: \$${(thisAmount / 100).toStringAsFixed(2)} (${perf['audience']} seats)\n';
-      totalAmount += thisAmount;
+          ' ${playFor(perf)['name']}: \$${(amountFor(perf) / 100).toStringAsFixed(2)} (${perf['audience']} seats)\n';
+      totalAmount += amountFor(perf);
     }
 
     result += 'Amount owed is \$${(totalAmount / 100).toStringAsFixed(2)}\n';
