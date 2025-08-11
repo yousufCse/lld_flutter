@@ -14,11 +14,7 @@ class Chapter01 {
     var result = 'Statement for ${invoice['customer']}\n';
 
     for (var perf in invoice['performances']) {
-      volumeCredits += max((perf['audience'] as int) - 30, 0);
-
-      if (playFor(perf)['type'] == 'comedy') {
-        volumeCredits += (perf['audience'] as int) ~/ 5;
-      }
+      volumeCredits += volumeCreditFor(perf);
 
       result +=
           ' ${playFor(perf)['name']}: \$${(amountFor(perf) / 100).toStringAsFixed(2)} (${perf['audience']} seats)\n';
@@ -51,6 +47,16 @@ class Chapter01 {
     }
 
     return result;
+  }
+
+  int volumeCreditFor(Map<String, dynamic> aPerformance) {
+    var volumeCredits = 0;
+    volumeCredits += max((aPerformance['audience'] as int) - 30, 0);
+
+    if (playFor(aPerformance)['type'] == 'comedy') {
+      volumeCredits += (aPerformance['audience'] as int) ~/ 5;
+    }
+    return volumeCredits;
   }
 
   Map<String, dynamic> playFor(Map<String, dynamic> aPerformance) {
