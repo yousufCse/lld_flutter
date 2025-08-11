@@ -14,17 +14,16 @@ class Chapter01 {
     var result = 'Statement for ${invoice['customer']}\n';
 
     for (var perf in invoice['performances']) {
-      var play = playFor(perf);
-      var thisAmount = amountFor(perf, play);
+      var thisAmount = amountFor(perf, playFor(perf));
 
       volumeCredits += max((perf['audience'] as int) - 30, 0);
 
-      if (play['type'] == 'comedy') {
+      if (playFor(perf)['type'] == 'comedy') {
         volumeCredits += (perf['audience'] as int) ~/ 5;
       }
 
       result +=
-          ' ${play['name']}: \$${(thisAmount / 100).toStringAsFixed(2)} (${perf['audience']} seats)\n';
+          ' ${playFor(perf)['name']}: \$${(thisAmount / 100).toStringAsFixed(2)} (${perf['audience']} seats)\n';
       totalAmount += thisAmount;
     }
 
