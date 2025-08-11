@@ -34,5 +34,17 @@ write code that humans can understand.
 
 6. It’s my coding standard to always call the return value from a function “result”
 
+7. Never be afraid to change names to improve clarity.
+
+8. When I’m breaking down a long function,
+    I like to get rid of variables like play, because
+    temporary variables create a lot of locally scoped names that complicate extractions.
+
+9.
+
+10.
+
+11.
+
 
 **Again, I compile, test, and commit.**

@@ -14,17 +14,15 @@ class Chapter01 {
     var result = 'Statement for ${invoice['customer']}\n';
 
     for (var perf in invoice['performances']) {
-      var play = plays[perf['playID']];
+      var play = playFor(perf);
       var thisAmount = amountFor(perf, play);
 
-      // add volume credits
       volumeCredits += max((perf['audience'] as int) - 30, 0);
-      // volumeCredits += perf['audience'] as int;
+
       if (play['type'] == 'comedy') {
         volumeCredits += (perf['audience'] as int) ~/ 5;
       }
 
-      // print line for this order
       result +=
           ' ${play['name']}: \$${(thisAmount / 100).toStringAsFixed(2)} (${perf['audience']} seats)\n';
       totalAmount += thisAmount;
@@ -35,27 +33,34 @@ class Chapter01 {
     return result;
   }
 
-  double amountFor(Map<String, dynamic> perf, Map<String, dynamic> play) {
+  double amountFor(
+    Map<String, dynamic> aPerformance,
+    Map<String, dynamic> play,
+  ) {
     var result = 0.0;
     switch (play['type']) {
       case 'tragedy':
         result = 40000;
-        if (perf['audience'] > 30) {
-          result += 1000 * (perf['audience'] - 30);
+        if (aPerformance['audience'] > 30) {
+          result += 1000 * (aPerformance['audience'] - 30);
         }
         break;
       case 'comedy':
         result = 30000;
-        if (perf['audience'] > 20) {
-          result += 10000 + 500 * (perf['audience'] - 20);
+        if (aPerformance['audience'] > 20) {
+          result += 10000 + 500 * (aPerformance['audience'] - 20);
         }
-        result += 300 * perf['audience'];
+        result += 300 * aPerformance['audience'];
         break;
       default:
         throw Exception('Unknown type: ${play['type']}');
     }
 
     return result;
+  }
+
+  Map<String, dynamic> playFor(Map<String, dynamic> aPerformance) {
+    return plays[aPerformance['playID']] ?? {};
   }
 }
 
