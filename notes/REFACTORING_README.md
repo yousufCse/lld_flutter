@@ -40,7 +40,7 @@ write code that humans can understand.
     I like to get rid of variables like play, because
     temporary variables create a lot of locally scoped names that complicate extractions.
 
-9.
+9. Breaking a large function into smaller ones only adds value if the names are good.
 
 10.
 

@@ -10,15 +10,18 @@ class Chapter01 {
 
   String statement(Map<String, dynamic> invoice, Map<String, dynamic> plays) {
     var totalAmount = 0.0;
-    var volumeCredits = 0;
+
     var result = 'Statement for ${invoice['customer']}\n';
 
     for (var perf in invoice['performances']) {
-      volumeCredits += volumeCreditFor(perf);
-
       result +=
           ' ${playFor(perf)['name']}: ${format(amountFor(perf) / 100)} (${perf['audience']} seats)\n';
       totalAmount += amountFor(perf);
+    }
+
+    var volumeCredits = 0;
+    for (var perf in invoice['performances']) {
+      volumeCredits += volumeCreditFor(perf);
     }
 
     result += 'Amount owed is ${format(totalAmount / 100)}\n';
