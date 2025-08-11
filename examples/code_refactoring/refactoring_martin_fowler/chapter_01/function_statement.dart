@@ -50,13 +50,13 @@ class Chapter01 {
   }
 
   int volumeCreditFor(Map<String, dynamic> aPerformance) {
-    var volumeCredits = 0;
-    volumeCredits += max((aPerformance['audience'] as int) - 30, 0);
+    var result = 0;
+    result += max((aPerformance['audience'] as int) - 30, 0);
 
     if (playFor(aPerformance)['type'] == 'comedy') {
-      volumeCredits += (aPerformance['audience'] as int) ~/ 5;
+      result += (aPerformance['audience'] as int) ~/ 5;
     }
-    return volumeCredits;
+    return result;
   }
 
   Map<String, dynamic> playFor(Map<String, dynamic> aPerformance) {
