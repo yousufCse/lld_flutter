@@ -19,14 +19,17 @@ class Chapter01 {
       totalAmount += amountFor(perf);
     }
 
+    result += 'Amount owed is ${format(totalAmount / 100)}\n';
+    result += 'You earned ${totalVolumeCredits()} credits\n';
+    return result;
+  }
+
+  int totalVolumeCredits() {
     var volumeCredits = 0;
     for (var perf in invoice['performances']) {
       volumeCredits += volumeCreditFor(perf);
     }
-
-    result += 'Amount owed is ${format(totalAmount / 100)}\n';
-    result += 'You earned $volumeCredits credits\n';
-    return result;
+    return volumeCredits;
   }
 
   String format(double aNumber) {
