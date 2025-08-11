@@ -30,5 +30,7 @@ write code that humans can understand.
 
 4. Mentally to Code
 
+5. Small changes and testing after each change
+
 
 **Again, I compile, test, and commit.**

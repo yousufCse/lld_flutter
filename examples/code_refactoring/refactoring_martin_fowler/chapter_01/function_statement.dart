@@ -8,32 +8,14 @@ class Chapter01 {
   final Map<String, dynamic> invoice;
   final Map<String, dynamic> plays;
 
-  String statement() {
+  String statement(Map<String, dynamic> invoice, Map<String, dynamic> plays) {
     var totalAmount = 0.0;
     var volumeCredits = 0;
     var result = 'Statement for ${invoice['customer']}\n';
 
     for (var perf in invoice['performances']) {
       var play = plays[perf['playID']];
-      var thisAmount = 0.0;
-
-      switch (play['type']) {
-        case 'tragedy':
-          thisAmount = 40000;
-          if (perf['audience'] > 30) {
-            thisAmount += 1000 * (perf['audience'] - 30);
-          }
-          break;
-        case 'comedy':
-          thisAmount = 30000;
-          if (perf['audience'] > 20) {
-            thisAmount += 10000 + 500 * (perf['audience'] - 20);
-          }
-          thisAmount += 300 * perf['audience'];
-          break;
-        default:
-          throw Exception('Unknown type: ${play['type']}');
-      }
+      var thisAmount = amountFor(perf, play);
 
       // add volume credits
       volumeCredits += max((perf['audience'] as int) - 30, 0);
@@ -51,6 +33,29 @@ class Chapter01 {
     result += 'Amount owed is \$${(totalAmount / 100).toStringAsFixed(2)}\n';
     result += 'You earned $volumeCredits credits\n';
     return result;
+  }
+
+  double amountFor(Map<String, dynamic> perf, Map<String, dynamic> play) {
+    var thisAmount = 0.0;
+    switch (play['type']) {
+      case 'tragedy':
+        thisAmount = 40000;
+        if (perf['audience'] > 30) {
+          thisAmount += 1000 * (perf['audience'] - 30);
+        }
+        break;
+      case 'comedy':
+        thisAmount = 30000;
+        if (perf['audience'] > 20) {
+          thisAmount += 10000 + 500 * (perf['audience'] - 20);
+        }
+        thisAmount += 300 * perf['audience'];
+        break;
+      default:
+        throw Exception('Unknown type: ${play['type']}');
+    }
+
+    return thisAmount;
   }
 }
 
@@ -73,5 +78,5 @@ void main(List<String> args) {
 
   final chapter01 = Chapter01(invoice: invoice, plays: plays);
 
-  print(chapter01.statement());
+  print(chapter01.statement(invoice, plays));
 }
