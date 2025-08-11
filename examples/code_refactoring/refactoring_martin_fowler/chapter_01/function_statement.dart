@@ -17,13 +17,17 @@ class Chapter01 {
       volumeCredits += volumeCreditFor(perf);
 
       result +=
-          ' ${playFor(perf)['name']}: \$${(amountFor(perf) / 100).toStringAsFixed(2)} (${perf['audience']} seats)\n';
+          ' ${playFor(perf)['name']}: ${format(amountFor(perf) / 100)} (${perf['audience']} seats)\n';
       totalAmount += amountFor(perf);
     }
 
-    result += 'Amount owed is \$${(totalAmount / 100).toStringAsFixed(2)}\n';
+    result += 'Amount owed is ${format(totalAmount / 100)}\n';
     result += 'You earned $volumeCredits credits\n';
     return result;
+  }
+
+  String format(double aNumber) {
+    return '\$${aNumber.toStringAsFixed(2)}';
   }
 
   double amountFor(Map<String, dynamic> aPerformance) {
