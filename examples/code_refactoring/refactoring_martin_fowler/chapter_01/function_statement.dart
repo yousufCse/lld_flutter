@@ -28,7 +28,7 @@ class Chapter01 {
 
     for (var perf in data['performances']) {
       result +=
-          ' ${perf['play']['name']}: ${format(amountFor(perf) / 100)} (${perf['audience']} seats)\n';
+          ' ${perf['play']['name']}: ${format(perf['amount'] / 100)} (${perf['audience']} seats)\n';
     }
 
     result += 'Amount owed is ${format(totalAmount() / 100)}\n';
@@ -39,6 +39,7 @@ class Chapter01 {
   Map<String, dynamic> enrichPerformance(Map<String, dynamic> aPerformance) {
     final result = Map<String, dynamic>.from(aPerformance);
     result.putIfAbsent('play', () => playFor(aPerformance));
+    result.putIfAbsent('amount', () => amountFor(result));
     return result;
   }
 
@@ -46,7 +47,7 @@ class Chapter01 {
     var result = 0.0;
 
     for (var perf in data['performances']) {
-      result += amountFor(perf);
+      result += perf['amount'];
     }
     return result;
   }
