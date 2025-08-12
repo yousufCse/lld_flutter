@@ -23,7 +23,7 @@ write code that humans can understand.
 * *Extract Function (106)* to create a function for calculating the total
 * *Inline Variable (123)* to remove the variable completely
 * *Split Phase (154)* 
-* 
+* *Move Function(198)*
 * 
 * 
 * 
