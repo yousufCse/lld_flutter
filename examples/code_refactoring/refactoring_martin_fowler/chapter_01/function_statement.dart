@@ -8,20 +8,21 @@ class Chapter01 {
   final Map<String, dynamic> invoice;
   final Map<String, dynamic> plays;
 
+  final Map<String, dynamic> data = {};
+
   String statement(Map<String, dynamic> invoice, Map<String, dynamic> plays) {
-    final Map<String, String> statementData = {};
-    statementData.putIfAbsent('customer', () => invoice['customer'] ?? '');
-    return renderPlainText(statementData, invoice, plays);
+    data.putIfAbsent('customer', () => invoice['customer'] ?? '');
+    data.putIfAbsent('performances', () => invoice['performances'] ?? []);
+    return renderPlainText(data, plays);
   }
 
   String renderPlainText(
-    Map<String, String> data,
-    Map<String, dynamic> invoice,
+    Map<String, dynamic> data,
     Map<String, dynamic> plays,
   ) {
     var result = 'Statement for ${data['customer']}\n';
 
-    for (var perf in invoice['performances']) {
+    for (var perf in data['performances']) {
       result +=
           ' ${playFor(perf)['name']}: ${format(amountFor(perf) / 100)} (${perf['audience']} seats)\n';
     }
@@ -34,7 +35,7 @@ class Chapter01 {
   double totalAmount() {
     var result = 0.0;
 
-    for (var perf in invoice['performances']) {
+    for (var perf in data['performances']) {
       result += amountFor(perf);
     }
     return result;
@@ -42,7 +43,7 @@ class Chapter01 {
 
   int totalVolumeCredits() {
     var result = 0;
-    for (var perf in invoice['performances']) {
+    for (var perf in data['performances']) {
       result += volumeCreditFor(perf);
     }
     return result;
