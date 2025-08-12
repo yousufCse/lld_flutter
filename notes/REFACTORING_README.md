@@ -57,7 +57,8 @@ write code that humans can understand.
 
 9. Breaking a large function into smaller ones only adds value if the names are good.
 
-10.
+10. I prefer to treat data as immutable as much as I can—mutable state
+    quickly becomes something rotten.
 
 11.
 

@@ -12,7 +12,11 @@ class Chapter01 {
 
   String statement(Map<String, dynamic> invoice, Map<String, dynamic> plays) {
     data.putIfAbsent('customer', () => invoice['customer'] ?? '');
-    data.putIfAbsent('performances', () => invoice['performances'] ?? []);
+    data.putIfAbsent(
+      'performances',
+      () => (invoice['performances'] ?? []).map(enrichPerformance).toList(),
+    );
+    print('data: $data');
     return renderPlainText(data, plays);
   }
 
@@ -29,6 +33,11 @@ class Chapter01 {
 
     result += 'Amount owed is ${format(totalAmount() / 100)}\n';
     result += 'You earned ${totalVolumeCredits()} credits\n';
+    return result;
+  }
+
+  Map<String, dynamic> enrichPerformance(Map<String, dynamic> aPerFormance) {
+    final result = Map<String, dynamic>.from(aPerFormance);
     return result;
   }
 
