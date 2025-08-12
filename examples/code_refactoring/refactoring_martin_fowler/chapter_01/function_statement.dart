@@ -9,6 +9,13 @@ class Chapter01 {
   final Map<String, dynamic> plays;
 
   String statement(Map<String, dynamic> invoice, Map<String, dynamic> plays) {
+    return renderPlainText(invoice, plays);
+  }
+
+  String renderPlainText(
+    Map<String, dynamic> invoice,
+    Map<String, dynamic> plays,
+  ) {
     var result = 'Statement for ${invoice['customer']}\n';
 
     for (var perf in invoice['performances']) {

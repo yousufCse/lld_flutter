@@ -17,11 +17,20 @@ is easy to find where the bug is.
 4. Any fool can write code that a computer can understand. Good programmers
 write code that humans can understand.
 
-
+### Refactoring Technique
 * *Split Loop (227)* to isolate the accumulation
 * *Slide Statements (223)* to bring the initializing code next to the accumulation
 * *Extract Function (106)* to create a function for calculating the total
 * *Inline Variable (123)* to remove the variable completely
+* *Split Phase (154)* 
+* 
+* 
+* 
+* 
+* 
+* 
+
+
 
 
 **Others**
