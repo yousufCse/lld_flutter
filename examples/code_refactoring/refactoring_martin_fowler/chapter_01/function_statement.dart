@@ -16,28 +16,26 @@ class Chapter01 {
           ' ${playFor(perf)['name']}: ${format(amountFor(perf) / 100)} (${perf['audience']} seats)\n';
     }
 
-    var totalAmount = appleSauche();
-
-    result += 'Amount owed is ${format(totalAmount / 100)}\n';
+    result += 'Amount owed is ${format(totalAmount() / 100)}\n';
     result += 'You earned ${totalVolumeCredits()} credits\n';
     return result;
   }
 
-  double appleSauche() {
-    var totalAmount = 0.0;
+  double totalAmount() {
+    var result = 0.0;
 
     for (var perf in invoice['performances']) {
-      totalAmount += amountFor(perf);
+      result += amountFor(perf);
     }
-    return totalAmount;
+    return result;
   }
 
   int totalVolumeCredits() {
-    var volumeCredits = 0;
+    var result = 0;
     for (var perf in invoice['performances']) {
-      volumeCredits += volumeCreditFor(perf);
+      result += volumeCreditFor(perf);
     }
-    return volumeCredits;
+    return result;
   }
 
   String format(double aNumber) {

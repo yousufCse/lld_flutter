@@ -18,6 +18,12 @@ is easy to find where the bug is.
 write code that humans can understand.
 
 
+* *Split Loop (227)* to isolate the accumulation
+* *Slide Statements (223)* to bring the initializing code next to the accumulation
+* *Extract Function (106)* to create a function for calculating the total
+* *Inline Variable (123)* to remove the variable completely
+
+
 **Others**
 1. The compiler doesn’t care whether the code is ugly or clean, but human do.
     A poorly designed system is hard to change.
