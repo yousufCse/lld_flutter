@@ -38,8 +38,9 @@ class Chapter01 {
 
   Map<String, dynamic> enrichPerformance(Map<String, dynamic> aPerformance) {
     final result = Map<String, dynamic>.from(aPerformance);
-    result.putIfAbsent('play', () => playFor(aPerformance));
+    result.putIfAbsent('play', () => playFor(result));
     result.putIfAbsent('amount', () => amountFor(result));
+    result.putIfAbsent('volumeCredits', () => volumeCreditFor(result));
     return result;
   }
 
@@ -55,7 +56,7 @@ class Chapter01 {
   int totalVolumeCredits() {
     var result = 0;
     for (var perf in data['performances']) {
-      result += volumeCreditFor(perf);
+      result += perf['volumeCredits'] as int;
     }
     return result;
   }
