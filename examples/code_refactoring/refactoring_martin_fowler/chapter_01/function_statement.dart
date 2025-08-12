@@ -36,9 +36,9 @@ class Chapter01 {
     return result;
   }
 
-  Map<String, dynamic> enrichPerformance(Map<String, dynamic> aPerFormance) {
-    final result = Map<String, dynamic>.from(aPerFormance);
-    result.putIfAbsent('play', () => playFor(aPerFormance));
+  Map<String, dynamic> enrichPerformance(Map<String, dynamic> aPerformance) {
+    final result = Map<String, dynamic>.from(aPerformance);
+    result.putIfAbsent('play', () => playFor(aPerformance));
     return result;
   }
 
@@ -90,7 +90,7 @@ class Chapter01 {
     var result = 0;
     result += max((aPerformance['audience'] as int) - 30, 0);
 
-    if (playFor(aPerformance)['type'] == 'comedy') {
+    if (aPerformance['play']['type'] == 'comedy') {
       result += (aPerformance['audience'] as int) ~/ 5;
     }
     return result;
