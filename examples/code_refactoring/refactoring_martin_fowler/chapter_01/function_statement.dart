@@ -9,7 +9,8 @@ class Chapter01 {
   final Map<String, dynamic> plays;
 
   String statement(Map<String, dynamic> invoice, Map<String, dynamic> plays) {
-    const Map<String, String> statementData = {};
+    final Map<String, String> statementData = {};
+    statementData.putIfAbsent('customer', () => invoice['customer'] ?? '');
     return renderPlainText(statementData, invoice, plays);
   }
 
@@ -18,7 +19,7 @@ class Chapter01 {
     Map<String, dynamic> invoice,
     Map<String, dynamic> plays,
   ) {
-    var result = 'Statement for ${invoice['customer']}\n';
+    var result = 'Statement for ${data['customer']}\n';
 
     for (var perf in invoice['performances']) {
       result +=
