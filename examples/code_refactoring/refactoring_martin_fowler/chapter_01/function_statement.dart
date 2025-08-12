@@ -9,10 +9,12 @@ class Chapter01 {
   final Map<String, dynamic> plays;
 
   String statement(Map<String, dynamic> invoice, Map<String, dynamic> plays) {
-    return renderPlainText(invoice, plays);
+    const Map<String, String> statementData = {};
+    return renderPlainText(statementData, invoice, plays);
   }
 
   String renderPlainText(
+    Map<String, String> data,
     Map<String, dynamic> invoice,
     Map<String, dynamic> plays,
   ) {
