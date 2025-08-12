@@ -65,7 +65,7 @@ class Chapter01 {
 
   double amountFor(Map<String, dynamic> aPerformance) {
     var result = 0.0;
-    switch (playFor(aPerformance)['type']) {
+    switch (aPerformance['play']['type']) {
       case 'tragedy':
         result = 40000;
         if (aPerformance['audience'] > 30) {
@@ -80,7 +80,7 @@ class Chapter01 {
         result += 300 * aPerformance['audience'];
         break;
       default:
-        throw Exception('Unknown type: ${playFor(aPerformance)['type']}');
+        throw Exception('Unknown type: ${aPerformance['play']['type']}');
     }
 
     return result;
