@@ -9,19 +9,27 @@ class Chapter01 {
   final Map<String, dynamic> plays;
 
   String statement(Map<String, dynamic> invoice, Map<String, dynamic> plays) {
-    var totalAmount = 0.0;
-
     var result = 'Statement for ${invoice['customer']}\n';
 
     for (var perf in invoice['performances']) {
       result +=
           ' ${playFor(perf)['name']}: ${format(amountFor(perf) / 100)} (${perf['audience']} seats)\n';
-      totalAmount += amountFor(perf);
     }
+
+    var totalAmount = appleSauche();
 
     result += 'Amount owed is ${format(totalAmount / 100)}\n';
     result += 'You earned ${totalVolumeCredits()} credits\n';
     return result;
+  }
+
+  double appleSauche() {
+    var totalAmount = 0.0;
+
+    for (var perf in invoice['performances']) {
+      totalAmount += amountFor(perf);
+    }
+    return totalAmount;
   }
 
   int totalVolumeCredits() {
