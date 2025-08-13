@@ -18,7 +18,6 @@ class Chapter01 {
     );
     data.putIfAbsent('totalAmount', () => totalAmount(data));
     data.putIfAbsent('totalVolumeCredits', () => totalVolumeCredits(data));
-    print('data: $data');
     return renderPlainText(data, plays);
   }
 
