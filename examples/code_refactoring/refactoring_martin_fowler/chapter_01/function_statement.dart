@@ -11,20 +11,26 @@ class Chapter01 {
   final Map<String, dynamic> data = {};
 
   String statement(Map<String, dynamic> invoice, Map<String, dynamic> plays) {
-    data.putIfAbsent('customer', () => invoice['customer'] ?? '');
-    data.putIfAbsent(
+    return renderPlainText(createStatementData(invoice, plays));
+  }
+
+  Map<String, dynamic> createStatementData(
+    Map<String, dynamic> invoice,
+    Map<String, dynamic> plays,
+  ) {
+    final result = <String, dynamic>{};
+    result.putIfAbsent('customer', () => invoice['customer'] ?? '');
+    result.putIfAbsent(
       'performances',
       () => (invoice['performances'] ?? []).map(enrichPerformance).toList(),
     );
-    data.putIfAbsent('totalAmount', () => totalAmount(data));
-    data.putIfAbsent('totalVolumeCredits', () => totalVolumeCredits(data));
-    return renderPlainText(data, plays);
+    result.putIfAbsent('totalAmount', () => totalAmount(result));
+    result.putIfAbsent('totalVolumeCredits', () => totalVolumeCredits(result));
+
+    return result;
   }
 
-  String renderPlainText(
-    Map<String, dynamic> data,
-    Map<String, dynamic> plays,
-  ) {
+  String renderPlainText(Map<String, dynamic> data) {
     var result = 'Statement for ${data['customer']}\n';
 
     for (var perf in data['performances']) {
