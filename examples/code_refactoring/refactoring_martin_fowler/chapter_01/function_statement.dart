@@ -16,6 +16,8 @@ class Chapter01 {
       'performances',
       () => (invoice['performances'] ?? []).map(enrichPerformance).toList(),
     );
+    data.putIfAbsent('totalAmount', () => totalAmount(data));
+    data.putIfAbsent('totalVolumeCredits', () => totalVolumeCredits(data));
     print('data: $data');
     return renderPlainText(data, plays);
   }
@@ -31,8 +33,8 @@ class Chapter01 {
           ' ${perf['play']['name']}: ${format(perf['amount'] / 100)} (${perf['audience']} seats)\n';
     }
 
-    result += 'Amount owed is ${format(totalAmount() / 100)}\n';
-    result += 'You earned ${totalVolumeCredits()} credits\n';
+    result += 'Amount owed is ${format(data['totalAmount'] / 100)}\n';
+    result += 'You earned ${data['totalVolumeCredits']} credits\n';
     return result;
   }
 
@@ -44,21 +46,16 @@ class Chapter01 {
     return result;
   }
 
-  double totalAmount() {
-    var result = 0.0;
-
-    for (var perf in data['performances']) {
-      result += perf['amount'];
-    }
-    return result;
+  double totalAmount(Map<String, dynamic> data) {
+    return data['performances']
+        .map((perf) => perf['amount'] as double)
+        .reduce((a, b) => a + b);
   }
 
-  int totalVolumeCredits() {
-    var result = 0;
-    for (var perf in data['performances']) {
-      result += perf['volumeCredits'] as int;
-    }
-    return result;
+  int totalVolumeCredits(Map<String, dynamic> data) {
+    return data['performances']
+        .map((perf) => perf['volumeCredits'] as int)
+        .reduce((a, b) => a + b);
   }
 
   String format(double aNumber) {
