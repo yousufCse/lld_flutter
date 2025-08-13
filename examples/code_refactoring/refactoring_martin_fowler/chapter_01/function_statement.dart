@@ -44,10 +44,16 @@ class Chapter01 {
   }
 
   Map<String, dynamic> enrichPerformance(Map<String, dynamic> aPerformance) {
+    final calculator = PerformanceCalculator(
+      performance: aPerformance,
+      play: playFor(aPerformance),
+    );
     final result = Map<String, dynamic>.from(aPerformance);
-    result.putIfAbsent('play', () => playFor(result));
+    result.putIfAbsent('play', () => calculator.play);
     result.putIfAbsent('amount', () => amountFor(result));
     result.putIfAbsent('volumeCredits', () => volumeCreditFor(result));
+    print('Enriching performance: $result');
+
     return result;
   }
 
@@ -103,6 +109,20 @@ class Chapter01 {
   Map<String, dynamic> playFor(Map<String, dynamic> aPerformance) {
     return plays[aPerformance['playID']] ?? {};
   }
+}
+
+class PerformanceCalculator {
+  PerformanceCalculator({
+    required Map<String, dynamic> performance,
+    required Map<String, dynamic> play,
+  }) : _aPerformance = performance,
+       _aPlay = play;
+
+  final Map<String, dynamic> _aPerformance;
+  final Map<String, dynamic> _aPlay;
+
+  Map<String, dynamic> get performance => _aPerformance;
+  Map<String, dynamic> get play => _aPlay;
 }
 
 // performance['as-like'] = {'name': 'As You Like It', 'type': 'comedy'};

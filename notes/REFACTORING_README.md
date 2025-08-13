@@ -24,8 +24,8 @@ write code that humans can understand.
 * *Inline Variable (123)* to remove the variable completely
 * *Split Phase (154)* 
 * *Move Function(198)*
-* 
-* 
+* *Replace Conditional with Polymorphism (272)*
+* *Change Function Declaration (124)*
 * 
 * 
 * 
