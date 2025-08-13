@@ -52,7 +52,6 @@ class Chapter01 {
     result.putIfAbsent('play', () => calculator.play);
     result.putIfAbsent('amount', () => amountFor(result));
     result.putIfAbsent('volumeCredits', () => volumeCreditFor(result));
-    print('Enriching performance: $result');
 
     return result;
   }
