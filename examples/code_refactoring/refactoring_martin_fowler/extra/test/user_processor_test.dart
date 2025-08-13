@@ -27,10 +27,10 @@ void main() {
     expect(report, contains('Subtotal: 1300.00'));
     expect(report, contains('Discount: 245.00'));
     expect(report, contains('Total: 1055.00'));
-    expect(result["order_id"], isNotNull);
+    expect(result["orderId"], isNotNull);
     expect(result["total"], 1300.00);
     expect(result["discount"], 245.00);
-    expect(result["final_amount"], 1055.00);
-    expect(result["processed_on"], isNotNull);
+    expect(result["finalAmount"], 1055.00);
+    expect(result["processedOn"], isNotNull);
   });
 }

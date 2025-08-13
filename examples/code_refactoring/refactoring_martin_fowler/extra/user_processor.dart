@@ -64,11 +64,11 @@ class UserProcessor {
     // Return final data
     final finalData = {
       "report": result,
-      "order_id": order_id,
+      "orderId": order_id,
       "total": total,
       "discount": discount,
-      "final_amount": total - discount,
-      "processed_on": DateTime.now().toString(),
+      "finalAmount": total - discount,
+      "processedOn": DateTime.now().toString(),
     };
 
     return finalData;
