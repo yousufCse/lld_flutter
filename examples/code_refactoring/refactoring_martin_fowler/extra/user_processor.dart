@@ -9,15 +9,15 @@ class UserProcessor {
     bool isVip,
   ) {
     // Initialize variables
-    var total = 0.0;
-    var discount = 0.0;
-    var result = "";
-    var products = [];
-    var userName = data["name"];
+    double total = 0.0;
+    double discount = 0.0;
+    String result = "";
+    List<String> products = [];
+    final userName = data["name"] as String;
 
     // Calculate total price of all products
-    for (var i = 0; i < data["products"].length; i++) {
-      var product = data["products"][i];
+    for (int i = 0; i < data["products"].length; i++) {
+      final product = data["products"][i];
       total = total + product["price"] * product["quantity"];
       products.add(product["name"]);
     }
@@ -59,12 +59,12 @@ class UserProcessor {
     result = result + "Total: " + (total - discount).toStringAsFixed(2);
 
     // Generate random order ID
-    var order_id = "ORD" + (Random().nextInt(9000) + 1000).toString();
+    final orderId = "ORD" + (Random().nextInt(9000) + 1000).toString();
 
     // Return final data
     final finalData = {
       "report": result,
-      "orderId": order_id,
+      "orderId": orderId,
       "total": total,
       "discount": discount,
       "finalAmount": total - discount,
