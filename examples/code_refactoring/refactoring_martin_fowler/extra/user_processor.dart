@@ -33,6 +33,17 @@ class UserProcessor {
 
   String format(double price) => price.toStringAsFixed(2);
 
+  String renderText(Map<String, dynamic> data, double discount) {
+    String result = "";
+    result = "User: ${data["name"]}\n";
+    result = "${result}Products: ${productNames(data).join(", ")}\n";
+    result = "${result}Subtotal: ${format(calculateTotalPrice(data))}\n";
+    result = "${result}Discount: ${format(discount)}\n";
+    result = "${result}Total: ${format(calculateTotalPrice(data) - discount)}";
+
+    return result;
+  }
+
   double calculateDiscountForVip(final Map<String, dynamic> data) {
     double result = 0.0;
     if (calculateTotalPrice(data) > 1000) {
@@ -69,14 +80,8 @@ class UserProcessor {
       discount = calculateTotalPrice(data);
     }
 
-    String result = "";
-    result = "User: ${data["name"]}\n";
-    result = "${result}Products: ${productNames(data).join(", ")}\n";
-    result = "${result}Subtotal: ${format(calculateTotalPrice(data))}\n";
-    result = "${result}Discount: ${format(discount)}\n";
-    result = "${result}Total: ${format(calculateTotalPrice(data) - discount)}";
+    String result = renderText(data, discount);
 
-    // Generate random order ID
     final orderId = "ORD${Random().nextInt(9000) + 1000}";
 
     // Return final data
