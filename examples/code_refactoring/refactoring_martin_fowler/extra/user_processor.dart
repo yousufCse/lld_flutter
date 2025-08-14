@@ -12,6 +12,12 @@ class UserProcessor {
         .reduce((value, element) => value + element);
   }
 
+  List<String> productNames(Map<String, dynamic> data) {
+    return (data['products'] as List)
+        .map((product) => product['name'] as String)
+        .toList();
+  }
+
   Map<String, dynamic> processUserData(
     Map<String, dynamic> data,
     Map<String, dynamic> options,
@@ -20,14 +26,9 @@ class UserProcessor {
     // Initialize variables
     double discount = 0.0;
     String result = "";
-    List<String> products = [];
     final userName = data["name"] as String;
 
-    // Calculate total price of all products
-    for (int i = 0; i < data["products"].length; i++) {
-      final product = data["products"][i];
-      products.add(product["name"]);
-    }
+    List<String> products = productNames(data);
 
     // Apply different discount based on user type
     if (isVip == true) {
