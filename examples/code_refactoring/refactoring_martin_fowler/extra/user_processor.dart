@@ -31,6 +31,18 @@ class UserProcessor {
     return result;
   }
 
+  double calculateDiscountForVip(final Map<String, dynamic> data) {
+    double result = 0.0;
+    if (calculateTotalPrice(data) > 1000) {
+      result = calculateTotalPrice(data) * 0.15;
+    } else if (calculateTotalPrice(data) > 500) {
+      result = calculateTotalPrice(data) * 0.1;
+    } else {
+      result = calculateTotalPrice(data) * 0.05;
+    }
+    return result;
+  }
+
   Map<String, dynamic> processUserData(
     Map<String, dynamic> data,
     Map<String, dynamic> options,
@@ -42,13 +54,7 @@ class UserProcessor {
 
     double discount = 0.0;
     if (isVip == true) {
-      if (calculateTotalPrice(data) > 1000) {
-        discount = calculateTotalPrice(data) * 0.15;
-      } else if (calculateTotalPrice(data) > 500) {
-        discount = calculateTotalPrice(data) * 0.1;
-      } else {
-        discount = calculateTotalPrice(data) * 0.05;
-      }
+      discount = calculateDiscountForVip(data);
     } else {
       discount = calculateDiscountForGeneral(data);
     }
