@@ -4,11 +4,11 @@ import 'dart:math';
 
 class UserProcessor {
   double calculateTotalPrice(Map<String, dynamic> data) {
-    double total = 0.0;
+    double result = 0.0;
     for (var product in data['products']) {
-      total += product['price'] * product['quantity'];
+      result += product['price'] * product['quantity'];
     }
-    return total;
+    return result;
   }
 
   Map<String, dynamic> processUserData(
@@ -28,22 +28,20 @@ class UserProcessor {
       products.add(product["name"]);
     }
 
-    double total = calculateTotalPrice(data);
-
     // Apply different discount based on user type
     if (isVip == true) {
-      if (total > 1000) {
-        discount = total * 0.15;
-      } else if (total > 500) {
-        discount = total * 0.1;
+      if (calculateTotalPrice(data) > 1000) {
+        discount = calculateTotalPrice(data) * 0.15;
+      } else if (calculateTotalPrice(data) > 500) {
+        discount = calculateTotalPrice(data) * 0.1;
       } else {
-        discount = total * 0.05;
+        discount = calculateTotalPrice(data) * 0.05;
       }
     } else {
-      if (total > 1000) {
-        discount = total * 0.1;
-      } else if (total > 500) {
-        discount = total * 0.05;
+      if (calculateTotalPrice(data) > 1000) {
+        discount = calculateTotalPrice(data) * 0.1;
+      } else if (calculateTotalPrice(data) > 500) {
+        discount = calculateTotalPrice(data) * 0.05;
       } else {
         discount = 0;
       }
@@ -55,16 +53,18 @@ class UserProcessor {
     }
 
     // Make sure discount doesn't exceed total
-    if (discount > total) {
-      discount = total;
+    if (discount > calculateTotalPrice(data)) {
+      discount = calculateTotalPrice(data);
     }
 
     // Generate report
     result = "User: $userName\n";
     result = "${result}Products: ${products.join(", ")}\n";
-    result = "${result}Subtotal: ${total.toStringAsFixed(2)}\n";
+    result =
+        "${result}Subtotal: ${calculateTotalPrice(data).toStringAsFixed(2)}\n";
     result = "${result}Discount: ${discount.toStringAsFixed(2)}\n";
-    result = "${result}Total: ${(total - discount).toStringAsFixed(2)}";
+    result =
+        "${result}Total: ${(calculateTotalPrice(data) - discount).toStringAsFixed(2)}";
 
     // Generate random order ID
     final orderId = "ORD${Random().nextInt(9000) + 1000}";
@@ -73,9 +73,9 @@ class UserProcessor {
     final finalData = {
       "report": result,
       "orderId": orderId,
-      "total": total,
+      "total": calculateTotalPrice(data),
       "discount": discount,
-      "finalAmount": total - discount,
+      "finalAmount": calculateTotalPrice(data) - discount,
       "processedOn": DateTime.now().toString(),
     };
 
