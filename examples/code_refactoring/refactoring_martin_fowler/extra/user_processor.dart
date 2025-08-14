@@ -80,14 +80,9 @@ class UserProcessor {
       discount = calculateTotalPrice(data);
     }
 
-    String result = renderText(data, discount);
-
-    final orderId = "ORD${Random().nextInt(9000) + 1000}";
-
-    // Return final data
     final finalData = {
-      "report": result,
-      "orderId": orderId,
+      "report": renderText(data, discount),
+      "orderId": "ORD${Random().nextInt(9000) + 1000}",
       "total": calculateTotalPrice(data),
       "discount": discount,
       "finalAmount": calculateTotalPrice(data) - discount,
