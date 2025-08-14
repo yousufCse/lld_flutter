@@ -19,16 +19,16 @@ class UserProcessor {
   }
 
   double calculateDiscountForGeneral(final Map<String, dynamic> data) {
-    double discount = 0.0;
+    double result = 0.0;
     if (calculateTotalPrice(data) > 1000) {
-      discount = calculateTotalPrice(data) * 0.1;
+      result = calculateTotalPrice(data) * 0.1;
     } else if (calculateTotalPrice(data) > 500) {
-      discount = calculateTotalPrice(data) * 0.05;
+      result = calculateTotalPrice(data) * 0.05;
     } else {
-      discount = 0;
+      result = 0;
     }
 
-    return discount;
+    return result;
   }
 
   Map<String, dynamic> processUserData(
