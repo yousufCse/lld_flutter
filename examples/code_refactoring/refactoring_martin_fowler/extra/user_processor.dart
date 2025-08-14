@@ -49,8 +49,6 @@ class UserProcessor {
     bool isVip,
   ) {
     // Initialize variables
-    String result = "";
-    final userName = data["name"] as String;
 
     double discount = 0.0;
     if (isVip == true) {
@@ -69,8 +67,8 @@ class UserProcessor {
       discount = calculateTotalPrice(data);
     }
 
-    // Generate report
-    result = "User: $userName\n";
+    String result = "";
+    result = "User: ${data["name"]}\n";
     result = "${result}Products: ${productNames(data).join(", ")}\n";
     result =
         "${result}Subtotal: ${calculateTotalPrice(data).toStringAsFixed(2)}\n";
