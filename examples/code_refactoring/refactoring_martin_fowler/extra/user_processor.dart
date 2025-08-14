@@ -52,14 +52,14 @@ class UserProcessor {
     }
 
     // Generate report
-    result = "User: " + userName + "\n";
-    result = result + "Products: " + products.join(", ") + "\n";
-    result = result + "Subtotal: " + total.toStringAsFixed(2) + "\n";
-    result = result + "Discount: " + discount.toStringAsFixed(2) + "\n";
-    result = result + "Total: " + (total - discount).toStringAsFixed(2);
+    result = "User: $userName\n";
+    result = "${result}Products: ${products.join(", ")}\n";
+    result = "${result}Subtotal: ${total.toStringAsFixed(2)}\n";
+    result = "${result}Discount: ${discount.toStringAsFixed(2)}\n";
+    result = "${result}Total: ${(total - discount).toStringAsFixed(2)}";
 
     // Generate random order ID
-    final orderId = "ORD" + (Random().nextInt(9000) + 1000).toString();
+    final orderId = "ORD${Random().nextInt(9000) + 1000}";
 
     // Return final data
     final finalData = {
