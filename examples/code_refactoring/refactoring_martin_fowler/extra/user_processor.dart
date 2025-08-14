@@ -18,17 +18,29 @@ class UserProcessor {
         .toList();
   }
 
+  double calculateDiscountForGeneral(final Map<String, dynamic> data) {
+    double discount = 0.0;
+    if (calculateTotalPrice(data) > 1000) {
+      discount = calculateTotalPrice(data) * 0.1;
+    } else if (calculateTotalPrice(data) > 500) {
+      discount = calculateTotalPrice(data) * 0.05;
+    } else {
+      discount = 0;
+    }
+
+    return discount;
+  }
+
   Map<String, dynamic> processUserData(
     Map<String, dynamic> data,
     Map<String, dynamic> options,
     bool isVip,
   ) {
     // Initialize variables
-    double discount = 0.0;
     String result = "";
     final userName = data["name"] as String;
 
-    // Apply different discount based on user type
+    double discount = 0.0;
     if (isVip == true) {
       if (calculateTotalPrice(data) > 1000) {
         discount = calculateTotalPrice(data) * 0.15;
@@ -38,13 +50,7 @@ class UserProcessor {
         discount = calculateTotalPrice(data) * 0.05;
       }
     } else {
-      if (calculateTotalPrice(data) > 1000) {
-        discount = calculateTotalPrice(data) * 0.1;
-      } else if (calculateTotalPrice(data) > 500) {
-        discount = calculateTotalPrice(data) * 0.05;
-      } else {
-        discount = 0;
-      }
+      discount = calculateDiscountForGeneral(data);
     }
 
     // Apply special discount if specified in options
