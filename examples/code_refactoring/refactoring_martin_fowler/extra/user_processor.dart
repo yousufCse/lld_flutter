@@ -3,6 +3,14 @@
 import 'dart:math';
 
 class UserProcessor {
+  double calculateTotalPrice(Map<String, dynamic> data) {
+    double total = 0.0;
+    for (var product in data['products']) {
+      total += product['price'] * product['quantity'];
+    }
+    return total;
+  }
+
   Map<String, dynamic> processUserData(
     Map<String, dynamic> data,
     Map<String, dynamic> options,
@@ -20,10 +28,7 @@ class UserProcessor {
       products.add(product["name"]);
     }
 
-    double total = 0.0;
-    for (var product in data['products']) {
-      total += product['price'] * product['quantity'];
-    }
+    double total = calculateTotalPrice(data);
 
     // Apply different discount based on user type
     if (isVip == true) {
