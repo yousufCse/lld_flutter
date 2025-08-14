@@ -85,16 +85,13 @@ class UserProcessor {
     Map<String, dynamic> options,
     bool isVip,
   ) {
-    // Initialize variables
-
-    double discount = calculateDiscount(data, options, isVip);
-
     final finalData = {
-      "report": renderText(data, discount),
+      "report": renderText(data, calculateDiscount(data, options, isVip)),
       "orderId": "ORD${Random().nextInt(9000) + 1000}",
       "total": calculateTotalPrice(data),
-      "discount": discount,
-      "finalAmount": calculateTotalPrice(data) - discount,
+      "discount": calculateDiscount(data, options, isVip),
+      "finalAmount":
+          calculateTotalPrice(data) - calculateDiscount(data, options, isVip),
       "processedOn": DateTime.now().toString(),
     };
 
