@@ -4,11 +4,12 @@ import 'dart:math';
 
 class UserProcessor {
   double calculateTotalPrice(Map<String, dynamic> data) {
-    double result = 0.0;
-    for (var product in data['products']) {
-      result += product['price'] * product['quantity'];
-    }
-    return result;
+    return data["products"]
+        .map(
+          (product) =>
+              product['price'].toDouble() * product['quantity'].toDouble(),
+        )
+        .reduce((value, element) => value + element);
   }
 
   Map<String, dynamic> processUserData(
