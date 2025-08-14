@@ -28,8 +28,6 @@ class UserProcessor {
     String result = "";
     final userName = data["name"] as String;
 
-    List<String> products = productNames(data);
-
     // Apply different discount based on user type
     if (isVip == true) {
       if (calculateTotalPrice(data) > 1000) {
@@ -61,7 +59,7 @@ class UserProcessor {
 
     // Generate report
     result = "User: $userName\n";
-    result = "${result}Products: ${products.join(", ")}\n";
+    result = "${result}Products: ${productNames(data).join(", ")}\n";
     result =
         "${result}Subtotal: ${calculateTotalPrice(data).toStringAsFixed(2)}\n";
     result = "${result}Discount: ${discount.toStringAsFixed(2)}\n";
