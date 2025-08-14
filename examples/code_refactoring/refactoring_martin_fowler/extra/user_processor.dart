@@ -3,13 +3,12 @@
 import 'dart:math';
 
 class UserProcessor {
-  dynamic processUserData(
+  Map<String, dynamic> processUserData(
     Map<String, dynamic> data,
     Map<String, dynamic> options,
     bool isVip,
   ) {
     // Initialize variables
-    double total = 0.0;
     double discount = 0.0;
     String result = "";
     List<String> products = [];
@@ -18,8 +17,12 @@ class UserProcessor {
     // Calculate total price of all products
     for (int i = 0; i < data["products"].length; i++) {
       final product = data["products"][i];
-      total = total + product["price"] * product["quantity"];
       products.add(product["name"]);
+    }
+
+    double total = 0.0;
+    for (var product in data['products']) {
+      total += product['price'] * product['quantity'];
     }
 
     // Apply different discount based on user type
