@@ -56,6 +56,30 @@ class UserProcessor {
     return result;
   }
 
+  double calculateDiscount(
+    Map<String, dynamic> data,
+    Map<String, dynamic> options,
+    bool isVip,
+  ) {
+    double discount = 0.0;
+
+    if (isVip == true) {
+      discount = calculateDiscountForVip(data);
+    } else {
+      discount = calculateDiscountForGeneral(data);
+    }
+
+    if (options["specialDiscount"] == true) {
+      discount = discount + 50;
+    }
+
+    if (discount > calculateTotalPrice(data)) {
+      discount = calculateTotalPrice(data);
+    }
+
+    return discount;
+  }
+
   Map<String, dynamic> processUserData(
     Map<String, dynamic> data,
     Map<String, dynamic> options,
@@ -63,22 +87,7 @@ class UserProcessor {
   ) {
     // Initialize variables
 
-    double discount = 0.0;
-    if (isVip == true) {
-      discount = calculateDiscountForVip(data);
-    } else {
-      discount = calculateDiscountForGeneral(data);
-    }
-
-    // Apply special discount if specified in options
-    if (options["specialDiscount"] == true) {
-      discount = discount + 50;
-    }
-
-    // Make sure discount doesn't exceed total
-    if (discount > calculateTotalPrice(data)) {
-      discount = calculateTotalPrice(data);
-    }
+    double discount = calculateDiscount(data, options, isVip);
 
     final finalData = {
       "report": renderText(data, discount),
