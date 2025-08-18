@@ -26,9 +26,7 @@ write code that humans can understand.
 * *Move Function(198)*
 * *Replace Conditional with Polymorphism (272)*
 * *Change Function Declaration (124)*
-* 
-* 
-* 
+
 
 
 
