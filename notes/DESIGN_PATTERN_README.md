@@ -44,13 +44,13 @@
 
 
 ------------------------------------------------------------------------------
-## Factory Pattern
+## Factory Method
 
 **Types**
 - Factory Method: Subclasses decide what to create.
 - Abstract Factory: Create families of related objects.
 
-*The Factory Pattern*
+*The Factory Method Pattern*
     defines an interface for creating an object, but lets subclasses decide
     which class to instantiate.
     Factory Method lets a class defer instantiation to sbclasses.
@@ -75,3 +75,30 @@
 - Like ordering from a pizza store: you ask for a pizza, the store decides how to make it and hands you the finished product.
 
 ----------------------------------------------------------------------------------
+
+## Singleton
+
+*The Singleton Pattern*
+    ensures a class has only one instance, and provides a global point of accesst to it.
+
+**Quick Hints**
+- *One and only one!*
+    Guarantees a signle instance for the lifetime of your app.
+- *Private constructor!*
+    Prevents others from creating new instances.
+- *Static instance!*
+    Holds the single instance in a static variable.
+- *Global access!*
+    Holds the single instace in a static variable.
+- *Lazy or eager?*
+    Create the instance when needed(lazy) or at startup(eager).
+- *Thread safety matters!*
+    Be carefull in muli-threaded environments.
+
+**Mnemonic**
+*There can be only one!*
+
+**Analogy**
+*Like the captain of a ship: there's only one captain and everyone knows how to reach them.*
+
+-----------------------------------------------------------------------------------
