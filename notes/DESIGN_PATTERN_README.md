@@ -102,3 +102,27 @@
 *Like the captain of a ship: there's only one captain and everyone knows how to reach them.*
 
 -----------------------------------------------------------------------------------
+
+## State
+
+*The State Pattern*
+    allow an object to alter its behaviour when its internal
+    state changes. The object will appear to change its class.
+
+**Quick Hints**
+- *Encapsulate state-specific behaviour!*
+    Put state-dependent code in seperate state classes.
+- *Context delegated to state!*
+    The context object delegates behavior to the current state object.
+- *Change the state, change the behavior!*
+    Swap the state object to change how to context behaves.
+- *No more giant if/else or switch!*
+    Replace conditional logic with polymorphism.
+- *State transitions are explicit!*
+    State objects can change the context's state
+
+**Mnemonic**
+*I change my mind(behavior) when my state changes!*
+
+**Analogy**
+*Like a vending machine: its behavior changes depending on weather you've inserted money, selected a product, or it's out of stock*
