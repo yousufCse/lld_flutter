@@ -126,3 +126,8 @@
 
 **Analogy**
 *Like a vending machine: its behavior changes depending on weather you've inserted money, selected a product, or it's out of stock*
+
+
+## Observer
+The observer pattern defines a one-to-many relationship between a set of objects.
+When the state of one object changes, all of its dependentes are notified.
