@@ -596,3 +596,21 @@
 
 **Analogy**
 *Like a power plug adapter: lets your device (client) use a foreign socket (adaptee) by converting the interface.*
+
+
+
+Singleton: Ensures a single instance of a class.
+Factory: Provides an interface for object creation, letting subclasses decide the class to instantiate.
+Builder: Separates complex object construction from its representation.
+Abstract Factory: Creates families of related objects. 
+
+Facade: Simplifies a complex system interface.
+Decorator: Adds behaviors dynamically by wrapping an object.
+Adapter: Allows incompatible interfaces to work together.
+Proxy: Provides a substitute for another object to control access. 
+
+Observer: Defines a one-to-many dependency for state change notifications.
+Strategy: Defines interchangeable algorithms.
+Command: Encapsulates a request as an object.
+Iterator: Provides sequential traversal of collection elements.
+State: Allows behavior change based on internal state. 
