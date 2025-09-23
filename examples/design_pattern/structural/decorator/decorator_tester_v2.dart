@@ -39,7 +39,7 @@ class Espresso extends Beverage {
 
   @override
   String getDescription() {
-    return 'Expresso, ${hasMilk() ? "milk, " : ""}${hasSoy() ? "soy, " : ""}${hasMocha() ? "mocha, " : ""}${hasWhip() ? "whip" : ""}';
+    return 'Expresso with ${hasMilk() ? "milk, " : ""}${hasSoy() ? "soy, " : ""}${hasMocha() ? "mocha, " : ""}${hasWhip() ? "whip" : ""}';
   }
 
   @override
@@ -53,13 +53,45 @@ class Espresso extends Beverage {
   }
 }
 
+class HouseBlend extends Beverage {
+  HouseBlend();
+
+  @override
+  String getDescription() {
+    return 'House Blend with ${hasMilk() ? "milk, " : ""}${hasSoy() ? "soy, " : ""}${hasMocha() ? "mocha, " : ""}${hasWhip() ? "whip" : ""}';
+  }
+
+  @override
+  double cost() {
+    double baseCost = 0.89;
+    if (hasMilk()) baseCost += 0.10;
+    if (hasSoy()) baseCost += 0.15;
+    if (hasMocha()) baseCost += 0.20;
+    if (hasWhip()) baseCost += 0.10;
+    return baseCost;
+  }
+}
+
 void main(List<String> args) {
   print('=== Decorator Pattern V2 ===');
+  print('--------------------------');
   Beverage beverage = Espresso();
   beverage.setMilk(true);
   print('${beverage.getDescription()} \$${beverage.cost()}');
+  print('--------------------------');
   beverage = Espresso();
   beverage.setSoy(true);
   beverage.setWhip(true);
   print('${beverage.getDescription()} \$${beverage.cost()}');
+  print('--------------------------');
+  beverage = HouseBlend();
+  beverage.setMocha(true);
+  beverage.setWhip(true);
+  print('${beverage.getDescription()} \$${beverage.cost().toStringAsFixed(2)}');
+  print('--------------------------');
+  beverage = HouseBlend();
+  beverage.setSoy(true);
+  beverage.setMocha(true);
+  beverage.setWhip(true);
+  print('${beverage.getDescription()} \$${beverage.cost().toStringAsFixed(2)}');
 }
