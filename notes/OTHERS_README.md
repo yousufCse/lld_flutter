@@ -15,3 +15,12 @@ Data Hiding
 
 Abstraction = concept/idea
 Abstract class = one way to implement abstraction in code
+
+### Lowering complexity
+1. Immutability
+2. Declarative code
+3. Mutable state
+4. Inheritance
+5. Syntax
+6. Collections
+7. TDD
