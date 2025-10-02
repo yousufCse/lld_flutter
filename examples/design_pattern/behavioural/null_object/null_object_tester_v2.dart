@@ -41,9 +41,7 @@ class NullItem extends Item {
 }
 
 Item makeItem(Item? item) {
-  return item != null
-      ? PresentItem(item.title, item.description, item.currentPrice)
-      : NullItem();
+  return item ?? NullItem();
 }
 
 class ItemDisplayController {
