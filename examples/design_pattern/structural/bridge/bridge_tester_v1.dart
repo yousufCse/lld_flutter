@@ -30,6 +30,11 @@ class Red implements Color {
   String fill() => 'Filling with Red color';
 }
 
+class Green extends Color {
+  @override
+  String fill() => 'Filling with Green color';
+}
+
 class Blue implements Color {
   @override
   String fill() => 'Filling with Blue color';
@@ -42,7 +47,10 @@ void main(List<String> args) {
 
   final Shape circleAndBlue = Circle(Blue());
   final Shape squareAndRed = Square(Red());
+  final Shape squareAndGreen = Square(Green());
+
   print(circleAndBlue.draw());
   print(squareAndRed.draw());
+  print(squareAndGreen.draw());
   print('----------------------------------------');
 }
