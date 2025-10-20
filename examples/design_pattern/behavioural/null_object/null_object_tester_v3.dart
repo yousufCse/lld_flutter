@@ -1,8 +1,5 @@
 // ignore_for_file: avoid_print
 
-/// The Null Object Pattern example based on a video player application.
-/// This demonstrates how to avoid null checks by using a null object implementation.
-
 // Abstract class defining the media player interface
 abstract class MediaPlayer {
   String getName();
@@ -20,12 +17,12 @@ class VideoPlayer implements MediaPlayer {
   bool _isPlaying = false;
   final int _duration;
   int _currentPosition = 0;
-  
+
   VideoPlayer(this.name, this._duration);
-  
+
   @override
   String getName() => name;
-  
+
   @override
   void play() {
     if (!_isPlaying) {
@@ -33,7 +30,7 @@ class VideoPlayer implements MediaPlayer {
       print('[$name] ▶️ Playing video');
     }
   }
-  
+
   @override
   void pause() {
     if (_isPlaying) {
@@ -41,7 +38,7 @@ class VideoPlayer implements MediaPlayer {
       print('[$name] ⏸️ Video paused');
     }
   }
-  
+
   @override
   void stop() {
     if (_isPlaying) {
@@ -50,16 +47,16 @@ class VideoPlayer implements MediaPlayer {
       print('[$name] ⏹️ Video stopped');
     }
   }
-  
+
   @override
   bool isPlaying() => _isPlaying;
-  
+
   @override
   int getDuration() => _duration;
-  
+
   @override
   int getCurrentPosition() => _currentPosition;
-  
+
   // Additional method for this implementation
   void seekTo(int position) {
     if (position >= 0 && position <= _duration) {
@@ -73,35 +70,35 @@ class VideoPlayer implements MediaPlayer {
 class NullMediaPlayer implements MediaPlayer {
   // Singleton pattern
   static final NullMediaPlayer _instance = NullMediaPlayer._internal();
-  
+
   NullMediaPlayer._internal();
-  
+
   factory NullMediaPlayer() => _instance;
-  
+
   @override
   String getName() => "No Media";
-  
+
   @override
   void play() {
     print('No media available to play');
   }
-  
+
   @override
   void pause() {
     print('No media available to pause');
   }
-  
+
   @override
   void stop() {
     print('No media available to stop');
   }
-  
+
   @override
   bool isPlaying() => false;
-  
+
   @override
   int getDuration() => 0;
-  
+
   @override
   int getCurrentPosition() => 0;
 }
@@ -113,7 +110,7 @@ class MediaPlayerFactory {
     'tutorial': VideoPlayer('Flutter Tutorial', 600),
     'music': VideoPlayer('Music Video', 240),
   };
-  
+
   static MediaPlayer getMediaPlayer(String mediaId) {
     // Instead of returning null, return a NullMediaPlayer
     return _availableMedia[mediaId] ?? NullMediaPlayer();
@@ -124,17 +121,17 @@ class MediaPlayerFactory {
 class MediaController {
   void playMedia(String mediaId) {
     print('\n--- Attempting to play: $mediaId ---');
-    
+
     // Get media player without worrying about null
     final MediaPlayer player = MediaPlayerFactory.getMediaPlayer(mediaId);
-    
+
     // Show media info
     print('Media: ${player.getName()}');
     print('Duration: ${player.getDuration()} seconds');
-    
+
     // No need for null checks anywhere
     player.play();
-    
+
     // Display playback status
     String status = player.isPlaying() ? 'Playing' : 'Not playing';
     print('Current status: $status');
@@ -147,13 +144,13 @@ void main() {
   );
 
   final mediaController = MediaController();
-  
+
   // Play existing media
   mediaController.playMedia('nature');
   mediaController.playMedia('tutorial');
-  
+
   // Attempt to play non-existent media - no null check needed
   mediaController.playMedia('nonexistent');
-  
+
   print('-------------------------------');
 }
