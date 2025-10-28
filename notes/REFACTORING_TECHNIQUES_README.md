@@ -26,7 +26,9 @@
 - ***Anti-pattern:*** Magic Inline Code.  
 - ***Similar:*** Extract Function, Replace Temp with Query.
 
-#### (4) - **Inline Variable (Inline Temp) (123)**: Replace variable references with expression.  
+#### (4) - **Inline Variable (123)**: Replace variable references with expression.   
+- ***formerly:*** *Inline Temp*
+- ***inverse of:*** *Extract Variable (119)*
 - ***Purpose:*** Simplify code by removing unnecessary temporary variables.  
 - ***When to use:*** When a variable adds no clarity and is used only once.  
 - ***Smells:*** Unnecessary Temporary.  
@@ -43,6 +45,8 @@
 - ***Similar:*** Parameterize Function.
 
 #### (6) - **Encapsulate Variable (132)**: Wrap variable access in functions (includes Encapsulate Field).  
+- ***formerly:*** *Self-­Encapsulate Field* 
+- ***formerly:*** *­Encapsulate Field*
 - ***Purpose:*** Protect data by controlling access through methods.  
 - ***When to use:*** When fields are accessed directly or need validation.  
 - ***Smells:*** Data Clumps, Feature Envy.  
@@ -93,6 +97,7 @@
 ### Encapsulation
 
 #### (12) - **Encapsulate Record (162)**: Wrap record in class (includes Replace Record with Data Class).  
+- ***formerly:*** *Replace Record with Data Class*
 - ***Purpose:*** Encapsulate raw data structures for better management.  
 - ***When to use:*** When using raw records or structs that need behavior.  
 - ***Smells:*** Primitive Obsession, Data Clumps.  
@@ -109,6 +114,8 @@
 - ***Similar:*** Encapsulate Variable.
 
 #### (14) - **Replace Primitive with Object (174)**: Turn primitive into class (includes Replace Data Value with Object).  
+- ***formerly*** *Replace Data Value with Object*
+- ***formerly*** *Replace Type Code with Class*
 - ***Purpose:*** Add behavior to primitive data types.  
 - ***When to use:*** When primitives carry implicit meaning or need methods.  
 - ***Smells:*** Primitive Obsession, Type Code.  
@@ -166,7 +173,7 @@
 
 ### Moving Features
 
-#### (21) - **Move Function (198)**: Relocate function to better class (includes Move Method).  
+#### (21) - **Move Function (Move Method) (198)**: Relocate function to better class (includes Move Method).  
 - ***Purpose:*** Place function in the class that uses its data most.  
 - ***When to use:*** When a function uses data from another class excessively.  
 - ***Smells:*** Feature Envy, Inappropriate Intimacy.  
@@ -207,6 +214,7 @@
 - ***Similar:*** Extract Function.
 
 #### (26) - **Slide Statements (223)**: Reorder code statements.  
+- ***formerly:*** *Consolidate Duplicate Conditional fragments*
 - ***Purpose:*** Improve code readability by logical statement order.  
 - ***When to use:*** When statements are in a confusing or suboptimal order.  
 - ***Smells:*** Poor Code Flow, Long Function.  
@@ -257,6 +265,8 @@
 ### Organizing Data
 
 #### (32) - **Split Variable (240)**: Separate variable uses (includes Split Temporary Variable).  
+- ***formerly:*** *Remove Assignments to Parameters*
+- ***formerly:*** *Split Temp*
 - ***Purpose:*** Split a variable used for multiple purposes into distinct ones.  
 - ***When to use:*** When a variable holds different values for different purposes.  
 - ***Smells:*** Divergent Change, Temporary Field.  
@@ -421,6 +431,7 @@
 - ***Similar:*** Change Function Declaration.
 
 #### (52) - **Remove Flag Argument (314)**: Split methods by flag.  
+- ***formerly:*** *Replace Parameter with Explicit Methods*
 - ***Purpose:*** Replace boolean flags with separate methods.  
 - ***When to use:*** When a flag changes method behavior significantly.  
 - ***Smells:*** Flag Argument, Complex Conditional.  
@@ -436,7 +447,8 @@
 - ***Anti-pattern:*** Field Extraction.  
 - ***Similar:*** Introduce Parameter Object.
 
-#### (54) - **Replace Parameter with Query (324)**: Compute param in method.  
+#### (54) - **Replace Parameter with Query (324)**: Compute param in method.
+- ***formerly:*** *Replace Parameter with Method*
 - ***Purpose:*** Remove a parameter by computing its value via a method call.  
 - ***When to use:*** When a parameter can be derived from existing data.  
 - ***Smells:*** Long Parameter List, Feature Envy.  
@@ -461,6 +473,7 @@
 - ***Similar:*** Encapsulate Variable.
 
 #### (57) - **Replace Constructor with Factory Function (334)**: Use factory for creation (includes Replace Constructor with Factory Method).  
+- ***formerly:*** *Replace Constructor with Factory Method*
 - ***Purpose:*** Replace constructor with a factory for flexibility.  
 - ***When to use:*** When object creation needs customization or abstraction.  
 - ***Smells:*** Complex Constructor, Divergent Change.  
@@ -469,6 +482,7 @@
 - ***Similar:*** Replace Function with Command.
 
 #### (58) - **Replace Function with Command (337)**: Wrap in command object.  
+- ***formerly:*** *Replace Method with Method Object*
 - ***Purpose:*** Encapsulate complex function logic in a command object.  
 - ***When to use:*** When a function needs state or complex execution.  
 - ***Smells:*** Long Function, Complex Algorithm.  
@@ -558,7 +572,10 @@
 - ***Anti-pattern:*** Broad Superclass.  
 - ***Similar:*** Push Down Method.
 
-#### (69) - **Replace Type Code with Subclasses (362)**: Subclass per type code.  
+#### (69) - **Replace Type Code with Subclasses (362)**: Subclass per type code.
+- ***subsumes:*** *Replace Type Code with State/Strategy*       
+- ***subsumes:*** *Extract Subclass*       
+- ***inverse of:*** *Remove Subclass*       
 - ***Purpose:*** Replace type codes with subclass-specific behavior.  
 - ***When to use:*** When type codes drive conditional logic.  
 - ***Smells:*** Type Code, Switch Statements.  
@@ -567,6 +584,8 @@
 - ***Similar:*** Replace Conditional with Polymorphism.
 
 #### (70) - **Remove Subclass (369)**: Eliminate unused subclass.  
+- ***formerly***: *Replace Subclass with Fields*
+- ***inverse of:*** *Replace Type Code With Subclasses*
 - ***Purpose:*** Remove unnecessary subclasses to simplify hierarchy.  
 - ***When to use:*** When a subclass adds no value or is unused.  
 - ***Smells:*** Speculative Generality, Lazy Class.  
@@ -591,6 +610,7 @@
 - ***Similar:*** Remove Subclass.
 
 #### (73) - **Replace Subclass with Delegate (381)**: Use delegation not inheritance.  
+- ***formerly:*** *Replace Inheritance with Delegation*
 - ***Purpose:*** Replace inheritance with composition for flexibility.  
 - ***When to use:*** When inheritance creates tight coupling or violates is-a.  
 - ***Smells:*** Inappropriate Intimacy, Type Code.  
