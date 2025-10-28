@@ -4,29 +4,46 @@
 //? Encapsulate Field
 //? Replace Code with Subclasses
 //? Self Encapsulate Field
+//? Replace Constructor with Factory Function
 class Employee {
   final String _name;
-  final String _type;
 
-  Employee(this._name, this._type) {
-    validateType(type);
-  }
+  Employee(this._name);
 
-  validateType(String args) {
-    if (!['engineer', 'salesman', 'manager'].contains(type)) {
-      throw ArgumentError('Invalid employee type: $type');
-    }
-  }
-
-  String get type => _type;
+  String get name => _name;
 
   @override
   String toString() {
-    return 'Employee(name: $_name, type: $type)';
+    return 'Employee(name: $_name)';
   }
 }
 
+class Engineer extends Employee {
+  Engineer(super.name);
+}
+
+class Salesman extends Employee {
+  Salesman(super.name);
+}
+
+class Manager extends Employee {
+  Manager(super.name);
+}
+
+//? Replace Constructor with Factory Function
+Employee createEmployee(String name, String type) {
+  switch (type) {
+    case 'engineer':
+      return Engineer(name);
+    case 'salesman':
+      return Salesman(name);
+    case 'manager':
+      return Manager(name);
+  }
+  throw ArgumentError('Invalid employee type: $type');
+}
+
 void main(List<String> args) {
-  var emp = Employee('Alice', 'manager');
-  print('Employee: ..., Type: ${emp.type}');
+  var emp = createEmployee('AAA', 'salesman');
+  print('Employee: ${emp.name}}');
 }
