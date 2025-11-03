@@ -665,3 +665,21 @@
 - ***Anti-refactoring:*** Replace Inheritance with Delegation.  
 - ***Anti-pattern:*** Over-Composition.  
 - ***Similar:*** None.
+
+***---------------------------------------***
+1. Change Function Declaration
+2. Split Phase
+3. Rename Variable
+4. Combine Function into Class
+5. Replace Primitive with Object / Replace Data Value with Object
+6. Move Statement into Function
+7. Move Statement to Callers
+8. Replace Inline code with Function Call
+9. Slide Statement
+10. Split Loop
+11. Replace Loop with Pipeline
+12. Remove Flag Argument
+13. Replace Parameter with query / Replace Parameter with Method Call
+14. Replace Query with Parameter
+15. Replace Function with Command / Replace Method with Method Object
+16. Replace Command with Function
