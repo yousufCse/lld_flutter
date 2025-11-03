@@ -86,6 +86,21 @@ With a good use case complete, textual analysis is a quick and easy way to figur
 5. **Delegation**: Delegate behaviour to another class when you don't want to change the behaviour, but
 it's not your object's responsibility to implement that behavior on its own.
 
+**Abstraction: is a concepts**
+    *Hide complexity, shows relevant features.*
+*Abstraction hides unnecessary details form a client, and showing only what is necessary.*
+Data Hiding
+
+**Encapsulation: is data hiding**
+    *Restricts direct access to data.*
+1. Put everyting inside a class
+2. Data security from outside of the world
+
+
+
+Abstraction = concept/idea
+Abstract class = one way to implement abstraction in code
+
 
 
 
