@@ -775,26 +775,27 @@ class ConsoleAppLogger implements AppLogger {
 ```dart
 class ExampleFormState extends Equatable {
   final String fieldName;
-  final String? fieldNameError;
   final ExampleOperationState operationState;
   final bool submitted;
 
   const ExampleFormState({
     required this.fieldName,
     required this.operationState,
-    this.fieldNameError,
     this.submitted = false,
   });
 
   const ExampleFormState.initial()
     : fieldName = '',
       operationState = const ExampleOperationIdle(),
-      fieldNameError = null,
       submitted = false;
+
+  bool get isValid => AppValidators.name(state.fieldName) != null;
+
+  String? get fieldNameError => submitted ? AppValidators.name(state.fieldName) : null;
+
 
   ExampleFormState copyWith({
     String? fieldName,
-    String? Function()? fieldNameError,  // nullable wrapper pattern
     ExampleOperationState? operationState,
     bool? submitted,
   }) {
@@ -859,11 +860,20 @@ class ExampleFormCubit extends Cubit<ExampleFormState> {
   final SomeUsecase _usecase;
 
   void onFieldChanged(String value) {
-    emit(state.copyWith(
-      fieldName: value,
-      fieldNameError: () => state.submitted ? AppValidators.fieldName(value) : null,
-    ));
+    emit(state.copyWith(fieldName: value));
   }
+
+  // In Cubit
+  bool validate() {
+    emit(state.copyWith(submitted: true));
+    return state.isValid;
+  }
+
+  // Uses in UI
+  AppTextField(
+    errorText: state.firstNameError
+  )
+
 
   bool validate() {
     emit(state.copyWith(
