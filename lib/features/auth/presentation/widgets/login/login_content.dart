@@ -5,6 +5,7 @@ import '../../../../../core/app/navigation/route_names.dart';
 import '../../../../../core/presentation/widgets/index.dart';
 import '../../../../../core/resources/app_sizes.dart';
 import '../../../../../core/resources/strings/app_strings.dart';
+import '../../../../../core/responsive/responsive.dart';
 
 class LoginContent extends StatelessWidget {
   const LoginContent({
@@ -121,7 +122,7 @@ class LoginContent extends StatelessWidget {
               title: AppStrings.loginButton,
               onPressed: isLoading ? null : _handleLogin,
             ),
-            const SizedBox(height: 20.0),
+            Gap.vertical(context.scaled(AppSizes.space20)),
 
             AppButton.text(
               onPressed: () {

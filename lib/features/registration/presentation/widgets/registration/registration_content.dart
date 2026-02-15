@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:niramoy_health_app/core/presentation/widgets/index.dart';
 import 'package:niramoy_health_app/core/resources/index.dart';
+import 'package:niramoy_health_app/core/responsive/responsive.dart';
 
 import '../../cubit/form/registration_form_cubit.dart';
 import 'form/index.dart';
@@ -22,7 +23,7 @@ class RegistrationContent extends StatelessWidget {
       padding: const EdgeInsets.all(AppSizes.space16),
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          minHeight: MediaQuery.of(context).size.height,
+          minHeight: context.screenHeight,
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -37,7 +38,7 @@ class RegistrationContent extends StatelessWidget {
             OthersField(cubit: formCubit),
             Gap.vertical(AppSizes.space24),
             _buildNextButton(),
-            Gap.vertical(MediaQuery.of(context).size.height * 0.2),
+            Gap.vertical(context.screenHeight * 0.2),
           ],
         ),
       ),

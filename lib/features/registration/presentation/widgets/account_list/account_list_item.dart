@@ -15,6 +15,7 @@ class AccountListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Card(
       child: InkWell(
         onTap: onTap,
@@ -26,8 +27,7 @@ class AccountListItem extends StatelessWidget {
                 radius: AppSizes.space24,
                 child: Text(
                   account.fullName.substring(0, 1).toUpperCase(),
-                  style: const TextStyle(
-                    fontSize: 20,
+                  style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -39,23 +39,28 @@ class AccountListItem extends StatelessWidget {
                   children: [
                     Text(
                       account.fullName,
-                      style: const TextStyle(
-                        fontSize: 16,
+                      style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: AppSizes.space4),
                     Text(
                       'Username: ${account.userName}',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     Text(
                       'Patient ID: ${account.patientId}',
-                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     Text(
                       '${account.age} years • ${account.gender}',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:niramoy_health_app/core/config/app_config.dart';
 import 'package:niramoy_health_app/core/di/injectable_container.dart';
+import 'package:niramoy_health_app/core/responsive/responsive_data.dart';
 
 import '../../../l10n.dart';
 import '../app/navigation/app_router_2.dart';
@@ -32,7 +33,10 @@ class _NiramoyAppState extends State<NiramoyApp> {
           WidgetsBinding.instance.platformDispatcher.locale.languageCode,
         ),
         builder: (context, child) {
-          return child!;
+          return ResponsiveData.fromMediaQuery(
+            mediaQuery: MediaQuery.of(context),
+            child: child!,
+          );
         },
       ),
     );

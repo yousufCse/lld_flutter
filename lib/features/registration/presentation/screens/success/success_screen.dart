@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:niramoy_health_app/core/app/logger/console_app_logger.dart';
 import 'package:niramoy_health_app/core/app/navigation/route_names.dart';
+import 'package:niramoy_health_app/core/presentation/widgets/gap.dart';
+import 'package:niramoy_health_app/core/resources/app_sizes.dart';
+import 'package:niramoy_health_app/core/responsive/responsive.dart';
 
 import '../../../domain/entities/account_completion_entity.dart';
 
@@ -20,65 +23,70 @@ class CongratulationScreen extends StatelessWidget {
     logger.i(
       'Congratulation Screen build: with userName: ${completionData.userName}',
     );
+    final theme = Theme.of(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EdgeInsets.all(context.scaled(AppSizes.screenPadding)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Icon(Icons.check_circle, size: 100, color: Colors.green),
-              SizedBox(height: 24),
+              Icon(
+                Icons.check_circle,
+                size: context.scaled(AppSizes.space100),
+                color: Colors.green,
+              ),
+              Gap.vertical(context.scaled(AppSizes.space24)),
               Text(
                 'Registration Successful!',
-                style: Theme.of(context).textTheme.headlineMedium,
+                style: theme.textTheme.headlineMedium,
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 16),
+              Gap.vertical(context.scaled(AppSizes.space16)),
               Text(
                 'Welcome, ${completionData.userName}',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: theme.textTheme.titleLarge,
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 8),
+              Gap.vertical(context.scaled(AppSizes.space8)),
               Text(
                 'Patient ID: ${completionData.patientId}',
-                style: Theme.of(context).textTheme.bodyLarge,
+                style: theme.textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 32),
+              Gap.vertical(context.scaled(AppSizes.space32)),
               if (completionData.credentials.mustChangePassword)
                 Card(
                   color: Colors.orange[50],
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(
+                      context.scaled(AppSizes.space16),
+                    ),
                     child: Column(
                       children: [
                         Row(
                           children: [
                             Icon(Icons.warning_amber, color: Colors.orange),
-                            SizedBox(width: 8),
+                            Gap.horizontal(context.scaled(AppSizes.space8)),
                             Expanded(
                               child: Text(
                                 'Temporary Password',
-                                style: TextStyle(
+                                style: theme.textTheme.titleSmall?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 12),
+                        Gap.vertical(context.scaled(AppSizes.space12)),
                         Row(
                           children: [
                             Expanded(
                               child: SelectableText(
                                 completionData.credentials.temporaryPassword,
-                                style: TextStyle(
+                                style: theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 20,
                                   letterSpacing: 2,
                                 ),
                               ),
@@ -105,11 +113,10 @@ class CongratulationScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 8),
+                        Gap.vertical(context.scaled(AppSizes.space8)),
                         Text(
                           'Please save this password. You will need to change it on first login.',
-                          style: TextStyle(
-                            fontSize: 12,
+                          style: theme.textTheme.bodySmall?.copyWith(
                             color: Colors.orange[900],
                           ),
                           textAlign: TextAlign.center,
@@ -118,14 +125,16 @@ class CongratulationScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-              SizedBox(height: 32),
+              Gap.vertical(context.scaled(AppSizes.space32)),
               ElevatedButton(
                 onPressed: () => onContinue(context),
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.all(
+                    context.scaled(AppSizes.space16),
+                  ),
                   child: Text(
                     'Continue to Login',
-                    style: TextStyle(fontSize: 16),
+                    style: theme.textTheme.bodyLarge,
                   ),
                 ),
               ),
