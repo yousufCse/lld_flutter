@@ -1,103 +1,176 @@
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_exercise/core/network/interceptors/auth_interceptor.dart';
+import 'package:flutter_exercise/core/network/interceptors/error_interceptor.dart';
+import 'package:flutter_exercise/core/utils/constants.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-import '../../res/visual_strings/app_strings.dart';
-import '../error/exceptions.dart';
-import '../storage/token_storage.dart';
-import 'token_refresh_interceptor.dart';
-
-@lazySingleton
+/// API Client setup using Dio
+/// Provides a configured Dio instance with interceptors
 class ApiClient {
-  final Dio dio;
-  final TokenStorage tokenStorage;
-  static const String baseUrl = 'https://umrtest.com/DhanvantariAuthApi/api/v1';
+  late final Dio _dio;
 
-  ApiClient(this.dio, this.tokenStorage) {
-    // Set the base URL for the API
-    dio.options.baseUrl = baseUrl;
+  ApiClient() {
+    _dio = Dio(_baseOptions);
+    _setupInterceptors();
+  }
 
-    // Add interceptor for authentication
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          final token = await tokenStorage.getToken();
-          if (token?.accessToken != null) {
-            options.headers['Authorization'] = 'Bearer ${token!.accessToken}';
-          }
-          return handler.next(options);
+  /// Base options for Dio
+  BaseOptions get _baseOptions => BaseOptions(
+        baseUrl: AppConstants.baseUrl,
+        connectTimeout: AppConstants.connectionTimeout,
+        receiveTimeout: AppConstants.receiveTimeout,
+        sendTimeout: AppConstants.sendTimeout,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-      ),
-    );
-
-    // Add token refresh interceptor
-    dio.interceptors.add(
-      TokenRefreshInterceptor(
-        dio: dio,
-        tokenStorage: tokenStorage,
-        baseUrl: baseUrl,
-      ),
-    );
-  }
-
-  Future<dynamic> get(String url) async {
-    try {
-      final response = await dio.get(url);
-      return _processResponse(response);
-    } on DioException catch (e) {
-      _handleDioError(e);
-    }
-  }
-
-  Future<dynamic> post(String url, {Map<String, dynamic>? data}) async {
-    try {
-      final response = await dio.post(url, data: data);
-      return _processResponse(response);
-    } on DioException catch (e) {
-      _handleDioError(e);
-    }
-  }
-
-  Future<dynamic> put(String url, {Map<String, dynamic>? data}) async {
-    try {
-      final response = await dio.put(url, data: data);
-      return _processResponse(response);
-    } on DioException catch (e) {
-      _handleDioError(e);
-    }
-  }
-
-  dynamic _processResponse(Response response) {
-    switch (response.statusCode) {
-      case 200:
-        return response.data;
-      case 400:
-        throw ServerException(message: ErrorStrings.badRequest);
-      case 401:
-        throw ServerException(message: ErrorStrings.unauthorized);
-      case 403:
-        throw ServerException(message: ErrorStrings.forbidden);
-      case 404:
-        throw ServerException(message: ErrorStrings.notFound);
-      case 500:
-        throw ServerException(message: ErrorStrings.internalServerError);
-      default:
-        throw ServerException(
-          message: '${ErrorStrings.statusCodeError}: ${response.statusCode}',
-        );
-    }
-  }
-
-  void _handleDioError(DioException error) {
-    if (error.type == DioExceptionType.connectionTimeout ||
-        error.type == DioExceptionType.receiveTimeout ||
-        error.type == DioExceptionType.sendTimeout) {
-      throw NetworkException(message: ErrorStrings.connectionTimeout);
-    } else if (error.type == DioExceptionType.connectionError) {
-      throw NetworkException(message: ErrorStrings.noInternetConnection);
-    } else {
-      throw ServerException(
-        message: error.message ?? ErrorStrings.unknownError,
       );
-    }
+
+  /// Setup interceptors for the Dio instance
+  void _setupInterceptors() {
+    _dio.interceptors.addAll([
+      // Auth interceptor for adding tokens
+      AuthInterceptor(),
+
+      // Error handling interceptor
+      ErrorInterceptor(),
+
+      // Logging interceptor (only in debug mode)
+      if (kDebugMode)
+        PrettyDioLogger(
+          requestHeader: true,
+          requestBody: true,
+          responseBody: true,
+          responseHeader: false,
+          error: true,
+          compact: true,
+          maxWidth: 90,
+        ),
+    ]);
+  }
+
+  /// Get the Dio instance
+  Dio get dio => _dio;
+
+  /// GET request
+  Future<Response<T>> get<T>(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    return _dio.get<T>(
+      path,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    );
+  }
+
+  /// POST request
+  Future<Response<T>> post<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    return _dio.post<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    );
+  }
+
+  /// PUT request
+  Future<Response<T>> put<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    return _dio.put<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    );
+  }
+
+  /// PATCH request
+  Future<Response<T>> patch<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    return _dio.patch<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    );
+  }
+
+  /// DELETE request
+  Future<Response<T>> delete<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    return _dio.delete<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    );
+  }
+
+  /// Upload file
+  Future<Response<T>> upload<T>(
+    String path, {
+    required FormData formData,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    void Function(int, int)? onSendProgress,
+  }) async {
+    return _dio.post<T>(
+      path,
+      data: formData,
+      queryParameters: queryParameters,
+      options: options ?? Options(contentType: 'multipart/form-data'),
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+    );
+  }
+
+  /// Download file
+  Future<Response> download(
+    String urlPath,
+    String savePath, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    void Function(int, int)? onReceiveProgress,
+  }) async {
+    return _dio.download(
+      urlPath,
+      savePath,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+      onReceiveProgress: onReceiveProgress,
+    );
   }
 }

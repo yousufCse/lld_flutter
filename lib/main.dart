@@ -1,58 +1,90 @@
-// ignore_for_file: avoid_print
+import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lld_flutter/core/env/app_env.dart';
-import 'package:lld_flutter/features/dashboard/presentation/cubit/dashboard_cubit.dart';
-import 'package:lld_flutter/features/vital_signs/presentation/cubit/vital_sign_cubit.dart';
 
-import 'core/di/injection_container.dart' as di;
-import 'core/router/app_router.dart';
-import 'core/router/app_routes.dart';
-import 'features/auth/presentation/cubit/auth_cubit.dart';
-import 'features/auth/presentation/cubit/auth_state.dart';
+import 'app.dart';
+import 'core/di/injection.dart';
+import 'core/utils/helpers.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  final currentEnv = AppEnv.currentEnv;
-  await di.configureDependencies(environment: currentEnv);
-
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+/// BLoC observer for debugging
+class AppBlocObserver extends BlocObserver {
+  @override
+  void onCreate(BlocBase bloc) {
+    super.onCreate(bloc);
+    logger.d('onCreate -- ${bloc.runtimeType}');
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthCubit>(create: (_) => di.sl<AuthCubit>()),
-        BlocProvider<DashboardCubit>(create: (_) => di.sl<DashboardCubit>()),
-        BlocProvider<VitalSignCubit>(create: (_) => di.sl<VitalSignCubit>()),
-      ],
-      child: BlocConsumer<AuthCubit, AuthState>(
-        listener: (context, state) {
-          state.maybeMap(
-            initial: (_) {
-              // Handle logout if needed (initial state is used after logout)
-            },
-            orElse: () {},
-          );
-        },
-        builder: (context, state) {
-          return MaterialApp(
-            title: 'Dhanvantari Auth App',
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.amber),
-              useMaterial3: true,
-            ),
-            initialRoute: AppRoutes.login,
-            onGenerateRoute: AppRouter.generateRoute,
-          );
-        },
-      ),
-    );
+  void onChange(BlocBase bloc, Change change) {
+    super.onChange(bloc, change);
+    logger.d('onChange -- ${bloc.runtimeType}, $change');
   }
+
+  @override
+  void onError(BlocBase bloc, Object error, StackTrace stackTrace) {
+    logger.e('onError -- ${bloc.runtimeType}',
+        error: error, stackTrace: stackTrace);
+    super.onError(bloc, error, stackTrace);
+  }
+
+  @override
+  void onClose(BlocBase bloc) {
+    super.onClose(bloc);
+    logger.d('onClose -- ${bloc.runtimeType}');
+  }
+}
+
+Future<void> main() async {
+  // Catch all errors in the Flutter framework
+  await runZonedGuarded<Future<void>>(
+    () async {
+      // Ensure Flutter is initialized
+      WidgetsFlutterBinding.ensureInitialized();
+
+      // Set preferred orientations
+      await SystemChrome.setPreferredOrientations([
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
+
+      // Set system UI overlay style
+      SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
+      );
+
+      // Initialize dependencies
+      await initializeDependencies();
+
+      // Set up BLoC observer for debugging
+      if (kDebugMode) {
+        Bloc.observer = AppBlocObserver();
+      }
+
+      // Handle Flutter errors
+      FlutterError.onError = (FlutterErrorDetails details) {
+        logger.e(
+          'Flutter Error',
+          error: details.exception,
+          stackTrace: details.stack,
+        );
+        // In production, you might want to send this to a crash reporting service
+      };
+
+      // Run the app
+      runApp(const App());
+    },
+    (error, stackTrace) {
+      // Handle errors that occur outside Flutter's error handling
+      logger.e('Unhandled error', error: error, stackTrace: stackTrace);
+      // In production, you might want to send this to a crash reporting service
+    },
+  );
 }
