@@ -1,176 +1,314 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_exercise/core/network/interceptors/auth_interceptor.dart';
-import 'package:flutter_exercise/core/network/interceptors/error_interceptor.dart';
-import 'package:flutter_exercise/core/utils/constants.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:flutter_exercise/core/error/app_exceptions.dart';
 
-/// API Client setup using Dio
-/// Provides a configured Dio instance with interceptors
 class ApiClient {
-  late final Dio _dio;
+  final Dio _dio;
 
-  ApiClient() {
-    _dio = Dio(_baseOptions);
-    _setupInterceptors();
-  }
+  ApiClient({required Dio dio}) : _dio = dio;
 
-  /// Base options for Dio
-  BaseOptions get _baseOptions => BaseOptions(
-        baseUrl: AppConstants.baseUrl,
-        connectTimeout: AppConstants.connectionTimeout,
-        receiveTimeout: AppConstants.receiveTimeout,
-        sendTimeout: AppConstants.sendTimeout,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
+  /// Generic GET request
+  Future<T> get<T>({
+    required String endpoint,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    required T Function(dynamic json) fromJson,
+  }) async {
+    try {
+      final response = await _dio.get(
+        endpoint,
+        queryParameters: queryParameters,
+        options: options,
       );
 
-  /// Setup interceptors for the Dio instance
-  void _setupInterceptors() {
-    _dio.interceptors.addAll([
-      // Auth interceptor for adding tokens
-      AuthInterceptor(),
-
-      // Error handling interceptor
-      ErrorInterceptor(),
-
-      // Logging interceptor (only in debug mode)
-      if (kDebugMode)
-        PrettyDioLogger(
-          requestHeader: true,
-          requestBody: true,
-          responseBody: true,
-          responseHeader: false,
-          error: true,
-          compact: true,
-          maxWidth: 90,
-        ),
-    ]);
+      return fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw ServerException('Unexpected error: ${e.toString()}');
+    }
   }
 
-  /// Get the Dio instance
-  Dio get dio => _dio;
-
-  /// GET request
-  Future<Response<T>> get<T>(
-    String path, {
+  /// Generic POST request
+  Future<T> post<T>({
+    required String endpoint,
+    dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
-    CancelToken? cancelToken,
+    required T Function(dynamic json) fromJson,
   }) async {
-    return _dio.get<T>(
-      path,
-      queryParameters: queryParameters,
-      options: options,
-      cancelToken: cancelToken,
-    );
+    try {
+      final response = await _dio.post(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      );
+
+      return fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw ServerException('Unexpected error: ${e.toString()}');
+    }
   }
 
-  /// POST request
-  Future<Response<T>> post<T>(
-    String path, {
+  /// Generic PUT request
+  Future<T> put<T>({
+    required String endpoint,
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    required T Function(dynamic json) fromJson,
+  }) async {
+    try {
+      final response = await _dio.put(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      );
+
+      return fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw ServerException('Unexpected error: ${e.toString()}');
+    }
+  }
+
+  /// Generic PATCH request
+  Future<T> patch<T>({
+    required String endpoint,
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
     CancelToken? cancelToken,
+    required T Function(dynamic json) fromJson,
   }) async {
-    return _dio.post<T>(
-      path,
-      data: data,
-      queryParameters: queryParameters,
-      options: options,
-      cancelToken: cancelToken,
-    );
+    try {
+      final response = await _dio.patch(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+      );
+
+      return fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw ServerException('Unexpected error: ${e.toString()}');
+    }
   }
 
-  /// PUT request
-  Future<Response<T>> put<T>(
-    String path, {
+  /// Generic DELETE request
+  Future<T> delete<T>({
+    required String endpoint,
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
-    CancelToken? cancelToken,
+    required T Function(dynamic json) fromJson,
   }) async {
-    return _dio.put<T>(
-      path,
-      data: data,
-      queryParameters: queryParameters,
-      options: options,
-      cancelToken: cancelToken,
-    );
+    try {
+      final response = await _dio.delete(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      );
+
+      return fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw ServerException('Unexpected error: ${e.toString()}');
+    }
   }
 
-  /// PATCH request
-  Future<Response<T>> patch<T>(
-    String path, {
+  /// For requests that don't return data (like delete operations)
+  Future<void> deleteWithoutResponse({
+    required String endpoint,
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
-    CancelToken? cancelToken,
   }) async {
-    return _dio.patch<T>(
-      path,
-      data: data,
-      queryParameters: queryParameters,
-      options: options,
-      cancelToken: cancelToken,
-    );
+    try {
+      await _dio.delete(
+        endpoint,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+      );
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw ServerException('Unexpected error: ${e.toString()}');
+    }
   }
 
-  /// DELETE request
-  Future<Response<T>> delete<T>(
-    String path, {
-    dynamic data,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
+  /// Upload file with multipart
+  Future<T> uploadFile<T>({
+    required String endpoint,
+    required String filePath,
+    required String fileKey,
+    Map<String, dynamic>? data,
+    ProgressCallback? onSendProgress,
+    required T Function(dynamic json) fromJson,
   }) async {
-    return _dio.delete<T>(
-      path,
-      data: data,
-      queryParameters: queryParameters,
-      options: options,
-      cancelToken: cancelToken,
-    );
+    try {
+      final formData = FormData.fromMap({
+        fileKey: await MultipartFile.fromFile(filePath),
+        ...?data,
+      });
+
+      final response = await _dio.post(
+        endpoint,
+        data: formData,
+        onSendProgress: onSendProgress,
+      );
+
+      return fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw ServerException('Unexpected error: ${e.toString()}');
+    }
   }
 
-  /// Upload file
-  Future<Response<T>> upload<T>(
-    String path, {
-    required FormData formData,
-    Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
-    void Function(int, int)? onSendProgress,
+  /// Upload multiple files
+  Future<T> uploadMultipleFiles<T>({
+    required String endpoint,
+    required List<String> filePaths,
+    required String fileKey,
+    Map<String, dynamic>? data,
+    ProgressCallback? onSendProgress,
+    required T Function(dynamic json) fromJson,
   }) async {
-    return _dio.post<T>(
-      path,
-      data: formData,
-      queryParameters: queryParameters,
-      options: options ?? Options(contentType: 'multipart/form-data'),
-      cancelToken: cancelToken,
-      onSendProgress: onSendProgress,
-    );
+    try {
+      final files = await Future.wait(
+        filePaths.map((path) => MultipartFile.fromFile(path)),
+      );
+
+      final formData = FormData.fromMap({fileKey: files, ...?data});
+
+      final response = await _dio.post(
+        endpoint,
+        data: formData,
+        onSendProgress: onSendProgress,
+      );
+
+      return fromJson(response.data);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw ServerException('Unexpected error: ${e.toString()}');
+    }
   }
 
-  /// Download file
-  Future<Response> download(
-    String urlPath,
-    String savePath, {
+  // Download file
+  Future<void> downloadFile({
+    required String endpoint,
+    required String savePath,
     Map<String, dynamic>? queryParameters,
-    Options? options,
-    CancelToken? cancelToken,
-    void Function(int, int)? onReceiveProgress,
+    ProgressCallback? onReceiveProgress,
   }) async {
-    return _dio.download(
-      urlPath,
-      savePath,
-      queryParameters: queryParameters,
-      options: options,
-      cancelToken: cancelToken,
-      onReceiveProgress: onReceiveProgress,
-    );
+    try {
+      await _dio.download(
+        endpoint,
+        savePath,
+        queryParameters: queryParameters,
+        onReceiveProgress: onReceiveProgress,
+      );
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    } catch (e) {
+      throw ServerException('Unexpected error: ${e.toString()}');
+    }
+  }
+
+  /// Handle Dio errors and throw appropriate exceptions
+  Exception _handleDioError(DioException error) {
+    switch (error.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        throw TimeoutException('Connection timeout. Please try again.');
+
+      case DioExceptionType.badResponse:
+        return _handleResponseError(error.response);
+
+      case DioExceptionType.connectionError:
+        throw const NetworkException('No internet connection');
+
+      case DioExceptionType.badCertificate:
+        throw const ServerException('Certificate verification failed');
+
+      case DioExceptionType.unknown:
+      default:
+        if (error.message?.contains('SocketException') ?? false) {
+          throw const NetworkException('No internet connection');
+        }
+        throw const ServerException('Unexpected error occurred');
+    }
+  }
+
+  /// Handle HTTP response errors
+  Exception _handleResponseError(Response? response) {
+    if (response == null) {
+      throw const ServerException('No response from server');
+    }
+
+    final errorMessage = _extractErrorMessage(response);
+
+    switch (response.statusCode) {
+      case 400:
+        throw ApiException(
+          message: errorMessage ?? 'Bad request',
+          statusCode: 400,
+        );
+      case 401:
+        throw AuthException(
+          errorMessage ?? 'Unauthorized. Please login again.',
+        );
+      case 403:
+        throw ApiException(
+          message: errorMessage ?? 'Access forbidden',
+          statusCode: 403,
+        );
+      case 404:
+        throw ApiException(
+          message: errorMessage ?? 'Resource not found',
+          statusCode: 404,
+        );
+      case 422:
+        throw ApiException(
+          message: errorMessage ?? 'Validation failed',
+          statusCode: 422,
+        );
+      case 500:
+        throw ServerException(errorMessage ?? 'Internal server error');
+      case 503:
+        throw ServerException(errorMessage ?? 'Service unavailable');
+      default:
+        throw ServerException(
+          errorMessage ?? 'Server error: ${response.statusCode}',
+        );
+    }
+  }
+
+  /// Extract error message from response
+  String? _extractErrorMessage(Response response) {
+    try {
+      final data = response.data;
+      if (data is Map<String, dynamic>) {
+        return data['message'] ?? data['error'] ?? data['msg'];
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 }

@@ -1,111 +1,86 @@
 import 'package:equatable/equatable.dart';
 
-/// Base class for all failures in the application
-/// Failures are returned from repositories to the domain layer
-/// They represent expected error states that the UI can handle
+/// Base failure class with equality comparison
 abstract class Failure extends Equatable {
   final String message;
-  final int? statusCode;
+  final String? code;
+  final Map<String, dynamic>? details;
 
-  const Failure({
-    required this.message,
-    this.statusCode,
-  });
+  const Failure({required this.message, this.code, this.details});
 
   @override
-  List<Object?> get props => [message, statusCode];
+  List<Object?> get props => [message, code, details];
 }
 
-/// Failure caused by server errors (5xx)
-class ServerFailure extends Failure {
-  const ServerFailure({
-    super.message = 'Server error occurred. Please try again later.',
-    super.statusCode,
-  });
+// Network Related Failures
+final class NetworkFailure extends Failure {
+  const NetworkFailure({String? message, String? code, super.details})
+    : super(
+        message: message ?? 'Network connection failed',
+        code: code ?? 'NETWORK_ERROR',
+      );
 }
 
-/// Failure caused by network connectivity issues
-class NetworkFailure extends Failure {
-  const NetworkFailure({
-    super.message = 'No internet connection. Please check your network.',
-    super.statusCode,
-  });
+// Server Related Failures
+final class ServerFailure extends Failure {
+  const ServerFailure({String? message, String? code, super.details})
+    : super(
+        message: message ?? 'Server error occurred',
+        code: code ?? 'SERVER_ERROR',
+      );
 }
 
-/// Failure caused by cache operations
-class CacheFailure extends Failure {
-  const CacheFailure({
-    super.message = 'Failed to load cached data.',
-    super.statusCode,
-  });
+// Authentication Failures
+final class AuthFailure extends Failure {
+  const AuthFailure({required super.message, String? code})
+    : super(code: code ?? 'AUTH_ERROR');
+
+  factory AuthFailure.unauthorized() =>
+      const AuthFailure(message: 'Unauthorized access', code: 'UNAUTHORIZED');
+
+  factory AuthFailure.sessionExpired() => const AuthFailure(
+    message: 'Session expired. Please login again',
+    code: 'SESSION_EXPIRED',
+  );
+
+  factory AuthFailure.invalidCredentials() => const AuthFailure(
+    message: 'Invalid email or password',
+    code: 'INVALID_CREDENTIALS',
+  );
 }
 
-/// Failure caused by authentication issues (401)
-class AuthFailure extends Failure {
-  const AuthFailure({
-    super.message = 'Authentication failed. Please login again.',
-    super.statusCode = 401,
-  });
+// Cache Related Failures
+final class CacheFailure extends Failure {
+  const CacheFailure({String? message})
+    : super(message: message ?? 'Cache operation failed', code: 'CACHE_ERROR');
 }
 
-/// Failure caused by authorization issues (403)
-class ForbiddenFailure extends Failure {
-  const ForbiddenFailure({
-    super.message = 'You do not have permission to access this resource.',
-    super.statusCode = 403,
-  });
+// Parsing Failures
+final class ParsingFailure extends Failure {
+  const ParsingFailure({String? message, super.details})
+    : super(message: message ?? 'Failed to parse data', code: 'PARSING_ERROR');
 }
 
-/// Failure caused by resource not found (404)
-class NotFoundFailure extends Failure {
-  const NotFoundFailure({
-    super.message = 'The requested resource was not found.',
-    super.statusCode = 404,
-  });
-}
+// API Failures
+final class ApiFailure extends Failure {
+  final int statusCode;
 
-/// Failure caused by validation errors (422)
-class ValidationFailure extends Failure {
-  final Map<String, List<String>>? errors;
-
-  const ValidationFailure({
-    super.message = 'Validation failed. Please check your input.',
-    super.statusCode = 422,
-    this.errors,
-  });
+  const ApiFailure({
+    required this.statusCode,
+    String? message,
+    String? code,
+    super.details,
+  }) : super(
+         message: message ?? 'API request failed',
+         code: code ?? 'API_ERROR_$statusCode',
+       );
 
   @override
-  List<Object?> get props => [message, statusCode, errors];
+  List<Object?> get props => [...super.props, statusCode];
 }
 
-/// Failure caused by timeout
-class TimeoutFailure extends Failure {
-  const TimeoutFailure({
-    super.message = 'Request timed out. Please try again.',
-    super.statusCode,
-  });
-}
-
-/// Failure for unexpected errors
-class UnexpectedFailure extends Failure {
-  const UnexpectedFailure({
-    super.message = 'An unexpected error occurred. Please try again.',
-    super.statusCode,
-  });
-}
-
-/// Failure caused by bad request (400)
-class BadRequestFailure extends Failure {
-  const BadRequestFailure({
-    super.message = 'Invalid request. Please check your input.',
-    super.statusCode = 400,
-  });
-}
-
-/// Failure caused by conflict (409)
-class ConflictFailure extends Failure {
-  const ConflictFailure({
-    super.message = 'A conflict occurred. The resource may already exist.',
-    super.statusCode = 409,
-  });
+// Custom Failures
+final class CustomFailure extends Failure {
+  const CustomFailure({required super.message, String? code, super.details})
+    : super(code: code ?? 'CUSTOM_ERROR');
 }
