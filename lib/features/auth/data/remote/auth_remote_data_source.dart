@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:injectable/injectable.dart';
 import 'package:niramoy_health_app/core/app/logger/console_app_logger.dart';
 import 'package:niramoy_health_app/core/di/injection_names.dart';
-import 'package:niramoy_health_app/core/error/app_exceptions.dart';
 import 'package:niramoy_health_app/core/network/api_client.dart';
 import 'package:niramoy_health_app/core/network/api_endpoints.dart';
 import 'package:niramoy_health_app/features/auth/data/models/login_request_model.dart';
+import '../../../../core/errors/errors.dart';
 import '../models/login_response.dart';
 import '../models/user_model.dart';
 

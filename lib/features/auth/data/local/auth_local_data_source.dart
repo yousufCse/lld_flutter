@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
-import 'package:niramoy_health_app/core/data/local/token_storage.dart';
-import 'package:niramoy_health_app/core/error/app_exceptions.dart';
 
+import '../../../../core/data/local/token_storage.dart';
+import '../../../../core/errors/errors.dart';
 import '../models/user_model.dart';
 
 abstract class AuthLocalDataSource {

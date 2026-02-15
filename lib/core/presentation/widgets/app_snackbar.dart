@@ -432,3 +432,25 @@ class _SnackbarContent extends StatelessWidget {
     );
   }
 }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Context Extensions
+// ═══════════════════════════════════════════════════════════════════════════
+
+extension SnackbarExtension on BuildContext {
+  void showSuccessSnackbar(String message, {AppSnackbarConfig? config}) {
+    AppSnackbar.showSuccess(this, message, config: config);
+  }
+
+  void showErrorSnackbar(String message, {AppSnackbarConfig? config}) {
+    AppSnackbar.showError(this, message, config: config);
+  }
+
+  void showWarningSnackbar(String message, {AppSnackbarConfig? config}) {
+    AppSnackbar.showWarning(this, message, config: config);
+  }
+
+  void showInfoSnackbar(String message, {AppSnackbarConfig? config}) {
+    AppSnackbar.showInfo(this, message, config: config);
+  }
+}

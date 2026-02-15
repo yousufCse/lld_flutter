@@ -2,8 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../app/logger/app_logger.dart';
 import '../constants/app_errors.dart';
-import '../error/exceptions/index.dart';
-import '../error/failures/index.dart';
+import '../errors/errors.dart';
 import '../network/network_info.dart';
 import '../types/type_defs.dart';
 

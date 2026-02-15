@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:injectable/injectable.dart';
 import 'package:niramoy_health_app/core/domain/usecase.dart';
-import '../../../../core/error/failures/failures.dart';
+import '../../../../core/errors/failures/failures.dart';
 import '../entities/auth_status_result.dart';
 import '../repositories/auth_repository.dart';
 

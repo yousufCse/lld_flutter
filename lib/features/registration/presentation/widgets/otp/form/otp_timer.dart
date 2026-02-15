@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:niramoy_health_app/core/presentation/widgets/index.dart';
+import 'package:niramoy_health_app/core/presentation/widgets/widgets.dart';
 import 'package:niramoy_health_app/core/resources/app_sizes.dart';
 import 'package:niramoy_health_app/features/registration/presentation/cubit/otp_form/otp_form_cubit.dart';
 

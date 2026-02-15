@@ -5,7 +5,7 @@ import 'package:niramoy_health_app/core/app/logger/console_app_logger.dart';
 import 'package:niramoy_health_app/core/app/navigation/route_names.dart';
 import 'package:niramoy_health_app/core/extensions/context_extensions.dart';
 import 'package:niramoy_health_app/core/extensions/datetime_extensions.dart';
-import 'package:niramoy_health_app/core/presentation/widgets/index.dart';
+import 'package:niramoy_health_app/core/presentation/widgets/widgets.dart';
 
 import '../../../domain/usecases/register_initiate_usecase.dart';
 import '../../cubit/form/registration_form_cubit.dart';

@@ -178,3 +178,43 @@ class AppDialog {
     };
   }
 }
+
+// ─── Context Extensions ──────────────────────────────────────────
+
+extension DialogExtension on BuildContext {
+  Future<void> showAlert({
+    required String title,
+    required String message,
+    String? confirmText,
+    DialogVariant variant = DialogVariant.info,
+  }) {
+    return AppDialog.alert(
+      this,
+      title: title,
+      message: message,
+      confirmText: confirmText,
+      variant: variant,
+    );
+  }
+
+  Future<bool> showConfirmDialog({
+    required String title,
+    required String message,
+    String? confirmText,
+    String? cancelText,
+    bool isDestructive = false,
+  }) {
+    return AppDialog.confirm(
+      this,
+      title: title,
+      message: message,
+      confirmText: confirmText,
+      cancelText: cancelText,
+      isDestructive: isDestructive,
+    );
+  }
+
+  void showLoadingDialog({String? message}) {
+    AppDialog.loading(this, message: message);
+  }
+}

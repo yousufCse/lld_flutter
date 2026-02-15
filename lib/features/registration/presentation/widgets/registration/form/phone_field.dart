@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:niramoy_health_app/core/presentation/widgets/app_text_field.dart';
-import 'package:niramoy_health_app/core/resources/index.dart';
+import 'package:niramoy_health_app/core/resources/resources.dart';
 import 'package:niramoy_health_app/features/registration/presentation/cubit/form/registration_form_cubit.dart';
 
 class PhoneField extends StatelessWidget {

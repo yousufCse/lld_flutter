@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:niramoy_health_app/core/presentation/widgets/index.dart';
-import 'package:niramoy_health_app/core/resources/index.dart';
+import 'package:niramoy_health_app/core/presentation/widgets/widgets.dart';
+import 'package:niramoy_health_app/core/resources/resources.dart';
 import 'package:niramoy_health_app/core/responsive/responsive.dart';
 
 import '../../cubit/form/registration_form_cubit.dart';
-import 'form/index.dart';
+import 'form/form.dart';
 
 class RegistrationContent extends StatelessWidget {
   const RegistrationContent({
@@ -22,9 +22,7 @@ class RegistrationContent extends StatelessWidget {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppSizes.space16),
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: context.screenHeight,
-        ),
+        constraints: BoxConstraints(minHeight: context.screenHeight),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,

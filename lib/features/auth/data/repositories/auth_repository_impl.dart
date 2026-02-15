@@ -5,7 +5,7 @@ import 'package:niramoy_health_app/core/types/type_defs.dart';
 import 'package:niramoy_health_app/features/auth/data/models/login_request/login_request_model.dart';
 import 'package:niramoy_health_app/features/auth/domain/usecase/login_usecase.dart';
 
-import '../../../../core/error/exceptions/index.dart';
+import '../../../../core/errors/errors.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../data_source/local/auth_local_data_source.dart';

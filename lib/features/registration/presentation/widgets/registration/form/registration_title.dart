@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:niramoy_health_app/core/resources/index.dart';
+import 'package:niramoy_health_app/core/resources/resources.dart';
 
 class RegistrationTitle extends StatelessWidget {
   const RegistrationTitle({super.key});

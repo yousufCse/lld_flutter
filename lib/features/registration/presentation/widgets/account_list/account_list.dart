@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:niramoy_health_app/core/presentation/widgets/index.dart';
-import 'package:niramoy_health_app/core/resources/index.dart';
+import 'package:niramoy_health_app/core/presentation/widgets/widgets.dart';
+import 'package:niramoy_health_app/core/resources/resources.dart';
 
 import '../../../domain/entities/account_verification_entity.dart';
 import 'account_list_item.dart';

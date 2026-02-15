@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:niramoy_health_app/core/app/logger/console_app_logger.dart';
 import 'package:niramoy_health_app/core/app/navigation/route_names.dart';
-import 'package:niramoy_health_app/core/presentation/widgets/index.dart';
+import 'package:niramoy_health_app/core/presentation/widgets/widgets.dart';
 import 'package:niramoy_health_app/features/registration/domain/entities/account_verification_entity.dart';
 import 'package:niramoy_health_app/features/registration/presentation/screens/account_list/account_list_route.dart';
 import 'package:niramoy_health_app/features/registration/presentation/widgets/account_list/account_list_content.dart';

@@ -2,7 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:logger/logger.dart';
-import 'package:niramoy_health_app/core/config/index.dart';
+import 'package:niramoy_health_app/core/config/config.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 @module

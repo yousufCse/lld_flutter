@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/app/navigation/route_names.dart';
-import '../../../../../core/presentation/widgets/index.dart';
+import '../../../../../core/presentation/widgets/widgets.dart';
 import '../../../../../core/resources/app_sizes.dart';
 import '../../../../../core/resources/strings/app_strings.dart';
 import '../../../../../core/responsive/responsive.dart';

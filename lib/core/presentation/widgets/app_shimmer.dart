@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import '../../extensions/index.dart';
+import '../../extensions/extensions.dart';
 import 'shimmer/app_shimmer_config.dart';
 import 'shimmer/shimmer_skeletons.dart';
 

@@ -4,7 +4,7 @@ import 'package:niramoy_health_app/core/data/local/token_storage.dart';
 import 'package:niramoy_health_app/core/di/injection_names.dart';
 import 'package:niramoy_health_app/core/network/base_config.dart';
 
-import '../../error/exceptions/index.dart';
+import '../../errors/errors.dart';
 import '../api_endpoints.dart';
 
 /// Interceptor to handle token refresh when a 401 Unauthorized response is received

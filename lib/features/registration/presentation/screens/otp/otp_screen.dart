@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:niramoy_health_app/core/app/logger/console_app_logger.dart';
 import 'package:niramoy_health_app/core/app/navigation/route_names.dart';
 import 'package:niramoy_health_app/core/extensions/context_extensions.dart';
-import 'package:niramoy_health_app/core/presentation/widgets/index.dart';
+import 'package:niramoy_health_app/core/presentation/widgets/widgets.dart';
 import 'package:niramoy_health_app/features/registration/domain/usecases/otp_resend_usecase.dart';
 
 import '../../../domain/entities/account_completion_entity.dart';

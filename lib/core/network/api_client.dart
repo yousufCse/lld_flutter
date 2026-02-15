@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 
 import '../app/logger/console_app_logger.dart';
 import '../constants/app_errors.dart';
-import '../error/exceptions/index.dart';
+import '../errors/errors.dart';
 
 class ApiClient {
   final Dio _dio;
