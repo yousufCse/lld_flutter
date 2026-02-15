@@ -1,108 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_exercise/core/config/app_config.dart';
-import 'package:flutter_exercise/core/router/route_names.dart';
-import 'package:flutter_exercise/core/services/storage_service.dart';
-import 'package:flutter_exercise/core/theme/cubit/theme_cubit.dart';
-import 'package:flutter_exercise/core/theme/extensions/app_spacing.dart';
-import 'package:flutter_exercise/core/utils/app_logger/app_logger.dart';
-import 'package:flutter_exercise/features/home/presentation/cubit/cubit/random_face_cubit.dart';
-import 'package:go_router/go_router.dart';
+import 'package:niramoy_health_app/core/app/logger/app_logger.dart';
+import 'package:niramoy_health_app/core/presentation/widgets/app_dialog.dart';
+import 'package:niramoy_health_app/core/resources/app_sizes.dart';
+import 'package:niramoy_health_app/core/resources/strings/app_strings.dart';
+import 'package:niramoy_health_app/features/auth/presentation/cubits/auth/auth_cubit.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({
-    super.key,
-    required this.storageService,
-    required this.appLogger,
-  });
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key, required this.logger, required this.authState});
 
-  final StorageService storageService;
-  final AppLogger appLogger;
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  AppLogger get appLogger => widget.appLogger;
-  StorageService get storageService => widget.storageService;
-  ThemeCubit get themeCubit => context.read<ThemeCubit>();
-  RandomFaceCubit get randomFaceCubit => context.read<RandomFaceCubit>();
-
-  @override
-  initState() {
-    super.initState();
-
-    appLogger.i('HomeScreen initialized');
-    appLogger.w('Flavor: ${AppConfig.instance.flavor.name}');
-  }
+  final AppLogger logger;
+  final AuthState authState;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final spacing = theme.extension<AppSpacing>()!;
+    logger.i(
+      'Building HomeScreen: Email=${authState.loginEntity?.data.user.phone} | Name=${authState.loginEntity?.data.user.name}',
+    );
     return Scaffold(
-      appBar: AppBar(title: Text(AppConfig.instance.appName)),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(spacing.medium),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                context.push(RouteNames.vitalSign);
-              },
-              child: const Text('Go to Vital Sign Screen'),
-            ),
-            SizedBox(height: spacing.large),
-            ElevatedButton(
-              onPressed: () {
-                context.push(RouteNames.themeShowcase);
-              },
-              child: const Text('Go to Theme Showcase Screen'),
-            ),
-            SizedBox(height: spacing.large),
-
-            ElevatedButton(
-              onPressed: () async {
-                randomFaceCubit.fetchRandomFace();
-                final int counter = await storageService.getInt('counter') ?? 0;
-                await storageService.saveInt('counter', counter + 1);
-              },
-              child: const Text('Fetch Data'),
-            ),
-            const SizedBox(height: 20),
-            BlocBuilder<RandomFaceCubit, RandomFaceState>(
-              builder: (context, state) {
-                if (state is RandomFaceInitial) {
-                  return const Text('Press the button to fetch data');
-                } else if (state is RandomFaceLoading) {
-                  return const CircularProgressIndicator();
-                } else if (state is RandomFaceError) {
-                  return Text(state.message);
-                }
-
-                return Column(
-                  children: [
-                    Text(
-                      state is RandomFaceLoaded
-                          ? state.entity.name.toString()
-                          : '0',
-                    ),
-                    const SizedBox(height: 10),
-                    Image.network(
-                      state is RandomFaceLoaded ? state.entity.imageUrl : '',
-                    ),
-                  ],
-                );
-              },
-            ),
-          ],
-        ),
+      appBar: AppBar(
+        title: const Text(AppStrings.home),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              final confirmed = await AppDialog.confirm(
+                context,
+                title: AppStrings.logout,
+                message: AppStrings.logoutConfirmation,
+                confirmText: AppStrings.logout,
+                isDestructive: true,
+              );
+              if (confirmed && context.mounted) {
+                context.read<AuthCubit>().logout();
+              }
+            },
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: const Icon(Icons.add),
+      body: BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, state) {
+          final theme = Theme.of(context);
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.home, size: 100, color: Colors.blue),
+                const SizedBox(height: AppSizes.space24),
+                Text(
+                  AppStrings.loginWelcome,
+                  style: theme.textTheme.headlineSmall,
+                ),
+                const SizedBox(height: AppSizes.space8),
+                Text(
+                  authState.loginEntity?.data.user.name ?? 'John Doe',
+                  style: theme.textTheme.bodyLarge!.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: AppSizes.space8),
+                Text(
+                  authState.loginEntity?.data.user.phone ?? 'dummy@example.com',
+                  style: theme.textTheme.bodyLarge!.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

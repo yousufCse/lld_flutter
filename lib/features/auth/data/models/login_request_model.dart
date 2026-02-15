@@ -1,10 +1,9 @@
-import 'package:flutter_exercise/core/domain/usecase.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'login_request_model.g.dart';
 
 @JsonSerializable(createToJson: false)
-class LoginRequestModel extends Params {
+class LoginRequestModel {
   final String loginId;
   final String pin;
   final String? latitude;

@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_exercise/core/error/app_exceptions.dart';
+
+import '../app/logger/console_app_logger.dart';
+import '../constants/app_errors.dart';
+import '../error/exceptions/index.dart';
 
 class ApiClient {
   final Dio _dio;
@@ -14,21 +17,14 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
     required T Function(dynamic json) fromJson,
-  }) async {
-    try {
-      final response = await _dio.get(
-        endpoint,
-        queryParameters: queryParameters,
-        options: options,
-      );
-
-      return fromJson(response.data);
-    } on DioException catch (e) {
-      throw _handleDioError(e);
-    } catch (e) {
-      throw ServerException('Unexpected error: ${e.toString()}');
-    }
-  }
+  }) => _execute(() async {
+    final response = await _dio.get(
+      endpoint,
+      queryParameters: queryParameters,
+      options: options,
+    );
+    return _parseResponse(response.data, fromJson);
+  });
 
   /// Generic POST request
   Future<T> post<T>({
@@ -37,22 +33,15 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
     required T Function(dynamic json) fromJson,
-  }) async {
-    try {
-      final response = await _dio.post(
-        endpoint,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-      );
-
-      return fromJson(response.data);
-    } on DioException catch (e) {
-      throw _handleDioError(e);
-    } catch (e) {
-      throw ServerException('Unexpected error: ${e.toString()}');
-    }
-  }
+  }) => _execute(() async {
+    final response = await _dio.post(
+      endpoint,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
+    return _parseResponse(response.data, fromJson);
+  });
 
   /// Generic PUT request
   Future<T> put<T>({
@@ -61,22 +50,15 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
     required T Function(dynamic json) fromJson,
-  }) async {
-    try {
-      final response = await _dio.put(
-        endpoint,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-      );
-
-      return fromJson(response.data);
-    } on DioException catch (e) {
-      throw _handleDioError(e);
-    } catch (e) {
-      throw ServerException('Unexpected error: ${e.toString()}');
-    }
-  }
+  }) => _execute(() async {
+    final response = await _dio.put(
+      endpoint,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
+    return _parseResponse(response.data, fromJson);
+  });
 
   /// Generic PATCH request
   Future<T> patch<T>({
@@ -86,23 +68,16 @@ class ApiClient {
     Options? options,
     CancelToken? cancelToken,
     required T Function(dynamic json) fromJson,
-  }) async {
-    try {
-      final response = await _dio.patch(
-        endpoint,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-      );
-
-      return fromJson(response.data);
-    } on DioException catch (e) {
-      throw _handleDioError(e);
-    } catch (e) {
-      throw ServerException('Unexpected error: ${e.toString()}');
-    }
-  }
+  }) => _execute(() async {
+    final response = await _dio.patch(
+      endpoint,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+      cancelToken: cancelToken,
+    );
+    return _parseResponse(response.data, fromJson);
+  });
 
   /// Generic DELETE request
   Future<T> delete<T>({
@@ -111,22 +86,15 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
     required T Function(dynamic json) fromJson,
-  }) async {
-    try {
-      final response = await _dio.delete(
-        endpoint,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-      );
-
-      return fromJson(response.data);
-    } on DioException catch (e) {
-      throw _handleDioError(e);
-    } catch (e) {
-      throw ServerException('Unexpected error: ${e.toString()}');
-    }
-  }
+  }) => _execute(() async {
+    final response = await _dio.delete(
+      endpoint,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
+    return _parseResponse(response.data, fromJson);
+  });
 
   /// For requests that don't return data (like delete operations)
   Future<void> deleteWithoutResponse({
@@ -134,20 +102,14 @@ class ApiClient {
     dynamic data,
     Map<String, dynamic>? queryParameters,
     Options? options,
-  }) async {
-    try {
-      await _dio.delete(
-        endpoint,
-        data: data,
-        queryParameters: queryParameters,
-        options: options,
-      );
-    } on DioException catch (e) {
-      throw _handleDioError(e);
-    } catch (e) {
-      throw ServerException('Unexpected error: ${e.toString()}');
-    }
-  }
+  }) => _execute(() async {
+    await _dio.delete(
+      endpoint,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
+  });
 
   /// Upload file with multipart
   Future<T> uploadFile<T>({
@@ -157,26 +119,20 @@ class ApiClient {
     Map<String, dynamic>? data,
     ProgressCallback? onSendProgress,
     required T Function(dynamic json) fromJson,
-  }) async {
-    try {
-      final formData = FormData.fromMap({
-        fileKey: await MultipartFile.fromFile(filePath),
-        ...?data,
-      });
+  }) => _execute(() async {
+    final formData = FormData.fromMap({
+      fileKey: await MultipartFile.fromFile(filePath),
+      ...?data,
+    });
 
-      final response = await _dio.post(
-        endpoint,
-        data: formData,
-        onSendProgress: onSendProgress,
-      );
+    final response = await _dio.post(
+      endpoint,
+      data: formData,
+      onSendProgress: onSendProgress,
+    );
 
-      return fromJson(response.data);
-    } on DioException catch (e) {
-      throw _handleDioError(e);
-    } catch (e) {
-      throw ServerException('Unexpected error: ${e.toString()}');
-    }
-  }
+    return _parseResponse(response.data, fromJson);
+  });
 
   /// Upload multiple files
   Future<T> uploadMultipleFiles<T>({
@@ -186,128 +142,214 @@ class ApiClient {
     Map<String, dynamic>? data,
     ProgressCallback? onSendProgress,
     required T Function(dynamic json) fromJson,
-  }) async {
-    try {
-      final files = await Future.wait(
-        filePaths.map((path) => MultipartFile.fromFile(path)),
-      );
+  }) => _execute(() async {
+    final files = await Future.wait(
+      filePaths.map((path) => MultipartFile.fromFile(path)),
+    );
 
-      final formData = FormData.fromMap({fileKey: files, ...?data});
+    final formData = FormData.fromMap({fileKey: files, ...?data});
 
-      final response = await _dio.post(
-        endpoint,
-        data: formData,
-        onSendProgress: onSendProgress,
-      );
+    final response = await _dio.post(
+      endpoint,
+      data: formData,
+      onSendProgress: onSendProgress,
+    );
 
-      return fromJson(response.data);
-    } on DioException catch (e) {
-      throw _handleDioError(e);
-    } catch (e) {
-      throw ServerException('Unexpected error: ${e.toString()}');
-    }
-  }
+    return _parseResponse(response.data, fromJson);
+  });
 
-  // Download file
+  /// Download file
   Future<void> downloadFile({
     required String endpoint,
     required String savePath,
     Map<String, dynamic>? queryParameters,
     ProgressCallback? onReceiveProgress,
-  }) async {
+  }) => _execute(() async {
+    await _dio.download(
+      endpoint,
+      savePath,
+      queryParameters: queryParameters,
+      onReceiveProgress: onReceiveProgress,
+    );
+  });
+
+  // ==================== Helper Methods ====================
+
+  /// Centralized error handling wrapper for all API operations.
+  Future<T> _execute<T>(Future<T> Function() operation) async {
     try {
-      await _dio.download(
-        endpoint,
-        savePath,
-        queryParameters: queryParameters,
-        onReceiveProgress: onReceiveProgress,
-      );
+      return await operation();
     } on DioException catch (e) {
       throw _handleDioError(e);
-    } catch (e) {
-      throw ServerException('Unexpected error: ${e.toString()}');
+    } on AppException {
+      rethrow;
+    } catch (e, stackTrace) {
+      throw CustomException(
+        AppErrors.unknownError,
+        originalError: e,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  /// Parse response data with error handling
+  T _parseResponse<T>(dynamic data, T Function(dynamic json) fromJson) {
+    try {
+      return fromJson(data);
+    } catch (e, stackTrace) {
+      throw ParsingException(
+        AppErrors.parsingError,
+        data: data,
+        originalError: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
   /// Handle Dio errors and throw appropriate exceptions
-  Exception _handleDioError(DioException error) {
+  Never _handleDioError(DioException error) {
+    logger.e('DioException: ${error.message}', error, error.stackTrace);
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        throw TimeoutException('Connection timeout. Please try again.');
+        throw NetworkException(
+          AppErrors.timeout,
+          code: AppErrorCodes.timeout,
+          originalError: error,
+          stackTrace: error.stackTrace,
+        );
 
       case DioExceptionType.badResponse:
-        return _handleResponseError(error.response);
+        throw _handleResponseError(error.response);
 
       case DioExceptionType.connectionError:
-        throw const NetworkException('No internet connection');
+        throw NetworkException(
+          AppErrors.noInternet,
+          originalError: error,
+          stackTrace: error.stackTrace,
+        );
 
       case DioExceptionType.badCertificate:
-        throw const ServerException('Certificate verification failed');
+        throw ServerException(
+          AppErrors.serverError,
+          originalError: error,
+          stackTrace: error.stackTrace,
+        );
+
+      case DioExceptionType.cancel:
+        throw CustomException(
+          AppErrors.requestCancelled,
+          code: AppErrorCodes.customError,
+          originalError: error,
+          stackTrace: error.stackTrace,
+        );
 
       case DioExceptionType.unknown:
-      default:
         if (error.message?.contains('SocketException') ?? false) {
-          throw const NetworkException('No internet connection');
+          throw NetworkException(
+            AppErrors.noInternet,
+            originalError: error,
+            stackTrace: error.stackTrace,
+          );
         }
-        throw const ServerException('Unexpected error occurred');
+        throw ServerException(
+          AppErrors.unknownError,
+          originalError: error,
+          stackTrace: error.stackTrace,
+        );
     }
   }
 
   /// Handle HTTP response errors
-  Exception _handleResponseError(Response? response) {
+  AppException _handleResponseError(Response? response) {
     if (response == null) {
-      throw const ServerException('No response from server');
+      return const ServerException(AppErrors.serverError);
     }
 
-    final errorMessage = _extractErrorMessage(response);
+    final error = _extractField(response, 'error');
+    final message = _extractField(response, 'message');
 
+    final data = response.data is Map<String, dynamic>
+        ? response.data as Map<String, dynamic>?
+        : null;
+    logger.e(
+      '_handleResponseError: ${response.statusCode} - $message',
+      null,
+      StackTrace.current,
+    );
     switch (response.statusCode) {
       case 400:
-        throw ApiException(
-          message: errorMessage ?? 'Bad request',
-          statusCode: 400,
+        return ApiException.badRequest(
+          message ?? AppErrors.apiRequestFailed,
+          code: error,
+          data: data,
         );
+
       case 401:
-        throw AuthException(
-          errorMessage ?? 'Unauthorized. Please login again.',
-        );
+        return AuthException.unauthorized();
+
       case 403:
-        throw ApiException(
-          message: errorMessage ?? 'Access forbidden',
-          statusCode: 403,
-        );
+        return AuthException(message ?? AppErrors.unauthorized, code: error);
+
       case 404:
-        throw ApiException(
-          message: errorMessage ?? 'Resource not found',
-          statusCode: 404,
+        return ApiException.notFound(
+          message ?? AppErrors.notFound,
+          code: error,
+          data: data,
         );
+
       case 422:
-        throw ApiException(
-          message: errorMessage ?? 'Validation failed',
-          statusCode: 422,
+        return ApiException.validationFailed(
+          message ?? AppErrors.requiredField,
+          data: data,
+          code: error,
         );
+
+      case 429:
+        return ApiException.tooManyRequests(
+          message ?? AppErrors.tryAgain,
+          data: data,
+          code: error,
+        );
+
       case 500:
-        throw ServerException(errorMessage ?? 'Internal server error');
+        return ServerException(
+          message ?? AppErrors.serverError,
+          statusCode: 500,
+        );
+
+      case 502:
+        return ServerException(
+          message ?? AppErrors.badGateway,
+          statusCode: 502,
+        );
+
       case 503:
-        throw ServerException(errorMessage ?? 'Service unavailable');
+        return ServerException(
+          message ?? AppErrors.serviceUnavailable,
+          statusCode: 503,
+        );
+
+      case 504:
+        return ServerException(message ?? AppErrors.timeout, statusCode: 504);
+
       default:
-        throw ServerException(
-          errorMessage ?? 'Server error: ${response.statusCode}',
+        return ServerException(
+          message ?? AppErrors.serverError,
+          statusCode: response.statusCode,
         );
     }
   }
 
-  /// Extract error message from response
-  String? _extractErrorMessage(Response response) {
+  /// Extract a field value from response data
+  String? _extractField(Response response, String key) {
     try {
-      final data = response.data;
-      if (data is Map<String, dynamic>) {
-        return data['message'] ?? data['error'] ?? data['msg'];
+      if (response.data is Map<String, dynamic>) {
+        return response.data[key] as String?;
       }
       return null;
-    } catch (e) {
+    } catch (_) {
       return null;
     }
   }

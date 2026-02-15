@@ -4,6 +4,7 @@ class AppErrors {
 
   // Network Errors
   static const String noInternet = 'No internet connection';
+  static const String networkConnectionFailed = 'Network connection failed';
   static const String timeout = 'Request timeout. Please try again';
   static const String unknownNetwork = 'Network error occurred';
   static const String poorConnection = 'Poor internet connection';
@@ -36,10 +37,15 @@ class AppErrors {
   // Cache Errors
   static const String cacheError = 'Failed to load cached data';
   static const String cacheWriteError = 'Failed to save data locally';
+  static const String cacheOperationFailed = 'Cache operation failed';
+  static const String cacheDataNotFound = 'Data not found in cache';
 
   // Parsing Errors
   static const String parsingError = 'Failed to process data';
   static const String invalidDataFormat = 'Invalid data format received';
+
+  // API Errors
+  static const String apiRequestFailed = 'API request failed';
 
   // Generic Errors
   static const String unknownError = 'An unexpected error occurred';
@@ -64,18 +70,41 @@ class AppErrorCodes {
   AppErrorCodes._();
 
   // Network
-  static const String noInternet = 'NET_001';
-  static const String timeout = 'NET_002';
-  static const String unknownNetwork = 'NET_003';
+  static const String networkError = 'NETWORK_ERROR';
+  static const String noInternet = 'NO_INTERNET';
+  static const String timeout = 'TIMEOUT';
+  static const String unknownNetwork = 'UNKNOWN_NETWORK';
 
   // Server
-  static const String serverError = 'SRV_001';
-  static const String serviceUnavailable = 'SRV_002';
+  static const String serverError = 'SERVER_ERROR';
+  static const String serviceUnavailable = 'SERVICE_UNAVAILABLE';
 
   // Auth
-  static const String unauthorized = 'AUTH_001';
-  static const String sessionExpired = 'AUTH_002';
-  static const String invalidCredentials = 'AUTH_003';
+  static const String authError = 'AUTH_ERROR';
+  static const String unauthorized = 'UNAUTHORIZED';
+  static const String sessionExpired = 'SESSION_EXPIRED';
+  static const String invalidCredentials = 'INVALID_CREDENTIALS';
 
-  // Add more codes as needed
+  // Cache
+  static const String cacheError = 'CACHE_ERROR';
+  static const String cacheReadError = 'CACHE_READ_ERROR';
+  static const String cacheWriteError = 'CACHE_WRITE_ERROR';
+  static const String cacheNotFound = 'CACHE_NOT_FOUND';
+  static const String forbidden = 'FORBIDDEN';
+
+  // Parsing
+  static const String parsingError = 'PARSING_ERROR';
+
+  // API
+  static const String apiError = 'API_ERROR';
+  static const String badRequest = 'BAD_REQUEST';
+  static const String notFound = 'NOT_FOUND';
+  static const String validationError = 'VALIDATION_ERROR';
+  static const String conflict = 'CONFLICT';
+  static const String rateLimitExeeded = 'RATE_LIMIT_EXCEEDED';
+  static const String accountLocked = 'ACCOUNT_LOCKED';
+
+  // Custom
+  static const String unknownError = 'UNKNOWN_ERROR';
+  static const String customError = 'CUSTOM_ERROR';
 }

@@ -1,0 +1,58 @@
+{
+  "@@locale": "bn",
+  "@@last_modified": "2024-01-28T00:00:00.000Z",
+  
+  "app_title": "নিরাময় হেলথ",
+  "welcome": "স্বাগতম",
+  "login": "লগইন",
+  "logout": "লগআউট",
+  "password": "পাসওয়ার্ড",
+  "confirm_password": "পাসওয়ার্ড নিশ্চিত করুন",
+  "email": "ইমেল",
+  "phone_number": "ফোন নম্বর",
+  "submit": "জমা দিন",
+  "cancel": "বাতিল",
+  "ok": "ঠিক আছে",
+  "error": "ত্রুটি",
+  "success": "সফল",
+  "loading": "লোড হচ্ছে...",
+  "retry": "আবার চেষ্টা করুন",
+  
+  "error_no_internet": "ইন্টারনেট সংযোগ নেই। আপনার নেটওয়ার্ক সেটিংস চেক করুন।",
+  "error_something_went_wrong": "কিছু ভুল হয়েছে। আবার চেষ্টা করুন।",
+  "error_invalid_credentials": "অবৈধ ইমেল বা পাসওয়ার্ড।",
+  "error_session_expired": "আপনার সেশন শেষ হয়েছে। আবার লগইন করুন।",
+  
+  "vital_heart_rate": "হার্ট রেট",
+  "vital_blood_pressure": "রক্তচাপ",
+  "vital_temperature": "তাপমাত্রা",
+  "vital_weight": "ওজন",
+  "vital_glucose": "গ্লুকোজ",
+  
+  "profile": "প্রোফাইল",
+  "settings": "সেটিংস",
+  "home": "হোম",
+  "dashboard": "ড্যাশবোর্ড",
+  "my_health": "আমার স্বাস্থ্য",
+  "nutrition": "পুষ্টি",
+  "exercise": "ব্যায়াম",
+  "journal": "জার্নাল",
+  
+  "today": "আজ",
+  "yesterday": "গতকাল",
+  "this_week": "এই সপ্তাহ",
+  "this_month": "এই মাস",
+  
+  "no_data_available": "কোন ডেটা পাওয়া যায়নি",
+  "pull_to_refresh": "রিফ্রেশ করতে টানুন",
+  "load_more": "আরও লোড করুন",
+  
+  "notification": "বিজ্ঞপ্তি",
+  "notifications": "বিজ্ঞপ্তিসমূহ",
+  "mark_all_read": "সব পঠিত হিসেবে চিহ্নিত করুন",
+  
+  "terms_and_conditions": "শর্তাবলী এবং শর্তসমূহ",
+  "privacy_policy": "গোপনীয়তা নীতি",
+  "agree": "আমি সম্মতি",
+  "disagree": "আমি অসম্মতি"
+}

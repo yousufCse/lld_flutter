@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_exercise/core/utils/app_logger/app_logger.dart';
 
+import '../app/logger/app_logger.dart';
 import '../constants/app_errors.dart';
-import '../error/app_exceptions.dart';
-import '../error/failures.dart';
+import '../error/exceptions/index.dart';
+import '../error/failures/index.dart';
 import '../network/network_info.dart';
-import '../utils/type_defs.dart';
+import '../types/type_defs.dart';
 
 /// Base repository for handling exceptions and converting them to failures
 abstract class BaseRepository {
@@ -97,10 +97,7 @@ abstract class BaseRepository {
 
   Failure _mapCustomException(Object e, StackTrace stackTrace) {
     _logError('CustomException: $e', e, stackTrace);
-    return const CustomFailure(
-      code: 'CUSTOM_ERROR',
-      message: 'An unexpected error occurred',
-    );
+    return CustomFailure(message: e.toString(), code: 'UNKNOWN_ERROR');
   }
 
   // ==================== Logging ====================

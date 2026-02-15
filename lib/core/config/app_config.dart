@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_exercise/core/config/env_config.dart';
-import 'package:flutter_exercise/core/config/flavor_config.dart';
+
+import '../app/theme/app_colors.dart';
+import '../app/theme/app_theme.dart';
+import 'env_config.dart';
+import 'flavor_config.dart';
 
 class AppConfig {
   final Flavor flavor;
   final String appName;
   final String apiBaseUrl;
   final ThemeData theme;
+  final bool isLoggingEnabled;
 
   AppConfig._({
     required this.flavor,
     required this.appName,
     required this.apiBaseUrl,
     required this.theme,
+    required this.isLoggingEnabled,
   });
 
   static AppConfig? _instance;
@@ -25,16 +30,14 @@ class AppConfig {
       flavor: flavor,
       appName: EnvConfig.appName,
       apiBaseUrl: EnvConfig.apiBaseUrl,
-      theme: _getThemeForFlavor,
+      theme: buildAppTheme(_seedColor),
+      isLoggingEnabled: EnvConfig.enableLogging,
     );
   }
 
-  static ThemeData get _getThemeForFlavor {
-    switch (EnvConfig.flavor) {
-      case Flavor.dev:
-        return ThemeData(primarySwatch: Colors.blue);
-      case Flavor.prod:
-        return ThemeData(primarySwatch: Colors.green);
-    }
-  }
+  static Color get _seedColor => switch (EnvConfig.flavor) {
+    Flavor.dev => AppColors.seedDev,
+    Flavor.prod => AppColors.seedProd,
+    Flavor.staging => AppColors.seedStaging,
+  };
 }

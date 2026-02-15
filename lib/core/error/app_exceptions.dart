@@ -1,3 +1,5 @@
+import '../constants/app_errors.dart';
+
 /// Base exception class for all custom exceptions
 abstract class AppException implements Exception {
   final String message;
@@ -26,7 +28,7 @@ class NetworkException extends AppException {
     String? code,
     super.originalError,
     super.stackTrace,
-  }) : super(message: message, code: code ?? 'NETWORK_ERROR');
+  }) : super(message: message, code: code ?? AppErrorCodes.networkError);
 
   @override
   String toString() => 'NetworkException: $message';
@@ -44,7 +46,7 @@ class ServerException extends AppException {
     String? code,
     super.originalError,
     super.stackTrace,
-  }) : super(message: message, code: code ?? 'SERVER_ERROR');
+  }) : super(message: message, code: code ?? AppErrorCodes.serverError);
 
   @override
   String toString() =>
@@ -60,21 +62,21 @@ class AuthException extends AppException {
     String? code,
     super.originalError,
     super.stackTrace,
-  }) : super(message: message, code: code ?? 'AUTH_ERROR');
+  }) : super(message: message, code: code ?? AppErrorCodes.authError);
 
   factory AuthException.unauthorized() => const AuthException(
-    'Unauthorized access. Please login again.',
-    code: 'UNAUTHORIZED',
+    AppErrors.unauthorized,
+    code: AppErrorCodes.unauthorized,
   );
 
   factory AuthException.sessionExpired() => const AuthException(
-    'Your session has expired. Please login again.',
-    code: 'SESSION_EXPIRED',
+    AppErrors.sessionExpired,
+    code: AppErrorCodes.sessionExpired,
   );
 
   factory AuthException.invalidCredentials() => const AuthException(
-    'Invalid credentials provided.',
-    code: 'INVALID_CREDENTIALS',
+    AppErrors.invalidCredentials,
+    code: AppErrorCodes.invalidCredentials,
   );
 
   @override
@@ -93,10 +95,10 @@ class ParsingException extends AppException {
     String? code,
     super.originalError,
     super.stackTrace,
-  }) : super(message: message, code: code ?? 'PARSING_ERROR');
+  }) : super(message: message, code: code ?? AppErrorCodes.parsingError);
 
   factory ParsingException.fromData(dynamic data) =>
-      ParsingException('Failed to parse data', data: data);
+      ParsingException(AppErrors.parsingError, data: data);
 
   @override
   String toString() => 'ParsingException: $message';
@@ -109,20 +111,22 @@ class CacheException extends AppException {
     String? code,
     super.originalError,
     super.stackTrace,
-  }) : super(message: message, code: code ?? 'CACHE_ERROR');
+  }) : super(message: message, code: code ?? AppErrorCodes.cacheError);
 
   factory CacheException.readFailed() => const CacheException(
-    'Failed to read from cache',
-    code: 'CACHE_READ_ERROR',
+    AppErrors.cacheError,
+    code: AppErrorCodes.cacheReadError,
   );
 
   factory CacheException.writeFailed() => const CacheException(
-    'Failed to write to cache',
-    code: 'CACHE_WRITE_ERROR',
+    AppErrors.cacheWriteError,
+    code: AppErrorCodes.cacheWriteError,
   );
 
-  factory CacheException.notFound() =>
-      const CacheException('Data not found in cache', code: 'CACHE_NOT_FOUND');
+  factory CacheException.notFound() => const CacheException(
+    AppErrors.cacheDataNotFound,
+    code: AppErrorCodes.cacheNotFound,
+  );
 
   @override
   String toString() => 'CacheException: $message';
@@ -142,13 +146,19 @@ class ApiException extends AppException {
     String? code,
     super.originalError,
     super.stackTrace,
-  }) : super(code: code ?? 'API_ERROR');
+  }) : super(code: code ?? AppErrorCodes.apiError);
 
-  factory ApiException.badRequest(String message) =>
-      ApiException(message: message, statusCode: 400, code: 'BAD_REQUEST');
+  factory ApiException.badRequest(String message) => ApiException(
+    message: message,
+    statusCode: 400,
+    code: AppErrorCodes.badRequest,
+  );
 
-  factory ApiException.notFound(String message) =>
-      ApiException(message: message, statusCode: 404, code: 'NOT_FOUND');
+  factory ApiException.notFound(String message) => ApiException(
+    message: message,
+    statusCode: 404,
+    code: AppErrorCodes.notFound,
+  );
 
   factory ApiException.validationFailed(
     String message, {
@@ -156,7 +166,7 @@ class ApiException extends AppException {
   }) => ApiException(
     message: message,
     statusCode: 422,
-    code: 'VALIDATION_ERROR',
+    code: AppErrorCodes.validationError,
     responseData: data,
   );
 
@@ -173,7 +183,7 @@ class CustomException extends AppException {
     String? code,
     super.originalError,
     super.stackTrace,
-  }) : super(message: message, code: code ?? 'UNKNOWN_ERROR');
+  }) : super(message: message, code: code ?? AppErrorCodes.unknownError);
 
   @override
   String toString() => 'CustomException: $message';

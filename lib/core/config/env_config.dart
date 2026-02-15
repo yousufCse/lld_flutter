@@ -1,5 +1,6 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'env_keys.dart';
 import 'flavor_config.dart';
 
 class EnvConfig {
@@ -12,9 +13,10 @@ class EnvConfig {
     await dotenv.load(fileName: flavor.envFile);
   }
 
-  static String get apiBaseUrl => dotenv.env['API_BASE_URL'] ?? '';
-  static String get apiKey => dotenv.env['API_KEY'] ?? '';
+  static String get appName => dotenv.env[envKeyAppName] ?? '';
+  static String get apiBaseUrl => dotenv.env[envKeyApiBaseUrl] ?? '';
+  static String get apiKey => dotenv.env[envKeyApiKey] ?? '';
 
-  static String get appName => dotenv.env['APP_NAME'] ?? '';
-  static String get appVersion => dotenv.env['ENABLE_LOGGING'] ?? '';
+  static bool get enableLogging =>
+      (dotenv.env[envKeyEnableLogging] ?? 'false').toLowerCase() == 'true';
 }

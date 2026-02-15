@@ -1,11 +1,14 @@
-import 'package:dartz/dartz.dart';
+import 'package:niramoy_health_app/core/types/type_defs.dart';
 
-import '../../../../core/error/failures.dart';
-import '../../data/models/login_request_model.dart';
-import '../entities/token_entity.dart';
+import '../entities/user_entity.dart';
+import '../usecase/login_usecase.dart';
 
 abstract class AuthRepository {
-  Future<Either<Failure, TokenEntity>> login(LoginRequestModel loginRequest);
-
-  Future<Either<Failure, void>> logout();
+  Result<bool> login(LoginParams params);
+  Result<bool> logout();
+  Result<UserEntity> getCurrentUser();
+  Result<bool> isTokenValid();
+  Result<bool> refreshToken();
+  Result<bool> isFirstTimeLaunch();
+  Result<bool> completeOnboarding();
 }

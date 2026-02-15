@@ -1,0 +1,58 @@
+{
+  "@@locale": "en",
+  "@@last_modified": "2024-01-28T00:00:00.000Z",
+  
+  "app_title": "Niramoy Health",
+  "welcome": "Welcome",
+  "login": "Login",
+  "logout": "Logout",
+  "password": "Password",
+  "confirm_password": "Confirm Password",
+  "email": "Email",
+  "phone_number": "Phone Number",
+  "submit": "Submit",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "error": "Error",
+  "success": "Success",
+  "loading": "Loading...",
+  "retry": "Retry",
+  
+  "error_no_internet": "No internet connection. Please check your network settings.",
+  "error_something_went_wrong": "Something went wrong. Please try again.",
+  "error_invalid_credentials": "Invalid email or password.",
+  "error_session_expired": "Your session has expired. Please login again.",
+  
+  "vital_heart_rate": "Heart Rate",
+  "vital_blood_pressure": "Blood Pressure",
+  "vital_temperature": "Temperature",
+  "vital_weight": "Weight",
+  "vital_glucose": "Glucose",
+  
+  "profile": "Profile",
+  "settings": "Settings",
+  "home": "Home",
+  "dashboard": "Dashboard",
+  "my_health": "My Health",
+  "nutrition": "Nutrition",
+  "exercise": "Exercise",
+  "journal": "Journal",
+  
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "this_week": "This Week",
+  "this_month": "This Month",
+  
+  "no_data_available": "No data available",
+  "pull_to_refresh": "Pull to refresh",
+  "load_more": "Load More",
+  
+  "notification": "Notification",
+  "notifications": "Notifications",
+  "mark_all_read": "Mark All as Read",
+  
+  "terms_and_conditions": "Terms and Conditions",
+  "privacy_policy": "Privacy Policy",
+  "agree": "I Agree",
+  "disagree": "I Disagree"
+}

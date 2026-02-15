@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_exercise/core/network/api_client.dart';
 import 'package:injectable/injectable.dart';
+import 'package:niramoy_health_app/core/network/interceptors/refresh_token_interceptor.dart';
+import 'package:niramoy_health_app/core/network/interceptors/token_interceptor.dart';
 
+import '../../network/api_client.dart';
 import '../../network/base_config.dart';
 import '../injectable_container.dart';
 import '../injection_names.dart';
@@ -18,7 +20,10 @@ abstract class NetworkModule {
   @Named(InjectionNames.dioAuth)
   Dio get dioAuth {
     final dio = getIt<Dio>(instanceName: InjectionNames.dioSingleton);
-    // You can add interceptors or other configurations specific to authenticated requests here.
+    dio.interceptors.addAll([
+      getIt<TokenInterceptor>(),
+      getIt<RefreshTokenInterceptor>(),
+    ]);
     return dio;
   }
 

@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../constants/app_errors.dart';
+
 /// Base failure class with equality comparison
 abstract class Failure extends Equatable {
   final String message;
@@ -16,8 +18,8 @@ abstract class Failure extends Equatable {
 final class NetworkFailure extends Failure {
   const NetworkFailure({String? message, String? code, super.details})
     : super(
-        message: message ?? 'Network connection failed',
-        code: code ?? 'NETWORK_ERROR',
+        message: message ?? AppErrors.networkConnectionFailed,
+        code: code ?? AppErrorCodes.networkError,
       );
 }
 
@@ -25,40 +27,48 @@ final class NetworkFailure extends Failure {
 final class ServerFailure extends Failure {
   const ServerFailure({String? message, String? code, super.details})
     : super(
-        message: message ?? 'Server error occurred',
-        code: code ?? 'SERVER_ERROR',
+        message: message ?? AppErrors.serverError,
+        code: code ?? AppErrorCodes.serverError,
       );
 }
 
 // Authentication Failures
 final class AuthFailure extends Failure {
   const AuthFailure({required super.message, String? code})
-    : super(code: code ?? 'AUTH_ERROR');
+    : super(code: code ?? AppErrorCodes.authError);
 
-  factory AuthFailure.unauthorized() =>
-      const AuthFailure(message: 'Unauthorized access', code: 'UNAUTHORIZED');
+  factory AuthFailure.unauthorized() => const AuthFailure(
+    message: AppErrors.unauthorized,
+    code: AppErrorCodes.unauthorized,
+  );
 
   factory AuthFailure.sessionExpired() => const AuthFailure(
-    message: 'Session expired. Please login again',
-    code: 'SESSION_EXPIRED',
+    message: AppErrors.sessionExpired,
+    code: AppErrorCodes.sessionExpired,
   );
 
   factory AuthFailure.invalidCredentials() => const AuthFailure(
-    message: 'Invalid email or password',
-    code: 'INVALID_CREDENTIALS',
+    message: AppErrors.invalidCredentials,
+    code: AppErrorCodes.invalidCredentials,
   );
 }
 
 // Cache Related Failures
 final class CacheFailure extends Failure {
   const CacheFailure({String? message})
-    : super(message: message ?? 'Cache operation failed', code: 'CACHE_ERROR');
+    : super(
+        message: message ?? AppErrors.cacheOperationFailed,
+        code: AppErrorCodes.cacheError,
+      );
 }
 
 // Parsing Failures
 final class ParsingFailure extends Failure {
   const ParsingFailure({String? message, super.details})
-    : super(message: message ?? 'Failed to parse data', code: 'PARSING_ERROR');
+    : super(
+        message: message ?? AppErrors.parsingError,
+        code: AppErrorCodes.parsingError,
+      );
 }
 
 // API Failures
@@ -71,8 +81,8 @@ final class ApiFailure extends Failure {
     String? code,
     super.details,
   }) : super(
-         message: message ?? 'API request failed',
-         code: code ?? 'API_ERROR_$statusCode',
+         message: message ?? AppErrors.apiRequestFailed,
+         code: code ?? '${AppErrorCodes.apiError}_$statusCode',
        );
 
   @override
@@ -82,5 +92,5 @@ final class ApiFailure extends Failure {
 // Custom Failures
 final class CustomFailure extends Failure {
   const CustomFailure({required super.message, String? code, super.details})
-    : super(code: code ?? 'CUSTOM_ERROR');
+    : super(code: code ?? AppErrorCodes.customError);
 }
