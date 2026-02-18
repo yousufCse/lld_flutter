@@ -1,188 +1,133 @@
-# Flutter Flavor Implementation Guide
+# Flutter Flavor Setup Guide
 
-A comprehensive guide to implementing multi-environment (Dev, Staging, Production) configurations in Flutter with injectable dependency injection.
+A complete, production-ready guide to implementing multi-environment flavors (Dev, Staging, Production) in Flutter — covering Android, iOS, app icons, and injectable dependency injection.
+
+---
 
 ## Table of Contents
 
 1. [Overview](#overview)
 2. [Why Use Flavors?](#why-use-flavors)
-3. [Architecture](#architecture)
-4. [Step-by-Step Implementation](#step-by-step-implementation)
-5. [Android Configuration](#android-configuration)
-6. [iOS Configuration](#ios-configuration)
-7. [Injectable Integration](#injectable-integration)
-8. [Running & Building](#running--building)
-9. [Troubleshooting](#troubleshooting)
-10. [Best Practices](#best-practices)
+3. [Project Structure](#project-structure)
+4. [Step 1 — Dependencies](#step-1--dependencies)
+5. [Step 2 — Environment Files](#step-2--environment-files)
+6. [Step 3 — Dart Configuration Layer](#step-3--dart-configuration-layer)
+7. [Step 4 — Entry Points](#step-4--entry-points)
+8. [Step 5 — Android Setup](#step-5--android-setup)
+9. [Step 6 — iOS Setup](#step-6--ios-setup)
+10. [Step 7 — App Icons with flutter_launcher_icons](#step-7--app-icons-with-flutter_launcher_icons)
+11. [Step 8 — Injectable Integration](#step-8--injectable-integration)
+12. [Running & Building](#running--building)
+13. [VS Code Launch Configuration](#vs-code-launch-configuration)
+14. [Common Pitfalls & Fixes](#common-pitfalls--fixes)
+15. [Best Practices](#best-practices)
 
 ---
 
 ## Overview
 
-Flavors (also called build variants or schemes) allow you to create multiple versions of your app from a single codebase, each with different configurations, API endpoints, app names, and bundle identifiers.
+Flavors let you build multiple variants of your app from a single codebase — each with its own API endpoints, app name, bundle ID, and icon. You can install dev, staging, and prod simultaneously on the same device.
 
-### What You'll Achieve
+### What You'll Have
 
-- ✅ Three separate app versions: Dev, Staging, Production
-- ✅ Different API endpoints per environment
-- ✅ Different app names and icons
-- ✅ Separate bundle identifiers (install all versions simultaneously)
-- ✅ Environment-specific dependencies with injectable
-- ✅ Type-safe configuration management
+- Three separate app variants: Dev, Staging, Production
+- Different API endpoints, app names, and bundle identifiers
+- Flavor-specific app icons on both Android and iOS
+- Environment variables loaded from `.env.*` files
+- Injectable dependency injection scoped per environment
 
 ---
 
 ## Why Use Flavors?
 
-### Without Flavors ❌
+### Without Flavors
 
 ```dart
 void main() {
-  // Manual configuration changes
-  String apiUrl = 'https://dev-api.example.com'; // Must change manually!
-  bool debug = true; // Might forget to disable!
+  // Manually change this before every build 🤦
+  const apiUrl = 'https://dev-api.example.com';
   runApp(MyApp());
 }
 ```
 
-**Problems:**
-- Risk of deploying with wrong configuration
-- Can't install dev and prod versions together
-- Manual code changes required
-- Easy to make mistakes
+Problems: wrong config deployed to production, can't install both versions on one device, error-prone.
 
-### With Flavors ✅
+### With Flavors
 
-```dart
-// main_dev.dart - Always uses dev settings
-// main_staging.dart - Always uses staging settings
-// main_prod.dart - Always uses production settings
+```
+flutter run -t lib/main_dev.dart --flavor dev      # always dev
+flutter run -t lib/main_prod.dart --flavor prod    # always prod
 ```
 
-**Benefits:**
-- No manual configuration changes
-- Install all versions on one device
-- Automatic environment switching
-- Type-safe configuration
-- Reduced deployment errors
+The right config is locked to the right entry point. No manual changes.
 
 ---
 
-## Architecture
-
-### File Structure
+## Project Structure
 
 ```
-flutter_project/
-├── .env.dev                          # Dev environment variables
-├── .env.staging                      # Staging environment variables
-├── .env.prod                         # Production environment variables
-├── .env.example                      # Template for environment files
-├── .gitignore                        # Exclude sensitive env files
+your_app/
+├── flutter_launcher_icons-dev.yaml       # Icon config for dev
+├── flutter_launcher_icons-staging.yaml   # Icon config for staging
+├── flutter_launcher_icons-prod.yaml      # Icon config for prod
+├── .env.dev
+├── .env.staging
+├── .env.prod
 │
 ├── lib/
-│   ├── main_dev.dart                 # Dev entry point
-│   ├── main_staging.dart             # Staging entry point
-│   ├── main_prod.dart                # Production entry point
-│   ├── main_common.dart              # Shared initialization logic
-│   ├── app.dart                      # Root app widget
-│   │
+│   ├── main_dev.dart
+│   ├── main_staging.dart
+│   ├── main_prod.dart
+│   ├── main_common.dart
+│   ├── app.dart
 │   └── core/
-│       ├── config/
-│       │   ├── flavor_config.dart    # Flavor enum definition
-│       │   ├── env_config.dart       # Environment configuration
-│       │   └── app_config.dart       # App-wide configuration
-│       │
-│       ├── di/
-│       │   ├── injectable_container.dart
-│       │   ├── injection_names.dart
-│       │   └── modules/
-│       │       ├── external_module.dart
-│       │       └── network_module.dart
-│       │
-│       └── constants/
-│           ├── app_strings.dart
-│           ├── app_paddings.dart
-│           └── app_colors.dart
+│       └── config/
+│           ├── flavor_config.dart
+│           ├── env_config.dart
+│           └── app_config.dart
 │
 ├── android/
 │   └── app/
-│       ├── build.gradle              # Flavor configuration
+│       ├── build.gradle.kts              # Kotlin DSL (modern)
 │       └── src/
-│           ├── main/
-│           ├── dev/                  # Dev-specific resources
-│           ├── staging/              # Staging-specific resources
-│           └── prod/                 # Prod-specific resources
+│           ├── main/AndroidManifest.xml
+│           ├── dev/res/mipmap-*/         # Generated by flutter_launcher_icons
+│           ├── staging/res/mipmap-*/
+│           └── prod/res/mipmap-*/
 │
 └── ios/
     ├── Flutter/
-    │   ├── Dev.xcconfig              # Dev configuration
-    │   ├── Staging.xcconfig          # Staging configuration
-    │   └── Prod.xcconfig             # Production configuration
-    └── Runner.xcodeproj/
-        └── project.pbxproj           # Xcode configurations
-```
-
-### Data Flow
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  flutter run -t lib/main_dev.dart --flavor dev             │
-└─────────────────────────┬───────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────────┐
-│  main_dev.dart                                              │
-│  └─ AppConfig.initialize(Flavor.dev)                        │
-│     └─ Loads .env.dev                                       │
-│        └─ API: https://dev-api.example.com                  │
-│           └─ Logging: VERBOSE                               │
-└─────────────────────────┬───────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────────┐
-│  mainCommon(Flavor.dev)                                     │
-│  └─ configureDependencies(Flavor.dev)                       │
-│     └─ getIt.init(environment: 'dev')                       │
-│        └─ Injects @dev annotated services                   │
-│           └─ DevLogger (verbose, colorful)                  │
-│              └─ DevAnalytics (console only)                 │
-└─────────────────────────┬───────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────────┐
-│  runApp(MyApp())                                            │
-│  └─ Uses AppConfig.instance for settings                    │
-└─────────────────────────────────────────────────────────────┘
+    │   ├── Debug.xcconfig
+    │   └── Release.xcconfig
+    └── Runner/
+        ├── Info.plist
+        └── Assets.xcassets/
+            ├── AppIcon.appiconset/
+            ├── AppIcon-dev.appiconset/   # Generated by flutter_launcher_icons
+            ├── AppIcon-staging.appiconset/
+            └── AppIcon-prod.appiconset/
 ```
 
 ---
 
-## Step-by-Step Implementation
+## Step 1 — Dependencies
 
-### 1. Add Dependencies
-
-Update `pubspec.yaml`:
+### `pubspec.yaml`
 
 ```yaml
 dependencies:
   flutter:
     sdk: flutter
-  
-  # Dependency Injection
-  get_it: ^7.6.0
-  injectable: ^2.3.2
-  
-  # Environment Management
-  flutter_dotenv: ^5.1.0
-  
-  # Networking
-  dio: ^5.4.0
-  
-  # State Management
-  flutter_bloc: ^8.1.3
+  get_it: ^9.2.0
+  injectable: ^2.7.1
+  flutter_dotenv: ^6.0.0
+  dio: ^5.9.1
+  flutter_bloc: ^9.1.1
 
 dev_dependencies:
-  # Code Generation
-  build_runner: ^2.4.7
-  injectable_generator: ^2.4.1
+  build_runner: ^2.10.5
+  injectable_generator: ^2.12.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   assets:
@@ -191,73 +136,69 @@ flutter:
     - .env.prod
 ```
 
-Install dependencies:
-
 ```bash
 flutter pub get
 ```
 
 ---
 
-### 2. Create Environment Files
+## Step 2 — Environment Files
 
-#### `.env.dev`
+Create these in your project root. Add all three to `.gitignore`.
 
-```bash
+### `.env.dev`
+
+```
 APP_NAME=MyApp Dev
 API_BASE_URL=https://dev-api.example.com
-API_KEY=dev_api_key_12345
+API_KEY=dev_key_here
 ENABLE_LOGGING=true
-SENTRY_DSN=
 ```
 
-#### `.env.staging`
+### `.env.staging`
 
-```bash
+```
 APP_NAME=MyApp Staging
 API_BASE_URL=https://staging-api.example.com
-API_KEY=staging_api_key_67890
+API_KEY=staging_key_here
 ENABLE_LOGGING=true
-SENTRY_DSN=https://staging-sentry-dsn
 ```
 
-#### `.env.prod`
+### `.env.prod`
 
-```bash
+```
 APP_NAME=MyApp
 API_BASE_URL=https://api.example.com
-API_KEY=prod_api_key_secret
+API_KEY=prod_key_here
 ENABLE_LOGGING=false
-SENTRY_DSN=https://prod-sentry-dsn
 ```
 
-#### `.env.example` (Template)
+### `.env.example` (commit this one)
 
-```bash
+```
 APP_NAME=MyApp
 API_BASE_URL=https://api.example.com
-API_KEY=your_api_key_here
+API_KEY=your_key_here
 ENABLE_LOGGING=true
-SENTRY_DSN=
 ```
 
-#### Update `.gitignore`
+### `.gitignore`
 
-```bash
-# Environment files (exclude production secrets)
+```gitignore
 .env.dev
 .env.staging
 .env.prod
-
-# Keep example file
+# Keep the template
 !.env.example
 ```
 
 ---
 
-### 3. Create Flavor Configuration
+## Step 3 — Dart Configuration Layer
 
-#### `lib/core/config/flavor_config.dart`
+### `lib/core/config/flavor_config.dart`
+
+> **Note:** Dart 2.15+ enums already have a built-in `.name` getter. Do not redefine it.
 
 ```dart
 enum Flavor {
@@ -268,17 +209,6 @@ enum Flavor {
   bool get isDev => this == Flavor.dev;
   bool get isStaging => this == Flavor.staging;
   bool get isProd => this == Flavor.prod;
-
-  String get name {
-    switch (this) {
-      case Flavor.dev:
-        return 'dev';
-      case Flavor.staging:
-        return 'staging';
-      case Flavor.prod:
-        return 'prod';
-    }
-  }
 
   String get displayName {
     switch (this) {
@@ -304,264 +234,232 @@ enum Flavor {
 }
 ```
 
----
-
-### 4. Create Environment Configuration
-
-#### `lib/core/config/env_config.dart`
+### `lib/core/config/env_config.dart`
 
 ```dart
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_exercise/core/config/flavor_config.dart';
+import 'flavor_config.dart';
 
 class EnvConfig {
-  static Flavor? _currentFlavor;
-
-  static Flavor get flavor => _currentFlavor!;
+  static Flavor? _flavor;
+  static Flavor get flavor => _flavor!;
 
   static Future<void> initialize(Flavor flavor) async {
-    _currentFlavor = flavor;
+    _flavor = flavor;
     await dotenv.load(fileName: flavor.envFile);
   }
 
-  // API Configuration
   static String get apiBaseUrl => dotenv.env['API_BASE_URL'] ?? '';
   static String get apiKey => dotenv.env['API_KEY'] ?? '';
-
-  // App Configuration
   static String get appName => dotenv.env['APP_NAME'] ?? 'MyApp';
-  static bool get enableLogging => 
+  static bool get enableLogging =>
       dotenv.env['ENABLE_LOGGING']?.toLowerCase() == 'true';
-
-  // Third-party Services
-  static String get sentryDsn => dotenv.env['SENTRY_DSN'] ?? '';
-
-  // Feature Flags
-  static bool get isAnalyticsEnabled => !flavor.isDev;
-  static bool get isCrashReportingEnabled => flavor.isProd;
 }
 ```
 
----
-
-### 5. Create App Configuration
-
-#### `lib/core/config/app_config.dart`
+### `lib/core/config/app_config.dart`
 
 ```dart
-import 'package:flutter/material.dart';
-import 'package:flutter_exercise/core/config/env_config.dart';
-import 'package:flutter_exercise/core/config/flavor_config.dart';
+import 'env_config.dart';
+import 'flavor_config.dart';
 
 class AppConfig {
   final Flavor flavor;
   final String appName;
   final String apiBaseUrl;
   final bool enableLogging;
-  final ThemeData theme;
 
   AppConfig._({
     required this.flavor,
     required this.appName,
     required this.apiBaseUrl,
     required this.enableLogging,
-    required this.theme,
   });
 
   static AppConfig? _instance;
-
   static AppConfig get instance => _instance!;
 
   static Future<void> initialize(Flavor flavor) async {
     await EnvConfig.initialize(flavor);
-
     _instance = AppConfig._(
       flavor: flavor,
       appName: EnvConfig.appName,
       apiBaseUrl: EnvConfig.apiBaseUrl,
       enableLogging: EnvConfig.enableLogging,
-      theme: _getThemeForFlavor(flavor),
     );
   }
 
-  static ThemeData _getThemeForFlavor(Flavor flavor) {
-    switch (flavor) {
-      case Flavor.dev:
-        return ThemeData.light().copyWith(
-          primaryColor: Colors.green,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.green,
-            foregroundColor: Colors.white,
-          ),
-        );
-      case Flavor.staging:
-        return ThemeData.light().copyWith(
-          primaryColor: Colors.orange,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.orange,
-            foregroundColor: Colors.white,
-          ),
-        );
-      case Flavor.prod:
-        return ThemeData.light().copyWith(
-          primaryColor: Colors.blue,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.blue,
-            foregroundColor: Colors.white,
-          ),
-        );
-    }
-  }
-
-  bool get isProduction => flavor.isProd;
-  bool get isDevelopment => flavor.isDev;
+  bool get isDev => flavor.isDev;
   bool get isStaging => flavor.isStaging;
+  bool get isProd => flavor.isProd;
 }
 ```
 
 ---
 
-### 6. Create Entry Points
+## Step 4 — Entry Points
 
-#### `lib/main_dev.dart`
+### `lib/main_dev.dart`
 
 ```dart
-import 'package:flutter_exercise/core/config/app_config.dart';
-import 'package:flutter_exercise/core/config/flavor_config.dart';
-import 'package:flutter_exercise/main_common.dart';
+import 'core/config/app_config.dart';
+import 'core/config/flavor_config.dart';
+import 'main_common.dart';
 
-/// 🟢 DEV ENVIRONMENT ENTRY POINT
-/// Run with: flutter run -t lib/main_dev.dart --flavor dev
 Future<void> main() async {
   await AppConfig.initialize(Flavor.dev);
   await mainCommon(Flavor.dev);
 }
 ```
 
-#### `lib/main_staging.dart`
+### `lib/main_staging.dart`
 
 ```dart
-import 'package:flutter_exercise/core/config/app_config.dart';
-import 'package:flutter_exercise/core/config/flavor_config.dart';
-import 'package:flutter_exercise/main_common.dart';
+import 'core/config/app_config.dart';
+import 'core/config/flavor_config.dart';
+import 'main_common.dart';
 
-/// 🟡 STAGING ENVIRONMENT ENTRY POINT
-/// Run with: flutter run -t lib/main_staging.dart --flavor staging
 Future<void> main() async {
   await AppConfig.initialize(Flavor.staging);
   await mainCommon(Flavor.staging);
 }
 ```
 
-#### `lib/main_prod.dart`
+### `lib/main_prod.dart`
 
 ```dart
-import 'package:flutter_exercise/core/config/app_config.dart';
-import 'package:flutter_exercise/core/config/flavor_config.dart';
-import 'package:flutter_exercise/main_common.dart';
+import 'core/config/app_config.dart';
+import 'core/config/flavor_config.dart';
+import 'main_common.dart';
 
-/// 🔴 PRODUCTION ENVIRONMENT ENTRY POINT
-/// Run with: flutter run -t lib/main_prod.dart --flavor prod
 Future<void> main() async {
   await AppConfig.initialize(Flavor.prod);
   await mainCommon(Flavor.prod);
 }
 ```
 
----
-
-### 7. Create Common Main
-
-#### `lib/main_common.dart`
+### `lib/main_common.dart`
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:flutter_exercise/core/config/app_config.dart';
-import 'package:flutter_exercise/core/config/flavor_config.dart';
-import 'package:flutter_exercise/core/di/injectable_container.dart';
-import 'package:flutter_exercise/app.dart';
+import 'core/config/app_config.dart';
+import 'core/config/flavor_config.dart';
+import 'core/di/injectable_container.dart';
+import 'app.dart';
 
 Future<void> mainCommon(Flavor flavor) async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize dependency injection with flavor
   await configureDependencies(flavor);
-
-  // Setup error handlers for production
-  if (AppConfig.instance.isProduction) {
-    FlutterError.onError = (details) {
-      // Send to crash reporting service (Sentry, Crashlytics)
-    };
-  }
-
   runApp(const MyApp());
 }
 ```
 
 ---
 
-### 8. Create App Widget
+## Step 5 — Android Setup
 
-#### `lib/app.dart`
+### Option A — Kotlin DSL: `android/app/build.gradle.kts` (Modern, recommended)
 
-```dart
-import 'package:flutter/material.dart';
-import 'package:flutter_exercise/core/config/app_config.dart';
-import 'package:flutter_exercise/core/router/app_router.dart';
+New Flutter projects generate `.kts` files by default.
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final config = AppConfig.instance;
-
-    return MaterialApp.router(
-      title: config.appName,
-      theme: config.theme,
-      routerConfig: router,
-      debugShowCheckedModeBanner: config.isDevelopment,
-      
-      // Show environment banner in dev/staging
-      builder: (context, child) {
-        if (!config.isProduction) {
-          return Banner(
-            message: config.flavor.displayName.toUpperCase(),
-            location: BannerLocation.topEnd,
-            color: config.flavor.isDev ? Colors.green : Colors.orange,
-            child: child!,
-          );
-        }
-        return child!;
-      },
-    );
-  }
+```kotlin
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("dev.flutter.flutter-gradle-plugin")
 }
-```
 
----
-
-## Android Configuration
-
-### 1. Update `android/app/build.gradle`
-
-```gradle
 android {
-    namespace = "com.example.flutter_exercise"
+    namespace = "com.example.myapp"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
-    defaultConfig {
-        applicationId = "com.example.flutter_exercise"
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutterVersionCode.toInteger()
-        versionName = flutterVersionName
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    // ADD FLAVOR DIMENSIONS
-    flavorDimensions = ["environment"]
-    
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
+
+    defaultConfig {
+        applicationId = "com.example.myapp"
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    // Flavor configuration
+    flavorDimensions += "environment"
+
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            resValue("string", "app_name", "MyApp Dev")
+        }
+        create("staging") {
+            dimension = "environment"
+            applicationIdSuffix = ".staging"
+            versionNameSuffix = "-staging"
+            resValue("string", "app_name", "MyApp Staging")
+        }
+        create("prod") {
+            dimension = "environment"
+            // No suffix — prod uses the base applicationId
+            resValue("string", "app_name", "MyApp")
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("debug") // Replace with real signing
+        }
+    }
+}
+
+flutter {
+    source = "../.."
+}
+```
+
+### Option B — Groovy DSL: `android/app/build.gradle` (Legacy projects)
+
+Older projects use the Groovy DSL. The syntax is slightly different:
+
+```groovy
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'dev.flutter.flutter-gradle-plugin'
+}
+
+android {
+    namespace "com.example.myapp"
+    compileSdk flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        applicationId "com.example.myapp"
+        minSdk flutter.minSdkVersion
+        targetSdk flutter.targetSdkVersion
+        versionCode flutter.versionCode
+        versionName flutter.versionName
+    }
+
+    // Flavor configuration
+    flavorDimensions "environment"
+
     productFlavors {
         dev {
             dimension "environment"
@@ -569,14 +467,12 @@ android {
             versionNameSuffix "-dev"
             resValue "string", "app_name", "MyApp Dev"
         }
-        
         staging {
             dimension "environment"
             applicationIdSuffix ".staging"
             versionNameSuffix "-staging"
             resValue "string", "app_name", "MyApp Staging"
         }
-        
         prod {
             dimension "environment"
             resValue "string", "app_name", "MyApp"
@@ -585,18 +481,19 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.debug
-            minifyEnabled = true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        debug {
-            minifyEnabled = false
+            signingConfig signingConfigs.debug // Replace with real signing
         }
     }
 }
+
+flutter {
+    source "../.."
+}
 ```
 
-### 2. Update `android/app/src/main/AndroidManifest.xml`
+### `android/app/src/main/AndroidManifest.xml`
+
+Use `@string/app_name` so each flavor picks up its own label:
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -606,257 +503,217 @@ android {
         android:label="@string/app_name"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-        
-        <!-- Your activities here -->
-        
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/LaunchTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
     </application>
 </manifest>
 ```
 
-### 3. Create Flavor-Specific Resources (Optional)
-
-```
-android/app/src/
-├── main/
-│   ├── AndroidManifest.xml
-│   └── res/
-│       └── mipmap-*/
-│           └── ic_launcher.png
-├── dev/
-│   └── res/
-│       ├── mipmap-*/
-│       │   └── ic_launcher.png      # Green icon
-│       └── values/
-│           └── strings.xml
-├── staging/
-│   └── res/
-│       └── mipmap-*/
-│           └── ic_launcher.png      # Orange icon
-└── prod/
-    └── res/
-        └── mipmap-*/
-            └── ic_launcher.png      # Blue icon
-```
-
-#### Example `strings.xml` for Dev:
-
-```xml
-<!-- android/app/src/dev/res/values/strings.xml -->
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">MyApp Dev</string>
-</resources>
-```
-
 ---
 
-## iOS Configuration
+## Step 6 — iOS Setup
 
-### 1. Configuration Approach
+### Step 6.1 — Open Xcode
 
-You have **two options** for iOS configuration:
-
-**Option A: Minimal Setup (Recommended for Beginners)** - Configure everything manually in Xcode  
-**Option B: xcconfig Files (Advanced)** - Automate with configuration files
-
----
-
-### Option A: Manual Xcode Configuration (Simple)
-
-You don't need to create `.xcconfig` files. Just configure directly in Xcode:
-
-#### Step 1: Open Xcode
-```bash
-cd ios
-open Runner.xcworkspace
-```
-
-#### Step 2: Configure Build Settings Manually
-1. Select **Runner** project → **Runner** target
-2. Go to **Build Settings** tab
-3. Search for **"Product Bundle Identifier"**
-4. Click the dropdown arrow to expand per-configuration
-5. Set different bundle IDs for each:
-   - **Debug-dev**: `com.example.flutterExercise.dev`
-   - **Debug-staging**: `com.example.flutterExercise.staging`
-   - **Debug-prod**: `com.example.flutterExercise`
-   - **Release-dev**: `com.example.flutterExercise.dev`
-   - **Release-staging**: `com.example.flutterExercise.staging`
-   - **Release-prod**: `com.example.flutterExercise`
-
-6. Search for **"Product Name"** and set:
-   - **Debug-dev**: `MyApp Dev`
-   - **Debug-staging**: `MyApp Staging`
-   - **Debug-prod**: `MyApp`
-   - (Same for Release-*)
-
-That's it! Skip to **Step 2: Configure Xcode** below.
-
----
-
-### Option B: Using xcconfig Files (Advanced - Optional)
-
-Create configuration files for automation (you can skip this if using Option A):
-
-#### `ios/Flutter/Dev.xcconfig`
-
-```ruby
-#include "Generated.xcconfig"
-
-// Required: Bundle identifier for dev flavor
-PRODUCT_BUNDLE_IDENTIFIER=com.example.flutterExercise.dev
-
-// Required: App display name
-DISPLAY_NAME=MyApp Dev
-
-// Optional: Specify entry point (if not using -t flag)
-// FLUTTER_TARGET=lib/main_dev.dart
-
-// Optional: Different app icon (only if you created AppIcon-Dev)
-// ASSETCATALOG_COMPILER_APPICON_NAME=AppIcon-Dev
-```
-
-#### `ios/Flutter/Staging.xcconfig`
-
-```ruby
-#include "Generated.xcconfig"
-
-PRODUCT_BUNDLE_IDENTIFIER=com.example.flutterExercise.staging
-DISPLAY_NAME=MyApp Staging
-```
-
-#### `ios/Flutter/Prod.xcconfig`
-
-```ruby
-#include "Generated.xcconfig"
-
-PRODUCT_BUNDLE_IDENTIFIER=com.example.flutterExercise
-DISPLAY_NAME=MyApp
-```
-
-**What each line does:**
-
-| Line | Required? | Purpose |
-|------|-----------|---------|
-| `#include "Generated.xcconfig"` | ✅ YES | Includes Flutter's generated settings |
-| `PRODUCT_BUNDLE_IDENTIFIER` | ✅ YES | Sets unique bundle ID per flavor |
-| `DISPLAY_NAME` | ✅ YES | Sets app name shown on device |
-| `FLUTTER_TARGET` | ❌ Optional | Auto-selects entry point (not needed if using `-t` flag) |
-| `ASSETCATALOG_COMPILER_APPICON_NAME` | ❌ Optional | Uses different icons (only if you created them) |
-
-**Minimal version (Recommended):**
-
-```ruby
-#include "Generated.xcconfig"
-
-PRODUCT_BUNDLE_IDENTIFIER=com.example.flutterExercise.dev
-DISPLAY_NAME=MyApp Dev
-```
-
-### 2. Configure Xcode
-
-Open Xcode:
+Always open the workspace, not the project:
 
 ```bash
-cd ios
-open Runner.xcworkspace
+open ios/Runner.xcworkspace
 ```
 
-#### Step 2.1: Create Build Configurations
+### Step 6.2 — Create Build Configurations
 
-1. Select **Runner** project in navigator
-2. Select **Runner** target
-3. Go to **Info** tab
-4. Under **Configurations**, duplicate existing configurations:
-   - Duplicate **Debug** → **Debug-dev**
-   - Duplicate **Debug** → **Debug-staging**
-   - Duplicate **Debug** → **Debug-prod**
-   - Duplicate **Release** → **Release-dev**
-   - Duplicate **Release** → **Release-staging**
-   - Duplicate **Release** → **Release-prod**
+1. In Xcode, select the **Runner** project (not the target) in the left navigator
+2. Go to the **Info** tab
+3. Under **Configurations**, you'll see Debug, Release, and Profile
+4. Duplicate each to create flavor variants:
+   - Duplicate **Debug** → rename to **Debug-dev**
+   - Duplicate **Debug** → rename to **Debug-staging**
+   - Duplicate **Debug** → rename to **Debug-prod**
+   - Duplicate **Release** → rename to **Release-dev**
+   - Duplicate **Release** → rename to **Release-staging**
+   - Duplicate **Release** → rename to **Release-prod**
+   - Duplicate **Profile** → rename to **Profile-dev**
+   - Duplicate **Profile** → rename to **Profile-staging**
+   - Duplicate **Profile** → rename to **Profile-prod**
 
-#### Step 2.2: Assign Configuration Files
+> Delete the original Debug/Release/Profile if you won't use them, or keep them as fallbacks.
 
-For each configuration, assign the appropriate `.xcconfig` file:
-
-| Configuration | Based on | Configuration File |
-|--------------|----------|-------------------|
-| Debug-dev | Debug | Dev.xcconfig |
-| Debug-staging | Debug | Staging.xcconfig |
-| Debug-prod | Debug | Prod.xcconfig |
-| Release-dev | Release | Dev.xcconfig |
-| Release-staging | Release | Staging.xcconfig |
-| Release-prod | Release | Prod.xcconfig |
-
-#### Step 2.3: Create Schemes
+### Step 6.3 — Create Schemes
 
 1. Go to **Product → Scheme → Manage Schemes**
-2. Click **+** to create new schemes
-3. Create three schemes:
+2. Click **+**, select **Runner** as the target
+3. Create three schemes named exactly: `dev`, `staging`, `prod`
 
-**Dev Scheme:**
-- Name: `dev`
-- Build Configuration:
-  - Run: Debug-dev
-  - Test: Debug-dev
-  - Profile: Release-dev
-  - Analyze: Debug-dev
-  - Archive: Release-dev
+For each scheme, set the build configurations:
 
-**Staging Scheme:**
-- Name: `staging`
-- Build Configuration:
-  - Run: Debug-staging
-  - Test: Debug-staging
-  - Profile: Release-staging
-  - Analyze: Debug-staging
-  - Archive: Release-staging
+| Action | dev scheme | staging scheme | prod scheme |
+|--------|-----------|----------------|-------------|
+| Run | Debug-dev | Debug-staging | Debug-prod |
+| Test | Debug-dev | Debug-staging | Debug-prod |
+| Profile | Profile-dev | Profile-staging | Profile-prod |
+| Analyze | Debug-dev | Debug-staging | Debug-prod |
+| Archive | Release-dev | Release-staging | Release-prod |
 
-**Prod Scheme:**
-- Name: `prod`
-- Build Configuration:
-  - Run: Debug-prod
-  - Test: Debug-prod
-  - Profile: Release-prod
-  - Analyze: Debug-prod
-  - Archive: Release-prod
+Make sure **Shared** is checked for each scheme so they are committed to version control.
 
-### 3. Update Info.plist
+### Step 6.4 — Configure Build Settings
 
-Edit `ios/Runner/Info.plist`:
+Select **Runner** target → **Build Settings** → set for each configuration:
+
+**Product Bundle Identifier** (search: `PRODUCT_BUNDLE_IDENTIFIER`):
+
+| Configuration | Value |
+|---|---|
+| Debug-dev, Release-dev, Profile-dev | `com.example.myapp.dev` |
+| Debug-staging, Release-staging, Profile-staging | `com.example.myapp.staging` |
+| Debug-prod, Release-prod, Profile-prod | `com.example.myapp` |
+
+**App Display Name** — add a user-defined setting named `APP_DISPLAY_NAME`:
+
+| Configuration | Value |
+|---|---|
+| *-dev | `MyApp Dev` |
+| *-staging | `MyApp Staging` |
+| *-prod | `MyApp` |
+
+### Step 6.5 — Update `ios/Runner/Info.plist`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>CFBundleDisplayName</key>
+    <string>$(APP_DISPLAY_NAME)</string>
+
     <key>CFBundleIdentifier</key>
     <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-    
-    <key>CFBundleDisplayName</key>
-    <string>$(DISPLAY_NAME)</string>
-    
-    <key>CFBundleName</key>
-    <string>$(DISPLAY_NAME)</string>
-    
-    <!-- Other keys remain unchanged -->
+
+    <key>CFBundleExecutable</key>
+    <string>$(EXECUTABLE_NAME)</string>
+
+    <key>CFBundleShortVersionString</key>
+    <string>$(FLUTTER_BUILD_NAME)</string>
+
+    <key>CFBundleVersion</key>
+    <string>$(FLUTTER_BUILD_NUMBER)</string>
+
+    <!-- other keys unchanged -->
 </dict>
 </plist>
 ```
 
 ---
 
-## Injectable Integration
+## Step 7 — App Icons with flutter_launcher_icons
 
-### 1. Update Injectable Container
+`flutter_launcher_icons` supports flavors via separate config files named `flutter_launcher_icons-<flavor>.yaml` in the project root.
 
-#### `lib/core/di/injectable_container.dart`
+### Step 7.1 — Prepare Icon Images
+
+Place your source images in `assets/images/`:
+
+```
+assets/images/
+├── app-icon-dev.png      # 1024x1024, transparent background OK
+├── app-icon-staging.png
+└── app-icon-prod.png
+```
+
+### Step 7.2 — Create Config Files
+
+#### `flutter_launcher_icons-dev.yaml`
+
+```yaml
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app-icon-dev.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/app-icon-dev.png"
+```
+
+#### `flutter_launcher_icons-staging.yaml`
+
+```yaml
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app-icon-staging.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/app-icon-staging.png"
+```
+
+#### `flutter_launcher_icons-prod.yaml`
+
+```yaml
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app-icon-prod.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/app-icon-prod.png"
+```
+
+### Step 7.3 — Generate Icons
+
+```bash
+dart run flutter_launcher_icons
+```
+
+This detects all three flavor files and generates:
+
+- **Android:** `android/app/src/dev/res/mipmap-*/`, `src/staging/res/...`, `src/prod/res/...`
+- **iOS:** `ios/Runner/Assets.xcassets/AppIcon-dev.appiconset/`, `AppIcon-staging.appiconset/`, `AppIcon-prod.appiconset/`
+
+### Step 7.4 — Wire iOS Icons to Build Configurations (CRITICAL)
+
+> **This step is the most commonly missed.** The generator creates the icon sets but does NOT automatically update Xcode to use them. Without this step, iOS always shows the default Flutter icon regardless of flavor.
+
+In Xcode, go to **Runner target → Build Settings**, search for **"Primary App Icon Set Name"** (`ASSETCATALOG_COMPILER_APPICON_NAME`), and set:
+
+| Configuration | Value |
+|---|---|
+| Debug-dev, Release-dev, Profile-dev | `AppIcon-dev` |
+| Debug-staging, Release-staging, Profile-staging | `AppIcon-staging` |
+| Debug-prod, Release-prod, Profile-prod | `AppIcon-prod` |
+
+Alternatively, edit `ios/Runner.xcodeproj/project.pbxproj` directly. Find every block with `APP_DISPLAY_NAME = "MyApp Dev"` and change:
+
+```
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+```
+to:
+```
+ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-dev";
+```
+
+Do the same for staging and prod blocks. There will be 3 occurrences per flavor (Debug, Release, Profile).
+
+---
+
+## Step 8 — Injectable Integration
+
+### `lib/core/di/injectable_container.dart`
 
 ```dart
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
-import 'package:flutter_exercise/core/config/flavor_config.dart';
-
+import '../config/flavor_config.dart';
 import 'injectable_container.config.dart';
 
 final getIt = GetIt.instance;
@@ -867,224 +724,99 @@ final getIt = GetIt.instance;
   asExtension: true,
 )
 Future<void> configureDependencies(Flavor flavor) async {
-  // Pass flavor name to injectable
-  getIt.init(environment: flavor.name.toLowerCase());
+  await getIt.init(environment: flavor.name);
 }
 ```
 
-### 2. Create Custom Environment Annotations
-
-#### `lib/core/config/injectable_environments.dart`
+### `lib/core/config/injectable_environments.dart`
 
 ```dart
 import 'package:injectable/injectable.dart';
 
-// Custom environment annotations
 const dev = Environment('dev');
 const staging = Environment('staging');
 const prod = Environment('prod');
 ```
 
-### 3. Create Environment-Specific Modules
-
-#### `lib/core/di/modules/external_module.dart`
+### Environment-Specific Module Example
 
 ```dart
 import 'package:injectable/injectable.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:logger/logger.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../config/injectable_environments.dart';
 
-// Common module (all environments)
-@module
-abstract class ExternalModule {
-  @lazySingleton
-  SharedPreferencesAsync get sharedPreferencesAsync => SharedPreferencesAsync();
-
-  @lazySingleton
-  InternetConnectionChecker get internetConnectionChecker =>
-      InternetConnectionChecker.createInstance();
+abstract class LoggerService {
+  void log(String message);
 }
 
-// Dev-only module
 @dev
-@module
-abstract class DevModule {
-  @lazySingleton
-  Logger get logger => Logger(
-    printer: PrettyPrinter(
-      methodCount: 2,
-      errorMethodCount: 8,
-      lineLength: 120,
-      colors: true,
-      printEmojis: true,
-    ),
-  );
-}
-
-// Staging-only module
-@staging
-@module
-abstract class StagingModule {
-  @lazySingleton
-  Logger get logger => Logger(
-    printer: PrettyPrinter(
-      methodCount: 1,
-      errorMethodCount: 5,
-      lineLength: 80,
-      colors: true,
-      printEmojis: false,
-    ),
-  );
-}
-
-// Production-only module
-@prod
-@module
-abstract class ProdModule {
-  @lazySingleton
-  Logger get logger => Logger(
-    printer: SimplePrinter(),
-    level: Level.error, // Only errors in production
-  );
-}
-```
-
-### 4. Create Network Module
-
-#### `lib/core/di/modules/network_module.dart`
-
-```dart
-import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
-import 'package:flutter_exercise/core/config/env_config.dart';
-import 'package:flutter_exercise/core/di/injection_names.dart';
-
-@module
-abstract class NetworkModule {
-  @Named(InjectionNames.dioBasic)
-  @lazySingleton
-  Dio get basicDio {
-    final dio = Dio(
-      BaseOptions(
-        baseUrl: EnvConfig.apiBaseUrl,
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-Key': EnvConfig.apiKey,
-        },
-      ),
-    );
-
-    // Add logging interceptor only for dev/staging
-    if (EnvConfig.enableLogging) {
-      dio.interceptors.add(LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-        requestHeader: true,
-        responseHeader: false,
-      ));
-    }
-
-    return dio;
-  }
-}
-```
-
-### 5. Create Environment-Specific Services
-
-#### `lib/core/services/analytics_service.dart`
-
-```dart
-import 'package:injectable/injectable.dart';
-
-abstract class AnalyticsService {
-  void logEvent(String name, Map<String, dynamic>? parameters);
-}
-
-// Dev implementation (console logging only)
-@dev
-@LazySingleton(as: AnalyticsService)
-class DevAnalyticsService implements AnalyticsService {
+@LazySingleton(as: LoggerService)
+class DevLogger implements LoggerService {
   @override
-  void logEvent(String name, Map<String, dynamic>? parameters) {
-    print('📊 [DEV] Analytics: $name - $parameters');
-  }
+  void log(String message) => print('[DEV] $message');
 }
 
-// Production implementation (real analytics)
-@prod
 @staging
-@LazySingleton(as: AnalyticsService)
-class ProdAnalyticsService implements AnalyticsService {
+@LazySingleton(as: LoggerService)
+class StagingLogger implements LoggerService {
   @override
-  void logEvent(String name, Map<String, dynamic>? parameters) {
-    // Firebase Analytics, Mixpanel, etc.
-    // FirebaseAnalytics.instance.logEvent(name: name, parameters: parameters);
+  void log(String message) => print('[STAGING] $message');
+}
+
+@prod
+@LazySingleton(as: LoggerService)
+class ProdLogger implements LoggerService {
+  @override
+  void log(String message) {
+    // Send to Sentry / Crashlytics only
   }
 }
 ```
 
-### 6. Generate Injectable Code
-
-Run code generation:
+### Generate DI Code
 
 ```bash
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 ```
 
-This generates `injectable_container.config.dart` with all dependencies registered.
+> **Note:** Use `dart run`, not the deprecated `flutter pub run`.
 
 ---
 
 ## Running & Building
 
-### Development Commands
+### Run
 
 ```bash
-# Run on connected device
 flutter run -t lib/main_dev.dart --flavor dev
-
-# Run staging
 flutter run -t lib/main_staging.dart --flavor staging
-
-# Run production
 flutter run -t lib/main_prod.dart --flavor prod
 ```
 
-### Build Commands
-
-#### Android
+### Build APK (Android)
 
 ```bash
-# Build Dev APK
 flutter build apk -t lib/main_dev.dart --flavor dev
-
-# Build Staging APK
 flutter build apk -t lib/main_staging.dart --flavor staging
-
-# Build Production APK (Release)
 flutter build apk -t lib/main_prod.dart --flavor prod --release
+```
 
-# Build App Bundle for Play Store
+### Build App Bundle for Play Store
+
+```bash
 flutter build appbundle -t lib/main_prod.dart --flavor prod --release
 ```
 
-#### iOS
+### Build iOS
 
 ```bash
-# Build Dev
 flutter build ios -t lib/main_dev.dart --flavor dev
-
-# Build Staging
 flutter build ios -t lib/main_staging.dart --flavor staging
-
-# Build Production IPA
 flutter build ipa -t lib/main_prod.dart --flavor prod --release
 ```
 
-### VS Code Configuration
+---
+
+## VS Code Launch Configuration
 
 Create `.vscode/launch.json`:
 
@@ -1093,25 +825,25 @@ Create `.vscode/launch.json`:
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "🟢 Dev",
+      "name": "Dev",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
       "args": ["--flavor", "dev"]
     },
     {
-      "name": "🟡 Staging",
+      "name": "Staging",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_staging.dart",
       "args": ["--flavor", "staging"]
     },
     {
-      "name": "🔴 Production",
+      "name": "Production",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_prod.dart",
-      "args": ["--flavor", "prod", "--release"]
+      "args": ["--flavor", "prod"]
     }
   ]
 }
@@ -1119,341 +851,193 @@ Create `.vscode/launch.json`:
 
 ---
 
-## Troubleshooting
+## Common Pitfalls & Fixes
 
-### Issue: Bundle ID Not Changing (iOS)
+### 1. iOS always shows the default Flutter icon (most common)
 
-**Solution:**
+**Cause:** `ASSETCATALOG_COMPILER_APPICON_NAME` is set to `AppIcon` for all configurations. `flutter_launcher_icons` generates the flavor icon sets but does not update this Xcode build setting.
 
-1. Clean build folder:
-   ```bash
-   cd ios
-   rm -rf build
-   flutter clean
-   flutter pub get
-   ```
+**Fix:** Manually set the icon set name per configuration (see [Step 7.4](#step-74--wire-ios-icons-to-build-configurations-critical)).
 
-2. Verify `.xcconfig` files are in `ios/Flutter/`
-3. Check that schemes use correct configurations
-4. Rebuild from Xcode
+Verify by searching in `project.pbxproj`:
+```
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;   ← wrong for flavor builds
+ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-dev";  ← correct
+```
 
-### Issue: Multiple Apps with Same Bundle ID
+---
 
-**Cause:** Xcode configurations not properly set.
+### 2. `Podfile` error — `Generated.xcconfig` must exist
 
-**Solution:**
+```
+[!] Invalid `Podfile` file: .../Flutter/Generated.xcconfig must exist.
+```
 
-1. Open `Runner.xcworkspace` in Xcode
-2. Go to Build Settings
-3. Search for "Product Bundle Identifier"
-4. Ensure it's set to `$(PRODUCT_BUNDLE_IDENTIFIER)`
+**Cause:** `flutter pub get` has not been run. This file is generated by Flutter, not committed to git.
 
-### Issue: Environment Variables Not Loading
+**Fix:**
+```bash
+flutter pub get
+cd ios && pod install && cd ..
+```
 
-**Solution:**
+---
 
-1. Verify `.env.*` files are in project root
-2. Check `pubspec.yaml` includes assets:
-   ```yaml
-   flutter:
-     assets:
-       - .env.dev
-       - .env.staging
-       - .env.prod
-   ```
-3. Run `flutter clean` and `flutter pub get`
+### 3. App name not changing on iOS
 
-### Issue: Injectable Not Finding Dependencies
+**Cause:** `Info.plist` still has a hardcoded string for `CFBundleDisplayName` instead of `$(APP_DISPLAY_NAME)`.
 
-**Solution:**
+**Fix:** Make sure `Info.plist` uses the variable:
+```xml
+<key>CFBundleDisplayName</key>
+<string>$(APP_DISPLAY_NAME)</string>
+```
 
-1. Ensure you ran code generation:
-   ```bash
-   flutter pub run build_runner build --delete-conflicting-outputs
-   ```
+And that `APP_DISPLAY_NAME` is defined in each build configuration's settings in Xcode.
 
-2. Check that `injectable_container.config.dart` exists
+---
 
-3. Verify imports in modules use correct annotations
+### 4. Wrong app icon appearing after re-running
 
-### Issue: Wrong Environment Running
+**Cause:** iOS simulators and devices aggressively cache app icons.
 
-**Solution:**
+**Fix:** Delete the app from the simulator/device, then reinstall:
+```bash
+flutter clean
+flutter run -t lib/main_dev.dart --flavor dev
+```
 
-Always specify both `-t` and `--flavor`:
+---
+
+### 5. `flutter_launcher_icons` only generates for one flavor
+
+**Cause:** Running the tool with a flavor-specific flag when the files should be auto-detected.
+
+**Fix:** Just run without flags — the package auto-detects all `flutter_launcher_icons-*.yaml` files:
+```bash
+dart run flutter_launcher_icons
+```
+
+---
+
+### 6. Android icons not showing (using adaptive icons)
+
+**Cause:** The `adaptive_icon_foreground` image has padding issues, or `min_sdk_android` is below 21.
+
+**Fix:** Ensure `min_sdk_android: 21` is set and your foreground image has a safe zone (the icon content should stay within the inner 66% of the image).
+
+---
+
+### 7. `Flavor.name` conflict in Dart
+
+**Cause:** Dart 2.15+ enums have a built-in `.name` getter. Defining your own `name` getter on a Flavor enum causes a compile error.
+
+**Fix:** Remove any custom `name` getter from your enum — use the built-in one. `Flavor.dev.name` already returns `"dev"`.
+
+---
+
+### 8. Scheme not found when running from CLI
+
+```
+Could not find scheme 'dev'.
+```
+
+**Cause:** The scheme exists in Xcode but **Shared** was not checked, so it was not committed to the repo.
+
+**Fix:** In Xcode → **Product → Scheme → Manage Schemes**, check the **Shared** checkbox for each flavor scheme.
+
+---
+
+### 9. `dart run build_runner` not found
+
+**Cause:** Using the deprecated `flutter pub run` command.
+
+**Fix:** Always use:
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
+
+---
+
+### 10. Both Android and iOS fail with "flavor not found"
+
+**Cause:** Always specify both `--flavor` and `-t` together. Omitting either causes a mismatch.
 
 ```bash
-# ✅ Correct
+# Correct
 flutter run -t lib/main_dev.dart --flavor dev
 
-# ❌ Wrong (might use wrong configuration)
-flutter run lib/main_dev.dart
+# Wrong — Flutter picks a default entry point that may not match
+flutter run --flavor dev
 ```
 
 ---
 
 ## Best Practices
 
-### 1. Security
+### Security
 
-- ❌ Never commit `.env.prod` with real secrets
-- ✅ Use CI/CD to inject production secrets
-- ✅ Keep `.env.example` in version control
-- ✅ Add sensitive files to `.gitignore`
+- Never commit `.env.dev`, `.env.staging`, `.env.prod`
+- Commit only `.env.example` as a template
+- Inject production secrets via CI/CD environment variables
 
-```gitignore
-.env.dev
-.env.staging
-.env.prod
-!.env.example
-```
+### Naming
 
-### 2. Naming Conventions
+- Flavor names must be **lowercase** and match exactly between Android, iOS schemes, and the `--flavor` flag
+- Common convention: `dev`, `staging`, `prod`
 
-- Use lowercase for flavor names: `dev`, `staging`, `prod`
-- Use descriptive display names: "MyApp Dev", "MyApp Staging"
-- Suffix bundle IDs: `.dev`, `.staging`
+### Visual Differentiation
 
-### 3. Visual Differentiation
-
-- Different app icons per flavor (green, orange, blue)
-- Show environment banner in non-production builds
-- Different theme colors per flavor
-
-### 4. Dependency Injection
-
-- Use `@dev`, `@staging`, `@prod` annotations
-- Create separate implementations per environment
-- Keep common dependencies in base module
-
-### 5. Testing
+- Use different icon designs per flavor (e.g., a badge or different color scheme) so testers can instantly tell environments apart
+- Consider showing an environment banner in non-production builds:
 
 ```dart
-// Test with specific flavor
-void main() {
-  setUp(() async {
-    await AppConfig.initialize(Flavor.dev);
-    await configureDependencies(Flavor.dev);
-  });
-  
-  test('should load dev configuration', () {
-    expect(AppConfig.instance.flavor, Flavor.dev);
-    expect(EnvConfig.apiBaseUrl, contains('dev'));
-  });
-}
+// In app.dart
+builder: (context, child) {
+  if (!AppConfig.instance.isProd) {
+    return Banner(
+      message: AppConfig.instance.flavor.name.toUpperCase(),
+      location: BannerLocation.topEnd,
+      color: AppConfig.instance.isDev ? Colors.green : Colors.orange,
+      child: child!,
+    );
+  }
+  return child!;
+},
 ```
 
-### 6. CI/CD Integration
+### Code Generation
 
-#### GitHub Actions Example
-
-```yaml
-name: Build & Deploy
-
-on:
-  push:
-    branches: [ main, develop ]
-
-jobs:
-  build-android-prod:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        
-      - name: Create .env.prod
-        run: echo "${{ secrets.ENV_PROD }}" > .env.prod
-        
-      - name: Build APK
-        run: flutter build apk -t lib/main_prod.dart --flavor prod --release
-        
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: app-prod-release.apk
-          path: build/app/outputs/flutter-apk/app-prod-release.apk
-```
-
-#### Fastlane Configuration
-
-**Android Fastfile** (`android/fastlane/Fastfile`):
-
-```ruby
-default_platform(:android)
-
-platform :android do
-  
-  # Build and deploy Dev flavor
-  lane :dev do
-    sh("flutter clean")
-    sh("flutter pub get")
-    sh("flutter build apk -t lib/main_dev.dart --flavor dev")
-  end
-  
-  # Build and deploy Staging flavor
-  lane :staging do
-    sh("flutter clean")
-    sh("flutter pub get")
-    sh("flutter build apk -t lib/main_staging.dart --flavor staging")
-  end
-  
-  # Build and deploy Production flavor
-  lane :prod do
-    sh("flutter clean")
-    sh("flutter pub get")
-    sh("flutter build appbundle -t lib/main_prod.dart --flavor prod --release")
-  end
-  
-  # Upload to Play Store (Internal Testing)
-  lane :deploy_internal do
-    upload_to_play_store(
-      track: 'internal',
-      aab: '../build/app/outputs/bundle/prodRelease/app-prod-release.aab'
-    )
-  end
-  
-  # Upload to Play Store (Production)
-  lane :deploy_production do
-    upload_to_play_store(
-      track: 'production',
-      aab: '../build/app/outputs/bundle/prodRelease/app-prod-release.aab'
-    )
-  end
-  
-end
-```
-
-**iOS Fastfile** (`ios/fastlane/Fastfile`):
-
-```ruby
-default_platform(:ios)
-
-platform :ios do
-  
-  # Build Dev flavor
-  lane :dev do
-    sh("flutter clean")
-    sh("flutter pub get")
-    build_app(
-      workspace: "Runner.xcworkspace",
-      scheme: "dev",
-      export_method: "development",
-      output_directory: "../build/ios/ipa",
-      output_name: "app-dev.ipa"
-    )
-  end
-  
-  # Build Staging flavor
-  lane :staging do
-    sh("flutter clean")
-    sh("flutter pub get")
-    build_app(
-      workspace: "Runner.xcworkspace",
-      scheme: "staging",
-      export_method: "ad-hoc",
-      output_directory: "../build/ios/ipa",
-      output_name: "app-staging.ipa"
-    )
-  end
-  
-  # Build Production flavor
-  lane :prod do
-    sh("flutter clean")
-    sh("flutter pub get")
-    build_app(
-      workspace: "Runner.xcworkspace",
-      scheme: "prod",
-      export_method: "app-store",
-      output_directory: "../build/ios/ipa",
-      output_name: "app-prod.ipa"
-    )
-  end
-  
-  # Upload to TestFlight
-  lane :deploy_testflight do
-    upload_to_testflight(
-      ipa: "../build/ios/ipa/app-prod.ipa",
-      skip_waiting_for_build_processing: true
-    )
-  end
-  
-  # Upload to App Store
-  lane :deploy_appstore do
-    upload_to_app_store(
-      ipa: "../build/ios/ipa/app-prod.ipa",
-      submit_for_review: false,
-      automatic_release: false
-    )
-  end
-  
-end
-```
-
-**Usage:**
+Run after any change to DI annotations or annotated model classes:
 
 ```bash
-# Android
-cd android
-fastlane dev          # Build dev flavor
-fastlane staging      # Build staging flavor
-fastlane prod         # Build production flavor
-fastlane deploy_internal    # Deploy to Play Store (Internal)
-fastlane deploy_production  # Deploy to Play Store (Production)
-
-# iOS
-cd ios
-fastlane dev                # Build dev flavor
-fastlane staging            # Build staging flavor
-fastlane prod               # Build production flavor
-fastlane deploy_testflight  # Upload to TestFlight
-fastlane deploy_appstore    # Upload to App Store
+dart run build_runner build --delete-conflicting-outputs
 ```
 
----
+### CI/CD
 
-## Summary
+Create the env file from a secret before building:
 
-### What You've Implemented
+```yaml
+# GitHub Actions example
+- name: Create .env.prod
+  run: echo "${{ secrets.ENV_PROD }}" > .env.prod
 
-✅ **Multi-environment setup** (Dev, Staging, Production)  
-✅ **Platform-specific configurations** (Android & iOS)  
-✅ **Injectable integration** for environment-specific dependencies  
-✅ **Type-safe configuration** management  
-✅ **Separate bundle identifiers** for simultaneous installation  
-✅ **Environment-specific theming** and branding  
-✅ **Automated dependency injection** with code generation  
-
-### Key Benefits
-
-- 🚀 No manual configuration changes
-- 🔒 Secure secret management
-- 🧪 Easy testing across environments
-- 📦 Professional deployment workflow
-- 🎨 Visual differentiation per environment
-- 🔧 Maintainable and scalable architecture
-
-### Next Steps
-
-1. Add feature flags for A/B testing
-2. Integrate analytics per environment
-3. Setup crash reporting (Sentry, Crashlytics)
-4. Configure push notifications per flavor
-5. Add CI/CD pipeline
-6. Create separate Firebase projects per environment
+- name: Build
+  run: flutter build appbundle -t lib/main_prod.dart --flavor prod --release
+```
 
 ---
 
 ## Resources
 
 - [Flutter Flavors Documentation](https://docs.flutter.dev/deployment/flavors)
-- [Injectable Package](https://pub.dev/packages/injectable)
-- [flutter_dotenv Package](https://pub.dev/packages/flutter_dotenv)
-- [Get_it Package](https://pub.dev/packages/get_it)
+- [flutter_launcher_icons on pub.dev](https://pub.dev/packages/flutter_launcher_icons)
+- [injectable on pub.dev](https://pub.dev/packages/injectable)
+- [flutter_dotenv on pub.dev](https://pub.dev/packages/flutter_dotenv)
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** January 2026  
 **Author:** Md. Yousuf Ali
+**Document Version:** 2.0
+**Last Updated:** February 2026
