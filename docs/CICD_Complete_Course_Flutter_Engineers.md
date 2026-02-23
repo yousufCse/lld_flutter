@@ -6,33 +6,50 @@
 
 # TABLE OF CONTENTS
 
-## Part 1 — Foundations
-- Module 1: What CI/CD Really Is (and Why You Should Care)
-- Module 2: GitLab CI/CD Architecture & Core Concepts
-- Module 3: Your First `.gitlab-ci.yml` Pipeline
+---
 
-## Part 2 — Flutter-Specific Pipelines
-- Module 4: Flutter Analyze, Test & Build in CI
-- Module 5: Code Quality Gates (Lint, Coverage, Code Metrics)
-- Module 6: Building APK / IPA / Web Artifacts
-- Module 7: Flavors, Environments & Build Variants in CI
+## [Part 1 — Foundations](#part-1--foundations)
 
-## Part 3 — Intermediate
-- Module 8: Caching, Artifacts & Pipeline Optimization
-- Module 9: Automated Testing Strategy (Unit, Widget, Integration)
-- Module 10: Code Signing (Android Keystore & iOS Certificates)
-- Module 11: Automated Deployment (Play Store, TestFlight, Firebase App Distribution)
+| # | Module | Key Topics |
+|---|--------|------------|
+| 1 | [What CI/CD Really Is (and Why You Should Care)](#module-1-what-cicd-really-is-and-why-you-should-care) | CI vs CD, Pipelines, Vocabulary, Flutter challenges |
+| 2 | [GitLab CI/CD Architecture & Core Concepts](#module-2-gitlab-cicd-architecture--core-concepts) | YAML syntax, Stages & Jobs, Runners, Variables, Artifacts vs Cache |
+| 3 | [Your First `.gitlab-ci.yml` Pipeline](#module-3-your-first-gitlab-ciyml-pipeline) | 5 incremental pipeline versions, Common mistakes, Validation |
 
-## Part 4 — Advanced
-- Module 12: GitLab Runners (Shared, Specific, Docker, macOS)
-- Module 13: Multi-Stage, Multi-Platform Pipelines
-- Module 14: Security Scanning, Dependency Checks & SAST
-- Module 15: Monorepo Strategies & Pipeline-as-Code Patterns
+## [Part 2 — Flutter-Specific Pipelines](#part-2--flutter-specific-pipelines)
 
-## Part 5 — Expert
-- Module 16: Release Management (Semantic Versioning, Changelogs, Tags)
-- Module 17: GitOps, Feature Flags & Rollback Strategies
-- Module 18: Designing CI/CD for a Team — Best Practices & Decision Framework
+| # | Module | Key Topics |
+|---|--------|------------|
+| 4 | [Flutter Analyze, Test & Build in CI](#module-4-flutter-analyze-test--build-in-ci) | Analysis flags, Test tags, Coverage, Build numbers, Dart defines |
+| 5 | [Code Quality Gates](#module-5-code-quality-gates) | Format gate, Analysis gate, Coverage threshold, Metrics, Adoption strategy |
+| 6 | [Building APK / IPA / Web Artifacts](#module-6-building-apk--ipa--web-artifacts) | APK vs AAB, IPA & ExportOptions.plist, Web renderers, Obfuscation |
+| 7 | [Flavors, Environments & Build Variants in CI](#module-7-flavors-environments--build-variants-in-ci) | dart-define, Android flavors, Entry points, Firebase per-env, DRY templates |
+
+## [Part 3 — Intermediate](#part-3--intermediate)
+
+| # | Module | Key Topics |
+|---|--------|------------|
+| 8 | [Caching, Artifacts & Pipeline Optimization](#module-8-caching-artifacts--pipeline-optimization) | Multi-layer caching, Cache policies, DAG with `needs:`, `changes:`, Interruptible |
+| 9 | [Automated Testing Strategy](#module-9-automated-testing-strategy) | Testing pyramid, Unit/Widget/Integration in CI, Golden tests, JUnit reports |
+| 10 | [Code Signing (Android Keystore & iOS Certificates)](#module-10-code-signing-android-keystore--ios-certificates) | Android keystore in CI, iOS temp keychain, Fastlane Match |
+| 11 | [Automated Deployment](#module-11-automated-deployment) | Firebase App Distribution, Play Store, TestFlight, GitLab Pages, Environments |
+
+## [Part 4 — Advanced](#part-4--advanced)
+
+| # | Module | Key Topics |
+|---|--------|------------|
+| 12 | [GitLab Runners (Deep Dive)](#module-12-gitlab-runners-deep-dive) | Shared vs Self-hosted, macOS runner setup, Docker runner, Runner fleet strategy |
+| 13 | [Multi-Stage, Multi-Platform Pipelines](#module-13-multi-stage-multi-platform-pipelines) | `include:` modular files, Parent-child pipelines, Cross-platform architecture |
+| 14 | [Security Scanning, Dependency Checks & SAST](#module-14-security-scanning-dependency-checks--sast) | Dependency scanning, Secret detection, SAST, License compliance |
+| 15 | [Monorepo Strategies & Pipeline-as-Code Patterns](#module-15-monorepo-strategies--pipeline-as-code-patterns) | Monorepo with `changes:`, Melos, Shared CI template repositories |
+
+## [Part 5 — Expert](#part-5--expert)
+
+| # | Module | Key Topics |
+|---|--------|------------|
+| 16 | [Release Management](#module-16-release-management) | Semantic Versioning, Git tags, Automated changelogs, GitLab Releases |
+| 17 | [GitOps, Feature Flags & Rollback Strategies](#module-17-gitops-feature-flags--rollback-strategies) | GitOps flow, Feature flags, 4 rollback strategies, Canary deployments |
+| 18 | [Designing CI/CD for a Team — Best Practices](#module-18-designing-cicd-for-a-team--best-practices--decision-framework) | Decision framework, Starter/Standard/Enterprise templates, Maturity model, Troubleshooting |
 
 ---
 ---
