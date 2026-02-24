@@ -56,3 +56,6 @@ app.*.map.json
 
 
 **/*.local.md
+*.freezed.dart
+*.config.dart
+*.g.dart
