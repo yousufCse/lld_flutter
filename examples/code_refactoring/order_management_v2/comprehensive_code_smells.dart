@@ -50,8 +50,11 @@ class ComprehensiveBusinessSystem {
 
   // CODE SMELL: Magic Numbers throughout
   // REFACTORING: Replace Magic Number with Named Constant
+  // ignore: constant_identifier_names
   static const double TAX_RATE = 0.08;
+  // ignore: constant_identifier_names
   static const double PREMIUM_DISCOUNT = 0.15;
+  // ignore: constant_identifier_names
   static const double REGULAR_DISCOUNT = 0.05;
 
   // CODE SMELL: Long Method - Does too many things
@@ -220,6 +223,7 @@ class ComprehensiveBusinessSystem {
 
     // CODE SMELL: Switch Statement for payment processing
     // REFACTORING: Replace Conditional with Polymorphism (Strategy Pattern)
+    // ignore: unused_local_variable
     String paymentResult = '';
     switch (paymentMethod) {
       case 'credit_card':
@@ -536,7 +540,7 @@ class SimpleValidator {
 // CODE SMELL: Middle Man - Just delegates to other classes
 // REFACTORING: Remove Middle Man
 class BusinessFacade {
-  ComprehensiveBusinessSystem _system = ComprehensiveBusinessSystem();
+  final ComprehensiveBusinessSystem _system = ComprehensiveBusinessSystem();
 
   String processOrder(Map<String, dynamic> orderData) {
     return _system.processComprehensiveBusinessTransaction(
@@ -702,8 +706,10 @@ void main() {
   print(system.generateComprehensiveBusinessReport());
 
   // Demonstrate other code smells
+  // ignore: unused_local_variable
   var facade = BusinessFacade();
   var validator = SimpleValidator();
+  // ignore: unused_local_variable
   var orderService = OrderService();
 
   print('Validator result: ${validator.isValid('test')}');

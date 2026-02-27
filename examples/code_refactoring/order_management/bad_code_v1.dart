@@ -37,11 +37,8 @@ class OrderManager {
     String paymentMethod,
   ) {
     // CODE SMELL: Complex Conditional
-    if (customerName != null &&
-        customerName.isNotEmpty &&
-        customerEmail != null &&
+    if (customerName.isNotEmpty &&
         customerEmail.isNotEmpty &&
-        customerPhone != null &&
         customerPhone.length == 10) {
       // CODE SMELL: Duplicated Code (this validation appears multiple times)
       if (quantity > 0 && quantity < 1000) {
@@ -113,10 +110,7 @@ class OrderManager {
     double price,
   ) {
     // Same validation as above - DUPLICATED
-    if (customerName != null &&
-        customerName.isNotEmpty &&
-        customerEmail != null &&
-        customerEmail.isNotEmpty) {
+    if (customerName.isNotEmpty && customerEmail.isNotEmpty) {
       if (quantity > 0 && quantity < 1000) {
         double total = quantity * price;
 

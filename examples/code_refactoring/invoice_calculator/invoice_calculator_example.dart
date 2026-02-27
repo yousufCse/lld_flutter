@@ -28,6 +28,7 @@ class InvoiceCalculator {
     // Temporary variable for tax
     double tax = (subtotal - discount) * taxRate;
     // More duplicated code: tax calculation
+    // ignore: unused_local_variable
     double taxAgain = (subtotalAgain - discount) * taxRate;
     // Unnecessary inline method
     double getFinalTotal() {
