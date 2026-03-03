@@ -1,78 +1,92 @@
-# Validation Guide
+# Form Validation Guide
 
-A complete reference for the Niramoy validation system — from low-level rules to the UX behavior visible to the user.
+How form validation works in Niramoy, from atomic rules up to the UI. Read this before building any form.
 
 ---
 
 ## Table of Contents
 
-1. [Architecture Overview](#1-architecture-overview)
-2. [Layer 1 — ValidationRule (Strategy)](#2-layer-1--validationrule-strategy)
+1. [How It All Fits Together](#1-how-it-all-fits-together)
+2. [Validation Rules](#2-validation-rules)
    - [Built-in Rules](#built-in-rules)
-   - [CustomRule — one-off validations](#customrule--one-off-validations)
+   - [The "Skip When Empty" Contract](#the-skip-when-empty-contract)
+   - [CustomRule](#customrule)
    - [Writing a New Rule](#writing-a-new-rule)
-3. [Layer 2 — FieldValidator (Compositor)](#3-layer-2--fieldvalidator-compositor)
-4. [Layer 3 — AppValidators (App-level Registry)](#4-layer-3--appvalidators-app-level-registry)
+3. [FieldValidator](#3-fieldvalidator)
+   - [Rule Ordering](#rule-ordering)
+   - [Using With TextFormField](#using-with-textformfield)
+4. [AppValidators](#4-appvalidators)
    - [Required vs Optional Variants](#required-vs-optional-variants)
-   - [Adding a New Named Validator](#adding-a-new-named-validator)
-5. [Layer 4 — FormInput\<T\> (Touched/Dirty State)](#5-layer-4--forminputt-toucheddirty-state)
-   - [Why FormInput?](#why-forminput)
-   - [API Reference](#api-reference)
-6. [Layer 5 — Cubit State (Error Getters + isValid)](#6-layer-5--cubit-state-error-getters--isvalid)
+   - [Adding a New Validator](#adding-a-new-validator)
+5. [ValidationMessages](#5-validationmessages)
+6. [FormInput\<T\>](#6-forminputt)
+   - [Constructors](#constructors)
+   - [touch()](#touch)
+   - [errorFrom()](#errorfrom)
+   - [Why Not formz?](#why-not-formz)
+7. [Cubit State](#7-cubit-state)
+   - [Field Declarations](#field-declarations)
    - [Error Getters](#error-getters)
    - [isValid](#isvalid)
-7. [Layer 6 — UI Widgets (Consuming Errors)](#7-layer-6--ui-widgets-consuming-errors)
+8. [Cubit Methods](#8-cubit-methods)
+   - [onChange Handlers](#onchange-handlers)
+   - [Pre-populating (initializeFormData)](#pre-populating-initializeformdata)
+   - [Building Params for API](#building-params-for-api)
+9. [UI Widgets](#9-ui-widgets)
    - [Field Widgets](#field-widgets)
    - [Submit Button](#submit-button)
-8. [Progressive Validation UX](#8-progressive-validation-ux)
-9. [Building a New Form — Step-by-Step](#9-building-a-new-form--step-by-step)
-10. [Validation Messages](#10-validation-messages)
-11. [Common Mistakes](#11-common-mistakes)
+10. [Progressive Validation UX](#10-progressive-validation-ux)
+11. [Cookbook: Adding a New Form](#11-cookbook-adding-a-new-form)
+12. [Common Mistakes](#12-common-mistakes)
 
 ---
 
-## 1. Architecture Overview
-
-The system has six layers. Each layer has one job and knows nothing about the layers above it.
+## 1. How It All Fits Together
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  UI Layer (Field widgets + Submit button)                   │
-│  Reads: state.xyzError, state.isValid                       │
-└────────────────────┬────────────────────────────────────────┘
-                     │ reads
-┌────────────────────▼────────────────────────────────────────┐
-│  Cubit State  (error getters, isValid computed property)    │
-│  FormInput fields with .isDirty gate                        │
-└────────────────────┬────────────────────────────────────────┘
-                     │ uses
-┌────────────────────▼────────────────────────────────────────┐
-│  FormInput<T>  (value + dirty flag per field)               │
-│  lib/core/forms/form_input.dart                             │
-└────────────────────┬────────────────────────────────────────┘
-                     │ calls
-┌────────────────────▼────────────────────────────────────────┐
-│  AppValidators  (named, pre-composed validators)            │
-│  lib/core/validation/app_validators.dart                    │
-└────────────────────┬────────────────────────────────────────┘
-                     │ composes
-┌────────────────────▼────────────────────────────────────────┐
-│  FieldValidator  (runs rules in order, returns first error) │
-│  lib/core/validation/field_validator.dart                   │
-└────────────────────┬────────────────────────────────────────┘
-                     │ implements
-┌────────────────────▼────────────────────────────────────────┐
-│  ValidationRule  (single-concern Strategy)                  │
-│  lib/core/validation/validation_rule.dart                   │
-│  lib/core/validation/rules/                                 │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  UI                                                             │
+│  Field widgets read state.xyzError                              │
+│  Submit button reads state.isValid                              │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────────┐
+│  Cubit State (Freezed)                                          │
+│                                                                  │
+│  Error getters:  field.errorFrom(AppValidators.xyz.call)        │
+│  isValid:        AppValidators.xyz(field.value) == null && ...  │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────────┐
+│  FormInput<T>                                                    │
+│  Wraps value + isDirty flag per field                            │
+│  lib/core/forms/form_input.dart                                  │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────────┐
+│  AppValidators                                                   │
+│  Named, pre-composed FieldValidator instances                    │
+│  lib/core/validation/app_validators.dart                         │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────────┐
+│  FieldValidator                                                  │
+│  Runs a list of ValidationRules, returns first error             │
+│  lib/core/validation/field_validator.dart                         │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────────┐
+│  ValidationRule (abstract)                                       │
+│  One class per concern: RequiredRule, EmailRule, PhoneRule, ...   │
+│  lib/core/validation/rules/                                      │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
-Data flows **downward** for definition (rules → validator → named validator) and **upward** for consumption (state reads validators → UI reads state).
+Each layer has one job and depends only on the layer below it.
 
 ---
 
-## 2. Layer 1 — ValidationRule (Strategy)
+## 2. Validation Rules
 
 **File:** `lib/core/validation/validation_rule.dart`
 
@@ -83,53 +97,56 @@ abstract class ValidationRule {
 }
 ```
 
-Each rule encapsulates **one** validation concern. It returns an error string if the value is invalid, or `null` if it passes. Rules are stateless and `const`-constructible.
+A rule checks one thing. Returns an error string on failure, `null` on success. Rules are `const`-constructible and stateless.
 
 ### Built-in Rules
 
-| Class | File | What it checks | Skip when empty? |
+| Class | File | Checks | Skips empty? |
 |---|---|---|---|
-| `RequiredRule` | `required_rule.dart` | Non-null, non-blank | No — this is the presence check |
-| `MinLengthRule(n)` | `min_length_rule.dart` | `length >= n` (trimmed) | Yes |
-| `MaxLengthRule(n)` | `max_length_rule.dart` | `length <= n` (trimmed) | Yes |
+| `RequiredRule(msg)` | `required_rule.dart` | Not null, not blank | No |
+| `MinLengthRule(n, msg)` | `min_length_rule.dart` | `trimmed.length >= n` | Yes |
+| `MaxLengthRule(n, msg)` | `max_length_rule.dart` | `trimmed.length <= n` | Yes |
 | `PatternRule(regex, msg)` | `pattern_rule.dart` | Regex match | Yes |
-| `EmailRule` | `email_rule.dart` | Standard email format | Yes |
-| `PhoneRule` | `phone_rule.dart` | BD phone `01XXXXXXXXX` (strips spaces/hyphens) | Yes |
-| `DobRule` | `dob_rule.dart` | Non-empty ISO8601 date string | No — delegates to RequiredRule behavior |
-| `CustomRule(fn)` | `custom_rule.dart` | Inline lambda — one-off logic | Caller decides |
+| `EmailRule(msg)` | `email_rule.dart` | Email format | Yes |
+| `PhoneRule(msg)` | `phone_rule.dart` | BD phone `01XXXXXXXXX` | Yes |
+| `DobRule()` | `dob_rule.dart` | Non-empty date string | No |
+| `CustomRule(fn)` | `custom_rule.dart` | Inline lambda | Caller decides |
 
-**The "skip when empty" contract:** format rules (Email, Phone, Pattern, MinLength, MaxLength) skip validation when the value is empty. This means you can use them without `RequiredRule` to make a field **optional-but-valid-if-provided**. Always put `RequiredRule` first if the field is mandatory.
+### The "Skip When Empty" Contract
 
-### CustomRule — one-off validations
+Format rules (`EmailRule`, `PhoneRule`, `PatternRule`, `MinLengthRule`, `MaxLengthRule`) return `null` when the value is empty. They only validate non-empty values. This is what makes optional fields work:
 
-Use `CustomRule` when you need a one-time validation that does not justify its own class:
+- **Required field:** `RequiredRule` + format rules. `RequiredRule` catches empty, format rules catch bad format.
+- **Optional field:** format rules only. Empty passes, non-empty must be valid.
+
+### CustomRule
+
+For one-off logic that doesn't justify a new class:
 
 ```dart
 CustomRule((value) {
-  if (value != null && value.trim() == context.read<AuthCubit>().state.username) {
-    return 'New username must differ from current';
+  if (value != null && value.contains('admin')) {
+    return 'Username cannot contain "admin"';
   }
   return null;
 });
 ```
 
-Do **not** use `CustomRule` for logic that appears in more than one place — create a named rule class instead.
+If you use the same logic twice, promote it to a named rule class.
 
 ### Writing a New Rule
 
 ```dart
 // lib/core/validation/rules/max_value_rule.dart
-import 'package:niramoy_health_app/core/validation/validation_rule.dart';
 
 class MaxValueRule extends ValidationRule {
   const MaxValueRule(this.max, this.message);
-
   final int max;
   final String message;
 
   @override
   String? validate(String? value) {
-    if (value == null || value.isEmpty) return null; // skip if empty
+    if (value == null || value.isEmpty) return null; // skip when empty
     final parsed = int.tryParse(value);
     if (parsed == null || parsed > max) return message;
     return null;
@@ -137,15 +154,11 @@ class MaxValueRule extends ValidationRule {
 }
 ```
 
-Rules for writing rules:
-- Extend `ValidationRule`, add `const` constructor.
-- Skip validation for null/empty if the rule is a format rule (not a presence check).
-- Return a **non-null string** on failure, `null` on success.
-- Export it from `lib/core/validation/rules/rules.dart`.
+Then export it from `lib/core/validation/rules/rules.dart`.
 
 ---
 
-## 3. Layer 2 — FieldValidator (Compositor)
+## 3. FieldValidator
 
 **File:** `lib/core/validation/field_validator.dart`
 
@@ -164,37 +177,36 @@ class FieldValidator {
 }
 ```
 
-`FieldValidator` is a callable class. It runs rules **in the order they are declared** and returns the **first failure**. A user sees one error at a time — the most fundamental one first (required → length → format).
+Runs rules in order, returns the **first** failure. The user sees one error at a time — the most fundamental one.
 
-Rule ordering convention:
-1. `RequiredRule` — presence
-2. `MinLengthRule` / `MaxLengthRule` — length
-3. `PatternRule` / `EmailRule` / `PhoneRule` — format
+### Rule Ordering
+
+Always declare rules in this order:
+
+1. `RequiredRule` — is it present?
+2. `MinLengthRule` / `MaxLengthRule` — is it the right length?
+3. `PatternRule` / `EmailRule` / `PhoneRule` — is the format correct?
 4. `CustomRule` — business logic
 
-`FieldValidator` works as a `TextFormField.validator` callback directly:
+### Using With TextFormField
+
+`FieldValidator` is callable, so it works directly as a `TextFormField.validator`:
 
 ```dart
 TextFormField(validator: AppValidators.firstName.call)
 ```
 
-It also works as a plain function call:
-
-```dart
-final error = AppValidators.firstName('Jo'); // returns 'Name must be at least 2 characters'
-```
-
 ---
 
-## 4. Layer 3 — AppValidators (App-level Registry)
+## 4. AppValidators
 
 **File:** `lib/core/validation/app_validators.dart`
 
-`AppValidators` is a collection of pre-composed, named `FieldValidator` instances shared across the app. Define once, reuse everywhere — in state error getters and in UI if needed.
+Pre-composed validators shared across the entire app. Define once, reuse in every form.
 
 ```dart
 class AppValidators {
-  const AppValidators._(); // no instances
+  const AppValidators._();
 
   static final firstName = FieldValidator([
     const RequiredRule(ValidationMessages.nameRequired),
@@ -207,47 +219,70 @@ class AppValidators {
     PhoneRule(),
   ]);
 
+  // Optional variants — no RequiredRule
   static const optionalEmail = FieldValidator([EmailRule()]);
   static const optionalPhone = FieldValidator([PhoneRule()]);
-
-  // ...
 }
 ```
 
 ### Required vs Optional Variants
 
-Some fields are required in one form and optional in another. The pattern:
-
-| Validator | Has `RequiredRule`? | Use case |
+| Validator | Has RequiredRule? | Use case |
 |---|---|---|
-| `AppValidators.phone` | Yes | Registration — mobile is required |
-| `AppValidators.optionalPhone` | No | Profile update — mobile is optional, but must be valid if provided |
-| `AppValidators.email` | Yes | Sign-up flows |
-| `AppValidators.optionalEmail` | No | Profile update — email is optional |
+| `AppValidators.phone` | Yes | Registration — mobile is mandatory |
+| `AppValidators.optionalPhone` | No | Profile — mobile is optional, but valid if provided |
+| `AppValidators.email` | Yes | Sign-up |
+| `AppValidators.optionalEmail` | No | Profile — email is optional |
 
-The optional variant has **no `RequiredRule`** — the format rule skips empty values, so an empty optional field always passes.
+The optional variant has no `RequiredRule`. Format rules skip empty values, so an empty optional field always passes.
 
-### Adding a New Named Validator
-
-1. Add the static field to `AppValidators`.
-2. Use `ValidationMessages` for the error string — never hardcode a message in `AppValidators`.
-3. Add the message constant to `ValidationMessages` if it does not exist.
+### Adding a New Validator
 
 ```dart
-// In AppValidators
+// 1. Add message to ValidationMessages
+static const String postalCodeRequired = 'Postal code is required';
+static const String postalCodeInvalid = 'Enter a 4-digit postal code';
+
+// 2. Add validator to AppValidators
 static final postalCode = FieldValidator([
   const RequiredRule(ValidationMessages.postalCodeRequired),
   PatternRule(RegExp(r'^\d{4}$'), ValidationMessages.postalCodeInvalid),
 ]);
-
-// In ValidationMessages
-static const String postalCodeRequired = 'Postal code is required';
-static const String postalCodeInvalid = 'Enter a 4-digit postal code';
 ```
+
+Never hardcode error strings in `AppValidators` — always reference `ValidationMessages`.
 
 ---
 
-## 5. Layer 4 — FormInput\<T\> (Touched/Dirty State)
+## 5. ValidationMessages
+
+**File:** `lib/core/validation/validation_messages.dart`
+
+All user-facing error strings in one place. Grouped by field type.
+
+```dart
+class ValidationMessages {
+  const ValidationMessages._();
+
+  static const String required         = 'This field is required';
+  static const String nameRequired     = 'Name is required';
+  static const String nameTooShort     = 'Name must be at least 2 characters';
+  static const String nameInvalid      = 'Only letters, spaces, hyphens and dots are allowed';
+  static const String phoneRequired    = 'Phone number is required';
+  static const String phoneInvalid     = 'Enter a valid phone number';
+  static const String emailRequired    = 'Email is required';
+  static const String emailInvalid     = 'Enter a valid email address';
+  static const String dobRequired      = 'Date of Birth is required';
+  static const String genderRequired   = 'Gender is required';
+  // ...
+}
+```
+
+When adding a new message: add it here, reference it from the rule constructor. Never pass a raw string literal to a rule.
+
+---
+
+## 6. FormInput\<T\>
 
 **File:** `lib/core/forms/form_input.dart`
 
@@ -261,120 +296,264 @@ class FormInput<T> extends Equatable {
 
   FormInput<T> touch(T newValue) => FormInput.dirty(newValue);
 
+  String? errorFrom(String? Function(T) validator) =>
+      isDirty ? validator(value) : null;
+
   @override
   List<Object?> get props => [value, isDirty];
 }
 ```
 
-`FormInput<T>` is a small immutable wrapper that bundles **the field's value** with **whether the user has interacted with it**. It does not validate anything — it only tracks state.
+`FormInput<T>` bundles a field's **value** with its **dirty state**. It does not validate anything — it only tracks whether the user has interacted with the field.
 
-### Why FormInput?
+### Constructors
 
-Without `FormInput`, all fields start with errors visible (empty required field → error). That is a bad UX: the user hasn't done anything wrong yet.
-
-With `FormInput`:
-
-| State | `isDirty` | Error getter returns |
+| Constructor | isDirty | When to use |
 |---|---|---|
-| Field never touched | `false` | `null` — no error shown |
-| User typed something | `true` | result of `AppValidators.xyz(value)` |
+| `FormInput.pure(value)` | `false` | Initial/default values, pre-populated data from server |
+| `FormInput.dirty(value)` | `true` | After user interaction (usually via `touch()`) |
 
-### API Reference
+### touch()
 
-| Constructor / Method | When to use |
-|---|---|
-| `FormInput.pure(value)` | Initial field value — not touched. Use in `RegistrationFormState()` defaults and in `ProfileFormCubit.initializeFormData()`. |
-| `FormInput.dirty(value)` | Field has been interacted with. You rarely call this directly. |
-| `.touch(newValue)` | Call from cubit `onXxxChanged` — marks dirty and sets the new value. |
-| `.value` | Read the current value (in `buildParams()`, `isValid`, etc.). |
-| `.isDirty` | True if the user has touched this field. Used in error getters. |
-
-**Key insight — `initializeFormData` uses `pure`:**
-When the profile form is pre-populated from the server, every field is initialized with `FormInput.pure(serverValue)`. This means:
-- The form is valid immediately (button is enabled) — because the server data is valid.
-- Zero error messages are shown — because no field is dirty yet.
-- The first edit the user makes marks that field dirty and shows its error if invalid.
-
----
-
-## 6. Layer 5 — Cubit State (Error Getters + isValid)
-
-The cubit state is a Freezed class with computed getters on top of `FormInput<T>` fields.
-
-### Error Getters
-
-Error getters are **touch-gated**: they return `null` until the field is dirty.
-
-```dart
-String? get firstNameError =>
-    firstName.isDirty ? AppValidators.firstName(firstName.value) : null;
-```
-
-The getter calls `AppValidators.firstName` with `.value` (not the raw `FormInput`), and suppresses the result when `isDirty` is false.
-
-Pattern used for all fields:
-
-```dart
-String? get xyzError =>
-    xyz.isDirty ? AppValidators.xyz(xyz.value) : null;
-```
-
-For fields with no validator (e.g. `address`), there is no error getter. The field is still a `FormInput<String>` for consistency with `copyWith` behavior.
-
-### isValid
-
-`isValid` is **touch-blind** — it ignores `isDirty` completely. It evaluates every required field's validator against the current value:
-
-```dart
-bool get isValid =>
-    AppValidators.firstName(firstName.value) == null &&
-    AppValidators.lastName(lastName.value) == null &&
-    // ...all required fields
-```
-
-This is intentional:
-- `isValid == true` → submit button is enabled.
-- `isValid == false` → submit button is disabled, regardless of which fields are dirty.
-
-The button state never depends on whether the user has touched any field — only on whether the **actual values** are all valid.
-
----
-
-## 7. Layer 6 — UI Widgets (Consuming Errors)
-
-### Field Widgets
-
-Field widgets are `BlocBuilder` wrappers that read **only the error getter(s) they care about** via `buildWhen`. They pass the error directly to `AppTextField`'s `errorText` parameter.
-
-```dart
-BlocBuilder<RegistrationFormCubit, RegistrationFormState>(
-  buildWhen: (prev, curr) => prev.firstNameError != curr.firstNameError,
-  builder: (context, state) {
-    return AppTextField.name(
-      labelText: RegistrationStrings.firstName,
-      errorText: state.firstNameError, // null = no error shown
-      onChanged: cubit.onFirstNameChanged,
-    );
-  },
-);
-```
-
-`buildWhen` ensures the field widget only rebuilds when its own error changes — not on every keystroke in any field.
-
-`onChanged` calls the cubit method:
+Transitions a field to dirty with a new value. Used in cubit `onXxxChanged` methods:
 
 ```dart
 void onFirstNameChanged(String value) =>
     emit(state.copyWith(firstName: state.firstName.touch(value)));
 ```
 
-The `.touch(value)` call marks the field dirty and sets the new value in a single operation.
+Always use `state.field.touch(value)` — it preserves the generic type parameter. This matters for `FormInput<DateTime?>` where `FormInput.dirty(dateTimeValue)` would infer `FormInput<DateTime>` (wrong) instead of `FormInput<DateTime?>` (correct).
+
+### errorFrom()
+
+Runs a validator only when the field is dirty. Returns `null` when pure (error suppressed).
+
+```dart
+// String fields — pass the validator's .call method
+String? get firstNameError => firstName.errorFrom(AppValidators.firstName.call);
+String? get emailError     => email.errorFrom(AppValidators.optionalEmail.call);
+
+// Non-String fields — lambda to transform the value first
+String? get dobError => dob.errorFrom(
+    (v) => AppValidators.dateOfBirth(v?.toIso8601String()));
+```
+
+`errorFrom` eliminates the manual `isDirty ? validator(value) : null` pattern. You cannot forget the dirty check or the `.value` access — both are handled internally.
+
+### Why Not formz?
+
+The `formz` package requires **per field**: 1 error enum + 1 class extending `FormzInput` + 1 extension to map enum back to string. For 5 fields that is ~150 lines of boilerplate.
+
+Our approach requires **0 extra classes per field**. The same `FormInput<T>` is reused everywhere, `AppValidators` provides validation through composable rules, and errors are strings from the start — no enum roundtrip.
+
+| | formz | Our approach |
+|---|---|---|
+| Per new field type | ~30 lines (enum + class + extension) | 0 extra classes |
+| Error type | Enum (mapped back to String for display) | String directly |
+| Rule composition | Monolithic per-field class | Atomic rules, mix-and-match |
+| Optional variant | Separate class | Same FormInput, different AppValidator |
+| Touched/dirty | Built-in via `displayError` | Built-in via `errorFrom()` |
+| External dependency | Yes | No |
+
+---
+
+## 7. Cubit State
+
+The state is a Freezed class with `FormInput<T>` fields and computed getters.
+
+### Field Declarations
+
+```dart
+@freezed
+abstract class RegistrationFormState with _$RegistrationFormState {
+  const RegistrationFormState._();
+
+  const factory RegistrationFormState({
+    @Default(FormInput.pure('')) FormInput<String> firstName,
+    @Default(FormInput.pure('')) FormInput<String> lastName,
+    @Default(FormInput.pure('')) FormInput<String> mobile,
+    @Default(FormInput<DateTime?>.pure(null)) FormInput<DateTime?> dob,
+    @Default(FormInput.pure('')) FormInput<String> gender,
+    @Default(true) bool termsAccepted,
+    @Default(RegisterInitiateIdle()) RegisterOperationState registerState,
+  }) = _RegistrationFormState;
+
+  factory RegistrationFormState.initial() => const RegistrationFormState();
+```
+
+- String fields default to `FormInput.pure('')`
+- Nullable types need the explicit generic: `FormInput<DateTime?>.pure(null)`
+- Non-form fields (`termsAccepted`, `registerState`, `userId`) stay as plain types
+
+### Error Getters
+
+One line per field using `errorFrom()`:
+
+```dart
+  String? get firstNameError => firstName.errorFrom(AppValidators.firstName.call);
+  String? get lastNameError  => lastName.errorFrom(AppValidators.lastName.call);
+  String? get mobileError    => mobile.errorFrom(AppValidators.phone.call);
+  String? get genderError    => gender.errorFrom(AppValidators.gender.call);
+
+  // Non-String fields use a lambda
+  String? get dateOfBirthError =>
+      dob.errorFrom((v) => AppValidators.dateOfBirth(v?.toIso8601String()));
+```
+
+For optional fields in profile:
+
+```dart
+  String? get emailError => email.errorFrom(AppValidators.optionalEmail.call);
+  String? get phoneError => mobile.errorFrom(AppValidators.optionalPhone.call);
+```
+
+Fields with no validator (`bloodGroup`, `nationalId`, `address`) have no error getter.
+
+### isValid
+
+`isValid` is **touch-blind** — it ignores `isDirty` and checks the raw values:
+
+```dart
+  bool get isValid =>
+      AppValidators.firstName(firstName.value) == null &&
+      AppValidators.lastName(lastName.value) == null &&
+      AppValidators.phone(mobile.value) == null &&
+      AppValidators.dateOfBirth(dob.value?.toIso8601String()) == null &&
+      AppValidators.gender(gender.value) == null;
+```
+
+Why two separate mechanisms:
+
+| | Error getters | isValid |
+|---|---|---|
+| Question | Should I **show** an error? | Are all values **actually valid**? |
+| Checks isDirty | Yes (via `errorFrom`) | No |
+| Used by | Field widgets (`errorText`) | Submit button (`onPressed`) |
+
+---
+
+## 8. Cubit Methods
+
+### onChange Handlers
+
+Each handler calls `touch()` to mark the field dirty and set the new value:
+
+```dart
+void onFirstNameChanged(String value) =>
+    emit(state.copyWith(firstName: state.firstName.touch(value)));
+
+void onDobChanged(DateTime value) =>
+    emit(state.copyWith(dob: state.dob.touch(value)));
+
+void onGenderChanged(String? value) =>
+    emit(state.copyWith(gender: state.gender.touch(value ?? '')));
+
+void onBloodGroupChanged(String? value) => emit(
+    state.copyWith(
+      bloodGroup: state.bloodGroup.touch((value ?? '').toUpperCase()),
+    ),
+  );
+```
+
+### Pre-populating (initializeFormData)
+
+When loading a form with server data, use `FormInput.pure()` for every field:
+
+```dart
+void initializeFormData(UserInfoEntity? user) {
+  if (user == null) return;
+  emit(ProfileFormState(
+    userId: user.userId,
+    firstName: FormInput.pure(user.firstName ?? ''),
+    lastName: FormInput.pure(user.lastName ?? ''),
+    dateOfBirth: FormInput.pure(_parseDateOfBirth(user.dateOfBirth)),
+    gender: FormInput.pure(_toTitleCase(user.gender ?? '')),
+    bloodGroup: FormInput.pure((user.bloodGroup ?? '').toUpperCase()),
+    // ...
+  ));
+}
+```
+
+`FormInput.pure()` means:
+- No errors shown (fields are not dirty)
+- `isValid` returns `true` if the server data is valid (button enabled immediately)
+- The first edit marks that single field dirty
+
+### Building Params for API
+
+Read `.value` from each `FormInput` field:
+
+```dart
+UpdateProfileParams? buildParams() {
+  if (!state.isValid) return null;
+  return UpdateProfileParams(
+    userId: state.userId,
+    firstName: state.firstName.value.trim(),
+    lastName: state.lastName.value.trim(),
+    dateOfBirth: _formatDateForApi(state.dateOfBirth.value),
+    gender: state.gender.value.isNotEmpty
+        ? state.gender.value.toUpperCase()
+        : null,
+    // ...
+  );
+}
+```
+
+---
+
+## 9. UI Widgets
+
+### Field Widgets
+
+Each field widget is a `BlocBuilder` that reads **only its own error getter** via `buildWhen`:
+
+```dart
+class NameField extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<RegistrationFormCubit>();
+    return BlocBuilder<RegistrationFormCubit, RegistrationFormState>(
+      buildWhen: (prev, curr) =>
+          prev.firstNameError != curr.firstNameError ||
+          prev.lastNameError != curr.lastNameError,
+      builder: (context, state) {
+        return Row(
+          children: [
+            Expanded(
+              child: AppTextField.name(
+                labelText: RegistrationStrings.firstNameRequired,
+                errorText: state.firstNameError,
+                onChanged: cubit.onFirstNameChanged,
+              ),
+            ),
+            Expanded(
+              child: AppTextField.name(
+                labelText: RegistrationStrings.lastNameRequired,
+                errorText: state.lastNameError,
+                onChanged: cubit.onLastNameChanged,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+```
+
+For fields that display the current value (dropdowns, date pickers), read `.value`:
+
+```dart
+value: state.bloodGroup.value.isNotEmpty ? state.bloodGroup.value : null,
+initialValue: state.dateOfBirth.value,
+```
 
 ### Submit Button
 
-The submit button uses a separate `BlocBuilder` that rebuilds only when `isValid` or `registerState` changes:
+The button depends on `isValid` (touch-blind) and loading state.
 
-**Registration:**
+**Registration — single cubit:**
+
 ```dart
 BlocBuilder<RegistrationFormCubit, RegistrationFormState>(
   buildWhen: (p, c) =>
@@ -382,6 +561,7 @@ BlocBuilder<RegistrationFormCubit, RegistrationFormState>(
   builder: (context, state) {
     final isLoading = state.registerState is RegisterInitiateLoading;
     return AppButton.filled(
+      title: AppStrings.next,
       isLoading: isLoading,
       onPressed: isLoading || !state.isValid ? null : onRegisterPressed,
     );
@@ -389,12 +569,12 @@ BlocBuilder<RegistrationFormCubit, RegistrationFormState>(
 );
 ```
 
-**Profile update:** the `ProfileFormCubit` state drives the outer `BlocBuilder` that decides `onPressed`, and the inner `UpdateButton` handles the loading state from `UpdateProfileCubit`:
+**Profile — two cubits (form validity + update operation):**
 
 ```dart
-// profile_update_form.dart
+// Outer: form validity drives onPressed
 BlocBuilder<ProfileFormCubit, ProfileFormState>(
-  buildWhen: (p, c) => p.isValid != c.isValid,
+  buildWhen: (prev, curr) => prev.isValid != curr.isValid,
   builder: (context, formState) {
     return UpdateButton(
       onPressed: formState.isValid ? _handleSubmit : null,
@@ -402,87 +582,97 @@ BlocBuilder<ProfileFormCubit, ProfileFormState>(
   },
 ),
 
-// update_button.dart
+// Inner (UpdateButton): loading state overrides onPressed
 BlocBuilder<UpdateProfileCubit, UpdateProfileState>(
   builder: (context, state) {
     final isLoading = state.maybeWhen(loading: () => true, orElse: () => false);
     return AppButton.filled(
       isLoading: isLoading,
-      onPressed: isLoading ? null : onPressed, // null when loading OR when form invalid
+      onPressed: isLoading ? null : onPressed, // null from either source
     );
   },
 );
 ```
 
-`onPressed: null` is how Flutter's `ElevatedButton` / `FilledButton` renders as disabled. No extra `enabled` flag is needed.
+`onPressed: null` makes Flutter render the button as disabled.
 
 ---
 
-## 8. Progressive Validation UX
+## 10. Progressive Validation UX
 
-The three UX states and what drives them:
-
-```
-┌──────────────────────────────────────────────────────────────────┐
-│  STATE 1: Form opens (all fields are pure)                      │
-│                                                                  │
-│  firstName.isDirty = false  →  firstNameError = null            │
-│  lastName.isDirty  = false  →  lastNameError  = null            │
-│  isValid = false (values are empty)                              │
-│                                                                  │
-│  UI: No error text shown. Submit button DISABLED.               │
-└──────────────────────────────────────────────────────────────────┘
-                              │ user types "A" in first name
-                              ▼
-┌──────────────────────────────────────────────────────────────────┐
-│  STATE 2: One field touched, still invalid                      │
-│                                                                  │
-│  firstName.isDirty = true   →  firstNameError = "Name must be   │
-│  firstName.value   = "A"         at least 2 characters"         │
-│  isValid = false                                                 │
-│                                                                  │
-│  UI: First name error shown. Other fields silent. Button DISABLED│
-└──────────────────────────────────────────────────────────────────┘
-                              │ user fills all fields validly
-                              ▼
-┌──────────────────────────────────────────────────────────────────┐
-│  STATE 3: All fields valid                                      │
-│                                                                  │
-│  all isDirty = true (or mixed, doesn't matter for isValid)       │
-│  all AppValidators.xyz(value) == null                            │
-│  isValid = true                                                  │
-│                                                                  │
-│  UI: Only errors on actually-invalid dirty fields. Button ENABLED│
-└──────────────────────────────────────────────────────────────────┘
-```
-
-**Profile-specific case — pre-populated form:**
+Three states the user experiences:
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  Form opens with server data (all fields pure, values valid)    │
-│                                                                  │
-│  firstName = FormInput.pure("Rafiq")  →  isDirty = false        │
-│  AppValidators.firstName("Rafiq") == null                        │
-│  isValid = true                                                  │
-│                                                                  │
-│  UI: Zero errors shown. Submit button ENABLED immediately.       │
-└──────────────────────────────────────────────────────────────────┘
+  FORM OPENS
+  ──────────────────────────────────────────
+  All fields: FormInput.pure → isDirty = false
+  errorFrom() returns null for all fields
+  isValid = false (empty values)
+
+  UI: No errors. Button DISABLED.
+                    │
+                    │ user types "A" in first name
+                    ▼
+  PARTIAL INPUT
+  ──────────────────────────────────────────
+  firstName: dirty("A") → errorFrom returns "Name must be at least 2 characters"
+  Other fields: still pure → errorFrom returns null
+  isValid = false
+
+  UI: Only first name error shown. Button DISABLED.
+                    │
+                    │ user fills all required fields correctly
+                    ▼
+  ALL VALID
+  ──────────────────────────────────────────
+  All required fields pass validation
+  isValid = true
+
+  UI: No errors on valid fields. Button ENABLED.
+```
+
+**Pre-populated form (profile):**
+
+```
+  FORM OPENS WITH SERVER DATA
+  ──────────────────────────────────────────
+  All fields: FormInput.pure(serverValue)
+  isDirty = false → errorFrom returns null
+  isValid = true (server data is valid)
+
+  UI: Zero errors. Button ENABLED immediately.
+                    │
+                    │ user clears first name
+                    ▼
+  firstName: dirty("") → errorFrom returns "Name is required"
+  isValid = false
+
+  UI: First name error shown. Button DISABLED.
 ```
 
 ---
 
-## 9. Building a New Form — Step-by-Step
+## 11. Cookbook: Adding a New Form
 
-### Step 1 — Add validators (if new fields)
+### Step 1 — Validators
 
-Add to `AppValidators` and `ValidationMessages` if the field type doesn't exist yet.
-
-### Step 2 — Write the state
+If the form has field types not already in `AppValidators`, add them. Skip if existing validators cover your fields.
 
 ```dart
-// lib/features/address/presentation/cubits/address_form_state.dart
+// ValidationMessages
+static const String postalCodeRequired = 'Postal code is required';
+static const String postalCodeInvalid = 'Enter a 4-digit postal code';
 
+// AppValidators
+static final postalCode = FieldValidator([
+  const RequiredRule(ValidationMessages.postalCodeRequired),
+  PatternRule(RegExp(r'^\d{4}$'), ValidationMessages.postalCodeInvalid),
+]);
+```
+
+### Step 2 — State
+
+```dart
 @freezed
 abstract class AddressFormState with _$AddressFormState {
   const AddressFormState._();
@@ -490,25 +680,24 @@ abstract class AddressFormState with _$AddressFormState {
   const factory AddressFormState({
     @Default(FormInput.pure('')) FormInput<String> street,
     @Default(FormInput.pure('')) FormInput<String> postalCode,
+    @Default(FormInput.pure('')) FormInput<String> city, // no validator
   }) = _AddressFormState;
 
   factory AddressFormState.initial() => const AddressFormState();
 
-  // Touch-gated error getters
-  String? get streetError =>
-      street.isDirty ? AppValidators.required(street.value) : null;
+  // Error getters
+  String? get streetError => street.errorFrom(AppValidators.required.call);
+  String? get postalCodeError => postalCode.errorFrom(AppValidators.postalCode.call);
+  // city has no validator — no getter
 
-  String? get postalCodeError =>
-      postalCode.isDirty ? AppValidators.postalCode(postalCode.value) : null;
-
-  // Touch-blind — drives button
+  // isValid
   bool get isValid =>
       AppValidators.required(street.value) == null &&
       AppValidators.postalCode(postalCode.value) == null;
 }
 ```
 
-### Step 3 — Write the cubit
+### Step 3 — Cubit
 
 ```dart
 @injectable
@@ -521,11 +710,12 @@ class AddressFormCubit extends Cubit<AddressFormState> {
   void onPostalCodeChanged(String value) =>
       emit(state.copyWith(postalCode: state.postalCode.touch(value)));
 
-  bool validate() => state.isValid; // safety net before submit
+  void onCityChanged(String value) =>
+      emit(state.copyWith(city: state.city.touch(value)));
 }
 ```
 
-### Step 4 — Write field widgets
+### Step 4 — Field widget
 
 ```dart
 BlocBuilder<AddressFormCubit, AddressFormState>(
@@ -540,7 +730,7 @@ BlocBuilder<AddressFormCubit, AddressFormState>(
 );
 ```
 
-### Step 5 — Wire the submit button
+### Step 5 — Submit button
 
 ```dart
 BlocBuilder<AddressFormCubit, AddressFormState>(
@@ -554,7 +744,7 @@ BlocBuilder<AddressFormCubit, AddressFormState>(
 );
 ```
 
-### Step 6 — Run codegen
+### Step 6 — Codegen
 
 ```bash
 fvm dart run build_runner build --delete-conflicting-outputs
@@ -562,151 +752,101 @@ fvm dart run build_runner build --delete-conflicting-outputs
 
 ---
 
-## 10. Validation Messages
+## 12. Common Mistakes
 
-**File:** `lib/core/validation/validation_messages.dart`
-
-All user-facing error strings live here. Never hardcode a validation message anywhere else.
+### 1. Bypassing errorFrom with manual isDirty check
 
 ```dart
-class ValidationMessages {
-  const ValidationMessages._();
+// WRONG — manual pattern, easy to forget isDirty or .value
+String? get nameError =>
+    name.isDirty ? AppValidators.name(name.value) : null;
 
-  // General
-  static const String required = 'This field is required';
-
-  // Name
-  static const String nameRequired = 'Name is required';
-  static const String nameTooShort = 'Name must be at least 2 characters';
-  static const String nameInvalid = 'Only letters, spaces, hyphens and dots are allowed';
-
-  // Phone
-  static const String phoneRequired = 'Phone number is required';
-  static const String phoneInvalid  = 'Enter a valid phone number';
-
-  // Email
-  static const String emailRequired = 'Email is required';
-  static const String emailInvalid  = 'Enter a valid email address';
-
-  // OTP
-  static const String otpRequired   = 'OTP is required';
-  static const String otpDigitsOnly = 'OTP must contain digits only';
-  static const String otpLength     = 'OTP must be 6 digits';
-
-  // Password
-  static const String passwordRequired = 'Password is required';
-  static const String passwordTooShort = 'Password must be at least 8 characters';
-
-  // Date of Birth
-  static const String dobRequired = 'Date of Birth is required';
-  static const String dobInvalid  = 'Enter a valid date of birth';
-
-  // Gender
-  static const String genderRequired = 'Gender is required';
-}
+// CORRECT — errorFrom handles both
+String? get nameError => name.errorFrom(AppValidators.name.call);
 ```
 
-When adding a new message: add the constant here, reference it from the rule or `AppValidators`. Never pass a raw string literal to a rule constructor in `AppValidators`.
-
----
-
-## 11. Common Mistakes
-
-### Mistake 1 — Showing errors on an untouched field
+### 2. Using FormInput.dirty() in initializeFormData
 
 ```dart
-// WRONG — always runs validation, shows error on form open
-String? get firstNameError => AppValidators.firstName(firstName);
-
-// CORRECT — suppresses error until dirty
-String? get firstNameError =>
-    firstName.isDirty ? AppValidators.firstName(firstName.value) : null;
-```
-
-### Mistake 2 — Reading `.value` in isValid but forgetting `.value` in error getters
-
-`isValid` and error getters both receive `firstName.value` (a `String`), not `firstName` (a `FormInput<String>`). `AppValidators.firstName` expects `String?`, not `FormInput<String>`.
-
-```dart
-// WRONG
-String? get firstNameError => AppValidators.firstName(firstName); // type error
-
-// CORRECT
-String? get firstNameError =>
-    firstName.isDirty ? AppValidators.firstName(firstName.value) : null;
-```
-
-### Mistake 3 — Using FormInput.dirty() in initializeFormData
-
-```dart
-// WRONG — shows errors immediately when profile loads
-emit(ProfileFormState(
-  firstName: FormInput.dirty(user.firstName ?? ''),
-));
+// WRONG — shows errors immediately on a pre-populated form
+firstName: FormInput.dirty(user.firstName ?? ''),
 
 // CORRECT — no errors shown, button enabled if data is valid
-emit(ProfileFormState(
-  firstName: FormInput.pure(user.firstName ?? ''),
-));
+firstName: FormInput.pure(user.firstName ?? ''),
 ```
 
-### Mistake 4 — Forgetting buildWhen on field widgets
+### 3. Reading FormInput instead of .value in widgets
 
-Without `buildWhen`, the field widget rebuilds on every state change in the cubit — including keystrokes in other fields. Always narrow the rebuild:
+```dart
+// WRONG — passes FormInput<String> where String is expected
+value: state.bloodGroup,
+
+// CORRECT
+value: state.bloodGroup.value,
+```
+
+### 4. Missing buildWhen on field widgets
 
 ```dart
 // WRONG — rebuilds on every state change
-BlocBuilder<RegistrationFormCubit, RegistrationFormState>(
+BlocBuilder<FormCubit, FormState>(
   builder: (context, state) { ... },
 );
 
 // CORRECT — rebuilds only when this field's error changes
-BlocBuilder<RegistrationFormCubit, RegistrationFormState>(
-  buildWhen: (prev, curr) => prev.firstNameError != curr.firstNameError,
+BlocBuilder<FormCubit, FormState>(
+  buildWhen: (p, c) => p.streetError != c.streetError,
   builder: (context, state) { ... },
 );
 ```
 
-### Mistake 5 — Putting validation logic in the widget
+### 5. Enabling the button based on dirty state
 
 ```dart
-// WRONG — validation logic leaks into the view
-builder: (context, state) {
-  final error = state.firstName.value.length < 2 ? 'Too short' : null;
-  return AppTextField(errorText: error);
-}
-
-// CORRECT — widget reads a pre-computed getter from state
-builder: (context, state) {
-  return AppTextField(errorText: state.firstNameError);
-}
-```
-
-### Mistake 6 — Enabling the button based on dirty state instead of validity
-
-The button should be enabled when the **values are valid**, not when fields have been touched.
-
-```dart
-// WRONG — button enables just because the user typed something
+// WRONG — enables just because user typed
 onPressed: state.firstName.isDirty ? _submit : null,
 
-// CORRECT — button enables only when all required fields pass validation
+// CORRECT — enables only when all values pass validation
 onPressed: state.isValid ? _submit : null,
 ```
 
-### Mistake 7 — Adding a new rule but forgetting to export it
+### 6. Putting validation logic in the widget
+
+```dart
+// WRONG — validation in the view layer
+final error = state.firstName.value.length < 2 ? 'Too short' : null;
+
+// CORRECT — read the pre-computed getter
+errorText: state.firstNameError,
+```
+
+### 7. Hardcoding error messages
+
+```dart
+// WRONG
+static final phone = FieldValidator([RequiredRule('Phone number is required')]);
+
+// CORRECT
+static final phone = const FieldValidator([RequiredRule(ValidationMessages.phoneRequired)]);
+```
+
+### 8. Using FormInput.dirty() instead of touch() in cubit methods
+
+```dart
+// WRONG — Dart infers FormInput<DateTime>, not FormInput<DateTime?>
+emit(state.copyWith(dob: FormInput.dirty(value)));
+
+// CORRECT — touch() preserves the generic type
+emit(state.copyWith(dob: state.dob.touch(value)));
+```
+
+### 9. Forgetting to export a new rule
 
 All rules must be exported from `lib/core/validation/rules/rules.dart`:
 
 ```dart
-// rules.dart
 export 'custom_rule.dart';
-export 'dob_rule.dart';
 export 'email_rule.dart';
 export 'max_length_rule.dart';
-export 'min_length_rule.dart';
-export 'pattern_rule.dart';
-export 'phone_rule.dart';
-export 'required_rule.dart';
-export 'max_value_rule.dart'; // add your new rule here
+// ... add your new rule here
 ```
