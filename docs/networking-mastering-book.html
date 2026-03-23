@@ -1,0 +1,2800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Networking Mastery — A Developer's Complete Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Fraunces:ital,wght@0,300;0,600;0,900;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#080c12;
+  --bg2:#0e1420;
+  --bg3:#141b28;
+  --border:#1e2d45;
+  --accent:#00c8ff;
+  --accent2:#ff6b35;
+  --accent3:#39d98a;
+  --accent4:#f7c94b;
+  --text:#c8d8e8;
+  --text-dim:#6a849e;
+  --text-bright:#eaf4ff;
+  --sidebar-w:290px;
+  --why:#ff6b35;
+  --what:#00c8ff;
+  --analogy:#a78bfa;
+  --example:#39d98a;
+  --quiz:#f7c94b;
+  --usecase:#fb7185;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  line-height:1.75;
+  display:flex;
+  min-height:100vh;
+}
+
+/* ── SIDEBAR ─────────────────────────────────── */
+#sidebar{
+  position:fixed;top:0;left:0;
+  width:var(--sidebar-w);
+  height:100vh;
+  background:var(--bg2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  z-index:100;
+  padding:0 0 40px 0;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border) transparent;
+}
+#sidebar::-webkit-scrollbar{width:4px;}
+#sidebar::-webkit-scrollbar-thumb{background:var(--border);}
+.sidebar-header{
+  padding:28px 22px 20px;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;
+  background:var(--bg2);
+  z-index:1;
+}
+.sidebar-header h2{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:4px;
+}
+.sidebar-header p{
+  font-size:12px;
+  color:var(--text-dim);
+}
+.toc-section{
+  padding:16px 0 4px 22px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+}
+.toc-item{
+  display:block;
+  padding:7px 22px 7px 22px;
+  font-size:13px;
+  color:var(--text-dim);
+  text-decoration:none;
+  border-left:2px solid transparent;
+  transition:all 0.2s;
+  line-height:1.4;
+}
+.toc-item:hover{
+  color:var(--text-bright);
+  border-left-color:var(--accent);
+  background:rgba(0,200,255,0.04);
+}
+.toc-item.active{
+  color:var(--accent);
+  border-left-color:var(--accent);
+  background:rgba(0,200,255,0.07);
+}
+.toc-item .ch-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:var(--text-dim);
+  margin-right:8px;
+}
+
+/* ── MAIN CONTENT ──────────────────────────────── */
+#main{
+  margin-left:var(--sidebar-w);
+  flex:1;
+  max-width:860px;
+  padding:0 56px 100px;
+}
+
+/* ── HERO ──────────────────────────────────────── */
+#hero{
+  padding:80px 0 60px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:70px;
+}
+#hero .eyebrow{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:20px;
+}
+#hero h1{
+  font-family:'Fraunces',serif;
+  font-weight:900;
+  font-size:52px;
+  line-height:1.1;
+  color:var(--text-bright);
+  margin-bottom:16px;
+}
+#hero h1 span{color:var(--accent);}
+#hero .subtitle{
+  font-family:'Fraunces',serif;
+  font-style:italic;
+  font-weight:300;
+  font-size:20px;
+  color:var(--text-dim);
+  margin-bottom:32px;
+}
+.meta-pills{
+  display:flex;gap:12px;flex-wrap:wrap;
+  margin-bottom:40px;
+}
+.meta-pill{
+  padding:6px 16px;
+  border:1px solid var(--border);
+  border-radius:100px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--text-dim);
+}
+.formula-box{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:28px 32px;
+  margin-top:32px;
+}
+.formula-box h3{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:16px;
+}
+.formula-row{
+  display:flex;align-items:center;gap:12px;
+  padding:6px 0;
+  font-size:14px;
+}
+.formula-badge{
+  width:28px;height:28px;
+  border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;flex-shrink:0;
+}
+
+/* ── CHAPTER ──────────────────────────────────── */
+.chapter{
+  margin-bottom:90px;
+  padding-top:20px;
+}
+.chapter-header{
+  margin-bottom:40px;
+}
+.part-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:10px;
+}
+.chapter-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--accent);
+  margin-bottom:8px;
+}
+.chapter-title{
+  font-family:'Fraunces',serif;
+  font-weight:900;
+  font-size:38px;
+  line-height:1.15;
+  color:var(--text-bright);
+  margin-bottom:16px;
+}
+.chapter-divider{
+  height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+  width:80px;
+  margin-bottom:36px;
+}
+
+/* ── SECTION BLOCKS ───────────────────────────── */
+.block{
+  margin-bottom:36px;
+  border-radius:12px;
+  overflow:hidden;
+}
+.block-header{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 20px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  font-weight:700;
+}
+.block-body{
+  padding:24px 28px;
+}
+.block.why .block-header{background:rgba(255,107,53,0.15);color:var(--why);}
+.block.why{border:1px solid rgba(255,107,53,0.25);}
+.block.what .block-header{background:rgba(0,200,255,0.12);color:var(--what);}
+.block.what{border:1px solid rgba(0,200,255,0.2);}
+.block.analogy .block-header{background:rgba(167,139,250,0.12);color:var(--analogy);}
+.block.analogy{border:1px solid rgba(167,139,250,0.2);}
+.block.diagram .block-header{background:rgba(57,217,138,0.1);color:var(--example);}
+.block.diagram{border:1px solid rgba(57,217,138,0.2);}
+.block.deepdive .block-header{background:rgba(0,200,255,0.08);color:var(--what);}
+.block.deepdive{border:1px solid rgba(0,200,255,0.15);}
+.block.example .block-header{background:rgba(57,217,138,0.1);color:var(--example);}
+.block.example{border:1px solid rgba(57,217,138,0.2);}
+.block.usecase .block-header{background:rgba(251,113,133,0.1);color:var(--usecase);}
+.block.usecase{border:1px solid rgba(251,113,133,0.2);}
+.block.quiz .block-header{background:rgba(247,201,75,0.1);color:var(--quiz);}
+.block.quiz{border:1px solid rgba(247,201,75,0.2);}
+
+/* ── TYPOGRAPHY ───────────────────────────────── */
+.block-body p{margin-bottom:14px;color:var(--text);}
+.block-body p:last-child{margin-bottom:0;}
+.block-body strong{color:var(--text-bright);}
+.block-body em{color:var(--accent4);font-style:normal;}
+
+h3.section-sub{
+  font-family:'Fraunces',serif;
+  font-weight:600;
+  font-size:20px;
+  color:var(--text-bright);
+  margin:28px 0 12px;
+}
+
+/* ── CODE ─────────────────────────────────────── */
+pre{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:20px 24px;
+  overflow-x:auto;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  line-height:1.6;
+  color:#8ecff5;
+  margin:12px 0;
+}
+code{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  background:var(--bg3);
+  padding:2px 7px;
+  border-radius:4px;
+  color:#8ecff5;
+}
+pre code{background:none;padding:0;}
+.code-comment{color:#4a6a8a;}
+.code-key{color:#00c8ff;}
+.code-val{color:#39d98a;}
+.code-str{color:#f7c94b;}
+
+/* ── TABLES ───────────────────────────────────── */
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+  margin:12px 0;
+}
+th{
+  background:var(--bg3);
+  color:var(--text-bright);
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  padding:11px 14px;
+  text-align:left;
+  border-bottom:2px solid var(--border);
+}
+td{
+  padding:10px 14px;
+  border-bottom:1px solid var(--border);
+  color:var(--text);
+  vertical-align:top;
+}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(0,200,255,0.03);}
+td strong{color:var(--text-bright);}
+
+/* ── DIAGRAMS ─────────────────────────────────── */
+.diagram-box{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:28px 24px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12.5px;
+  line-height:1.7;
+  color:#8ecff5;
+  overflow-x:auto;
+  white-space:pre;
+}
+.diagram-caption{
+  font-size:12px;
+  color:var(--text-dim);
+  text-align:center;
+  margin-top:10px;
+  font-style:italic;
+}
+
+/* ── QUIZ ─────────────────────────────────────── */
+.quiz-q{
+  margin-bottom:18px;
+  padding:16px 20px;
+  background:var(--bg3);
+  border-radius:8px;
+  border-left:3px solid var(--quiz);
+}
+.quiz-q .q-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--quiz);
+  margin-bottom:6px;
+}
+.quiz-q .q-text{
+  color:var(--text-bright);
+  font-size:15px;
+}
+.quiz-answers{
+  margin-top:24px;
+  padding:20px;
+  background:rgba(57,217,138,0.05);
+  border:1px dashed rgba(57,217,138,0.3);
+  border-radius:8px;
+}
+.quiz-answers summary{
+  cursor:pointer;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--example);
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  padding:4px 0;
+}
+.quiz-answers .ans-item{
+  margin-top:12px;
+  padding:10px 14px;
+  background:var(--bg3);
+  border-radius:6px;
+  font-size:14px;
+}
+.quiz-answers .ans-item .ans-n{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--quiz);
+  margin-bottom:4px;
+}
+
+/* ── USECASE CARDS ────────────────────────────── */
+.usecase-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;
+}
+.usecase-card{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:14px 16px;
+}
+.usecase-card .uc-icon{font-size:20px;margin-bottom:8px;}
+.usecase-card .uc-title{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  color:var(--usecase);
+  font-weight:700;
+  margin-bottom:6px;
+  letter-spacing:0.05em;
+}
+.usecase-card .uc-desc{font-size:13px;color:var(--text-dim);}
+
+/* ── PROBLEM/SOLUTION ─────────────────────────── */
+.ps-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-bottom:14px;
+}
+.ps-box{
+  padding:16px 18px;
+  border-radius:8px;
+}
+.ps-box.problem{
+  background:rgba(255,107,53,0.07);
+  border:1px solid rgba(255,107,53,0.2);
+}
+.ps-box.solution{
+  background:rgba(57,217,138,0.07);
+  border:1px solid rgba(57,217,138,0.2);
+}
+.ps-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.ps-box.problem .ps-label{color:var(--why);}
+.ps-box.solution .ps-label{color:var(--example);}
+.ps-box p{font-size:13px;color:var(--text);}
+
+/* ── BACK TO TOC ──────────────────────────────── */
+.back-to-toc{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-top:48px;
+  padding:10px 20px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--text-dim);
+  text-decoration:none;
+  transition:all 0.2s;
+}
+.back-to-toc:hover{
+  color:var(--accent);
+  border-color:var(--accent);
+  background:rgba(0,200,255,0.05);
+}
+
+/* ── PART DIVIDER ─────────────────────────────── */
+.part-divider{
+  margin:70px 0 60px;
+  padding:32px 36px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  border-left:4px solid var(--accent);
+}
+.part-divider .part-n{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:10px;
+}
+.part-divider h2{
+  font-family:'Fraunces',serif;
+  font-weight:900;
+  font-size:28px;
+  color:var(--text-bright);
+  margin-bottom:10px;
+}
+.part-divider p{font-size:14px;color:var(--text-dim);}
+
+/* ── CALLOUT ──────────────────────────────────── */
+.callout{
+  padding:16px 20px;
+  border-radius:8px;
+  margin:16px 0;
+  font-size:14px;
+}
+.callout.tip{
+  background:rgba(0,200,255,0.06);
+  border-left:3px solid var(--accent);
+  color:var(--text);
+}
+.callout.warning{
+  background:rgba(247,201,75,0.07);
+  border-left:3px solid var(--accent4);
+  color:var(--text);
+}
+.callout strong{color:var(--text-bright);}
+
+/* ── FLOW DIAGRAM ─────────────────────────────── */
+.flow{display:flex;flex-direction:column;gap:0;}
+.flow-item{
+  display:flex;align-items:flex-start;gap:16px;
+  padding-bottom:4px;
+}
+.flow-item .flow-left{
+  display:flex;flex-direction:column;align-items:center;
+  flex-shrink:0;width:32px;
+}
+.flow-item .flow-dot{
+  width:32px;height:32px;
+  border-radius:50%;
+  background:var(--bg3);
+  border:2px solid var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--accent);
+  flex-shrink:0;
+}
+.flow-item .flow-line{
+  width:2px;flex:1;background:var(--border);
+  min-height:20px;margin-top:0;
+}
+.flow-item .flow-content{
+  padding:6px 0 20px;
+  font-size:14px;
+}
+.flow-item .flow-title{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--accent);
+  margin-bottom:4px;
+}
+
+/* ── APPENDIX ─────────────────────────────────── */
+.gloss-item{
+  display:grid;grid-template-columns:160px 1fr;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+  font-size:14px;
+}
+.gloss-term{
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px;
+  color:var(--accent);
+  align-self:start;
+  padding-top:2px;
+}
+.port-grid{
+  display:grid;
+  grid-template-columns:80px 80px 1fr;
+  gap:0;
+}
+.port-grid .ph{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  padding:8px 12px;
+  background:var(--bg3);
+  border-bottom:2px solid var(--border);
+}
+.port-grid .pr{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  color:var(--accent4);
+  padding:8px 12px;
+  border-bottom:1px solid var(--border);
+}
+.port-grid .pt,.port-grid .pd{
+  font-size:13px;
+  padding:8px 12px;
+  border-bottom:1px solid var(--border);
+  color:var(--text);
+}
+
+/* ── PROGRESS TABLE ───────────────────────────── */
+.progress-table td .check{
+  font-size:18px;cursor:pointer;
+}
+.score-input{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  color:var(--text-bright);
+  border-radius:4px;
+  width:50px;
+  padding:3px 6px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  text-align:center;
+}
+
+/* ── SCROLLBAR ────────────────────────────────── */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+@media(max-width:900px){
+  #sidebar{display:none;}
+  #main{margin-left:0;padding:0 24px 80px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ SIDEBAR TOC ═══════════════════ -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <h2>🌐 Networking Mastery</h2>
+    <p>A Developer's Complete Guide</p>
+  </div>
+
+  <div class="toc-section">Introduction</div>
+  <a class="toc-item" href="#preface"><span class="ch-num">00</span>Preface</a>
+
+  <div class="toc-section">Part 1 — Foundations</div>
+  <a class="toc-item" href="#ch1"><span class="ch-num">01</span>The Internet & How It Works</a>
+  <a class="toc-item" href="#ch2"><span class="ch-num">02</span>The OSI Model — 7 Layers</a>
+  <a class="toc-item" href="#ch3"><span class="ch-num">03</span>IP Addresses, DNS & Ports</a>
+  <a class="toc-item" href="#ch4"><span class="ch-num">04</span>TCP vs UDP</a>
+  <a class="toc-item" href="#ch5"><span class="ch-num">05</span>HTTP & HTTPS</a>
+
+  <div class="toc-section">Part 2 — Security</div>
+  <a class="toc-item" href="#ch6"><span class="ch-num">06</span>Firewalls</a>
+  <a class="toc-item" href="#ch7"><span class="ch-num">07</span>Forward Proxy</a>
+  <a class="toc-item" href="#ch8"><span class="ch-num">08</span>Reverse Proxy</a>
+  <a class="toc-item" href="#ch9"><span class="ch-num">09</span>VPN</a>
+
+  <div class="toc-section">Part 3 — Infrastructure</div>
+  <a class="toc-item" href="#ch10"><span class="ch-num">10</span>VPS</a>
+  <a class="toc-item" href="#ch11"><span class="ch-num">11</span>Load Balancing</a>
+  <a class="toc-item" href="#ch12"><span class="ch-num">12</span>CDN</a>
+  <a class="toc-item" href="#ch13"><span class="ch-num">13</span>SSL / TLS</a>
+
+  <div class="toc-section">Part 4 — System Design</div>
+  <a class="toc-item" href="#ch14"><span class="ch-num">14</span>Putting It All Together</a>
+
+  <div class="toc-section">Appendix</div>
+  <a class="toc-item" href="#app-a">A — Glossary</a>
+  <a class="toc-item" href="#app-b">B — Ports Cheatsheet</a>
+  <a class="toc-item" href="#app-c">C — HTTP Status Codes</a>
+  <a class="toc-item" href="#app-d">D — Progress Tracker</a>
+  <a class="toc-item" href="#app-e">E — What to Learn Next</a>
+</nav>
+
+<!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+<main id="main">
+
+<!-- HERO -->
+<section id="preface">
+<div id="hero">
+  <div class="eyebrow">// Developer Reference Book v2.0</div>
+  <h1>Networking<br><span>Mastery</span></h1>
+  <div class="subtitle">A Complete Guide — From Zero to System Design</div>
+  <div class="meta-pills">
+    <span class="meta-pill">For Flutter Developers</span>
+    <span class="meta-pill">Beginner → Advanced</span>
+    <span class="meta-pill">14 Chapters</span>
+    <span class="meta-pill">Diagrams + Code</span>
+  </div>
+
+  <div class="formula-box">
+    <h3>// Learning Formula — Every Chapter</h3>
+    <div class="formula-row"><div class="formula-badge" style="background:rgba(255,107,53,0.2);color:#ff6b35">🔴</div><strong>Why Do We Need It?</strong> — The problem it solves (start here)</div>
+    <div class="formula-row"><div class="formula-badge" style="background:rgba(0,200,255,0.15);color:#00c8ff">🔵</div><strong>Simple Explanation</strong> — What is it in plain words</div>
+    <div class="formula-row"><div class="formula-badge" style="background:rgba(167,139,250,0.15);color:#a78bfa">🟣</div><strong>Real Life Analogy</strong> — Make it click in your mind</div>
+    <div class="formula-row"><div class="formula-badge" style="background:rgba(57,217,138,0.12);color:#39d98a">🟢</div><strong>Visual Diagram</strong> — See the system with your eyes</div>
+    <div class="formula-row"><div class="formula-badge" style="background:rgba(57,217,138,0.12);color:#39d98a">💻</div><strong>Real Code Example</strong> — Including Flutter/Dart</div>
+    <div class="formula-row"><div class="formula-badge" style="background:rgba(251,113,133,0.12);color:#fb7185">📋</div><strong>Use Cases</strong> — When and where to apply it</div>
+    <div class="formula-row"><div class="formula-badge" style="background:rgba(247,201,75,0.12);color:#f7c94b">🧪</div><strong>Mini Quiz</strong> — 5 questions to lock in knowledge</div>
+  </div>
+</div>
+</section>
+
+<!-- ════════════════ PART 1 ════════════════ -->
+<div class="part-divider" id="part1">
+  <div class="part-n">// Part 01</div>
+  <h2>The Foundations</h2>
+  <p>Everything else in this book is built on these concepts. Understand them deeply before moving forward.</p>
+</div>
+
+<!-- ════ CHAPTER 1 ════ -->
+<section class="chapter" id="ch1">
+  <div class="chapter-header">
+    <div class="part-label">Part 1 — Foundations</div>
+    <div class="chapter-num">// Chapter 01</div>
+    <h2 class="chapter-title">The Internet &<br>How It Works</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <p>Before the internet, sharing information between computers meant physically carrying a storage device. The internet solved one massive problem:</p>
+      <div class="callout tip"><strong>"How do we let any computer in the world talk to any other computer — reliably, at any time?"</strong></div>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">❌ Without It</div><p>Data transfer requires physical media. No remote communication. No cloud. No APIs. No Flutter apps talking to a backend.</p></div>
+        <div class="ps-box solution"><div class="ps-label">✅ With It</div><p>Any two devices anywhere on Earth exchange data in milliseconds. Your Flutter app calls an API in another continent and gets a response instantly.</p></div>
+      </div>
+      <p>Every concept in this book — firewalls, VPNs, proxies, CDNs — are all solutions to problems that arise from how the internet works. This is the foundation.</p>
+    </div>
+  </div>
+
+  <div class="block what">
+    <div class="block-header">🔵 Simple Explanation</div>
+    <div class="block-body">
+      <p>The internet is a <strong>giant network of computers</strong> all connected together — like a massive web of roads connecting every city in the world. When your Flutter app loads data, that data travels from a computer somewhere in the world (a <strong>server</strong>), through cables and routers, and arrives on your device (the <strong>client</strong>). It is not magic. It is computers following agreed-upon rules called <strong>protocols</strong>.</p>
+    </div>
+  </div>
+
+  <div class="block analogy">
+    <div class="block-header">🟣 Real Life Analogy</div>
+    <div class="block-body">
+      <p>Think of the global postal system:</p>
+      <table>
+        <tr><th>Postal System</th><th>Internet Equivalent</th></tr>
+        <tr><td>You (the sender)</td><td>Your Flutter app (client)</td></tr>
+        <tr><td>Amazon warehouse</td><td>The API server</td></tr>
+        <tr><td>Your order request</td><td>The HTTP request</td></tr>
+        <tr><td>The delivered package</td><td>The HTTP response</td></tr>
+        <tr><td>Roads, trucks, sorting centers</td><td>Routers & network infrastructure</td></tr>
+        <tr><td>Address written on package</td><td>IP address + URL</td></tr>
+        <tr><td>Address format rules</td><td>Protocols</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">YOUR FLUTTER APP                                          API SERVER
+┌─────────────────┐                                    ┌──────────────────┐
+│  http.get()     │                                    │  Returns         │
+│  "Get /users"   │                                    │  JSON data       │
+└────────┬────────┘                                    └────────┬─────────┘
+         │  REQUEST                                             │  RESPONSE
+         ▼                                                      ▲
+┌──────────────┐    ┌───────────┐    ┌───────────┐    ┌───────────────┐
+│  Your Phone  │───▶│  Router   │───▶│  Router   │───▶│  Data Center  │
+│  WiFi / 4G   │    │  (ISP 1)  │    │  (ISP 2)  │    │  (your server)│
+└──────────────┘    └───────────┘    └───────────┘    └───────────────┘
+                         │                │
+                    Packets hop across many routers
+                    Each one reads the destination
+                    and forwards it forward
+
+                    Total journey: ~100 milliseconds 🚀</div>
+      <div class="diagram-caption">Data is broken into packets. Each packet travels independently and is reassembled at the destination.</div>
+    </div>
+  </div>
+
+  <div class="block deepdive">
+    <div class="block-header">🔵 How It Actually Works</div>
+    <div class="block-body">
+      <div class="flow">
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">1</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">Your app creates a REQUEST</div><code>GET https://api.myapp.com/users</code> — the message is created</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">2</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">DNS translates domain → IP</div><code>api.myapp.com → 142.250.80.100</code> — computer needs numbers, not words</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">3</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">Data is broken into PACKETS</div>Each packet has: source IP, destination IP, sequence number, and payload data</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">4</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">Packets travel through ROUTERS</div>Each router reads the destination IP and forwards the packet toward it</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">5</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">Packets REASSEMBLE at destination</div>Server collects all packets by sequence number and rebuilds the message</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">6</div></div><div class="flow-content"><div class="flow-title">Server sends RESPONSE</div>Same process in reverse — JSON data travels back to your app</div></div>
+      </div>
+      <table style="margin-top:20px">
+        <tr><th>Term</th><th>Meaning</th></tr>
+        <tr><td><strong>Client</strong></td><td>The device making requests (your phone/computer)</td></tr>
+        <tr><td><strong>Server</strong></td><td>The computer responding to requests</td></tr>
+        <tr><td><strong>Packet</strong></td><td>A tiny chunk of data with source, destination &amp; payload</td></tr>
+        <tr><td><strong>Router</strong></td><td>A device that reads destination IP and forwards packets</td></tr>
+        <tr><td><strong>Protocol</strong></td><td>A set of rules so different computers can communicate</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block example">
+    <div class="block-header">💻 Real Example</div>
+    <div class="block-body">
+<pre><span class="code-comment">// This simple Flutter line:</span>
+final response = await http.get(Uri.parse(<span class="code-str">'https://api.github.com/users/octocat'</span>));
+
+<span class="code-comment">// Triggers this entire journey:
+// 1. DNS: api.github.com → 140.82.112.5
+// 2. TCP connection on port 443
+// 3. TLS handshake (encrypted channel)
+// 4. HTTP GET request sent in packets
+// 5. Server processes the request
+// 6. Response packets return
+// 7. Packets reassemble
+// 8. Flutter parses the JSON ✅</span></pre>
+<pre><span class="code-comment"># See the actual path your data takes (terminal):</span>
+traceroute api.github.com        <span class="code-comment"># Mac/Linux</span>
+tracert api.github.com           <span class="code-comment"># Windows</span>
+<span class="code-comment"># Each line = one router your data passed through</span></pre>
+    </div>
+  </div>
+
+  <div class="block usecase">
+    <div class="block-header">📋 Use Cases — When This Knowledge Helps</div>
+    <div class="block-body">
+      <div class="usecase-grid">
+        <div class="usecase-card"><div class="uc-icon">🐛</div><div class="uc-title">Debugging</div><div class="uc-desc">"Connection timed out" — now you know it could be DNS, a router, or the server itself</div></div>
+        <div class="usecase-card"><div class="uc-icon">⚡</div><div class="uc-title">Performance</div><div class="uc-desc">Understanding packets explains why large responses are slower and how CDNs help</div></div>
+        <div class="usecase-card"><div class="uc-icon">🔒</div><div class="uc-title">Security</div><div class="uc-desc">Data passes through many routers — this is exactly why encryption is critical</div></div>
+        <div class="usecase-card"><div class="uc-icon">🏗️</div><div class="uc-title">Architecture</div><div class="uc-desc">Every system design decision is about controlling this data flow</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 1</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">What is the difference between a client and a server?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">What is a packet and what does it contain?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">What does a router do?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">Why do we need protocols?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">When your Flutter app calls <code>http.get()</code>, which device is the client?</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>Client makes requests; server responds to them</div>
+        <div class="ans-item"><div class="ans-n">A2</div>A tiny chunk of data — contains source IP, destination IP, sequence number, and payload</div>
+        <div class="ans-item"><div class="ans-n">A3</div>Reads the destination IP of a packet and forwards it in the correct direction</div>
+        <div class="ans-item"><div class="ans-n">A4</div>So computers from different manufacturers can communicate using the same agreed-upon rules</div>
+        <div class="ans-item"><div class="ans-n">A5</div>Your phone or computer running the Flutter app</div>
+      </details>
+    </div>
+  </div>
+
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════ CHAPTER 2 ════ -->
+<section class="chapter" id="ch2">
+  <div class="chapter-header">
+    <div class="part-label">Part 1 — Foundations</div>
+    <div class="chapter-num">// Chapter 02</div>
+    <h2 class="chapter-title">The OSI Model<br>— 7 Layers</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <p>Early networking was a tangled mess — everything connected to everything. Changing one thing broke another. The OSI model was invented to fix this with one principle:</p>
+      <div class="callout tip"><strong>"Each layer does ONE job. Each layer only talks to the layers next to it. You can change one layer without breaking others."</strong></div>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">❌ Without OSI</div><p>Wi-Fi replacing Ethernet breaks your HTTP code. Adding encryption breaks the application. You can't isolate where a problem is.</p></div>
+        <div class="ps-box solution"><div class="ps-label">✅ With OSI</div><p>Swap Wi-Fi for Ethernet — HTTP doesn't care. Add TLS — the app layer doesn't change. "Is it a Layer 1 or Layer 7 problem?" instantly narrows debugging.</p></div>
+      </div>
+      <p>Every tool in this book — firewalls, proxies, VPNs, CDNs — is defined by <strong>which OSI layer it operates at</strong>. Understanding the model means understanding everything else.</p>
+    </div>
+  </div>
+
+  <div class="block what">
+    <div class="block-header">🔵 Simple Explanation</div>
+    <div class="block-body">
+      <p>The OSI Model divides network communication into <strong>7 layers</strong>. Each layer has one responsibility. Data travels <em>down</em> the layers when sending (each layer wraps the data), and <em>up</em> when receiving (each layer unwraps it).</p>
+    </div>
+  </div>
+
+  <div class="block analogy">
+    <div class="block-header">🟣 Real Life Analogy</div>
+    <div class="block-body">
+      <p>Imagine <strong>sending a letter internationally through a large company:</strong></p>
+      <table>
+        <tr><th>Layer</th><th>Name</th><th>Company Analogy</th></tr>
+        <tr><td><strong>7</strong></td><td>Application</td><td>You write the actual letter content</td></tr>
+        <tr><td><strong>6</strong></td><td>Presentation</td><td>Secretary translates it into the recipient's language</td></tr>
+        <tr><td><strong>5</strong></td><td>Session</td><td>Manager opens a "phone call session" with the other office</td></tr>
+        <tr><td><strong>4</strong></td><td>Transport</td><td>Courier chooses fast delivery vs. standard delivery</td></tr>
+        <tr><td><strong>3</strong></td><td>Network</td><td>Post office plans the route across cities</td></tr>
+        <tr><td><strong>2</strong></td><td>Data Link</td><td>Local post office hands the letter to the next post office</td></tr>
+        <tr><td><strong>1</strong></td><td>Physical</td><td>The actual truck on the actual road</td></tr>
+      </table>
+      <p>Each department only knows its own job. The translator doesn't care which truck carries the letter. The truck driver doesn't care what language it's in.</p>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">SENDER                                                    RECEIVER
+──────────────────────────────────────────────────────────────────────
+┌──────────────────────────────┐          ┌──────────────────────────────┐
+│ L7 │ APPLICATION             │ HTTP/DNS │ L7 │ APPLICATION             │
+│    │ http.get() in Flutter   │◀────────▶│    │ Server processes request │
+├────┼────────────────────────-┤          ├────┼─────────────────────────┤
+│ L6 │ PRESENTATION            │ TLS/SSL  │ L6 │ PRESENTATION            │
+│    │ Encrypts data           │◀────────▶│    │ Decrypts data           │
+├────┼─────────────────────────┤          ├────┼─────────────────────────┤
+│ L5 │ SESSION                 │  Socket  │ L5 │ SESSION                 │
+│    │ Manages connection      │◀────────▶│    │ Manages connection      │
+├────┼─────────────────────────┤          ├────┼─────────────────────────┤
+│ L4 │ TRANSPORT               │ TCP/UDP  │ L4 │ TRANSPORT               │
+│    │ Port 443 (HTTPS)        │◀────────▶│    │ Port 443                │
+├────┼─────────────────────────┤          ├────┼─────────────────────────┤
+│ L3 │ NETWORK                 │    IP    │ L3 │ NETWORK                 │
+│    │ Your IP address         │◀────────▶│    │ Server IP address       │
+├────┼─────────────────────────┤          ├────┼─────────────────────────┤
+│ L2 │ DATA LINK               │   MAC    │ L2 │ DATA LINK               │
+│    │ Your router MAC addr    │◀────────▶│    │ Switch MAC address      │
+├────┼─────────────────────────┤          ├────┼─────────────────────────┤
+│ L1 │ PHYSICAL                │  Signal  │ L1 │ PHYSICAL                │
+│    │ Wi-Fi radio waves       │◀────────▶│    │ Fiber optic cable       │
+└────┴─────────────────────────┘          └────┴─────────────────────────┘
+         Data goes DOWN ↓                           Data goes UP ↑
+      (each layer WRAPS data)                  (each layer UNWRAPS data)</div>
+      <div class="diagram-caption">Encapsulation: as data moves down the stack, each layer adds its own header. The receiver removes them in reverse.</div>
+    </div>
+  </div>
+
+  <div class="block deepdive">
+    <div class="block-header">🔵 Where Tools Live in the OSI Model</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Tool / Technology</th><th>OSI Layer</th><th>Why That Layer?</th></tr>
+        <tr><td><strong>HTTP, HTTPS, DNS</strong></td><td>Layer 7</td><td>Application-level protocols — your code lives here</td></tr>
+        <tr><td><strong>TLS/SSL Encryption</strong></td><td>Layer 6</td><td>Encodes/decodes data for security</td></tr>
+        <tr><td><strong>WebSockets</strong></td><td>Layer 5</td><td>Manages persistent session connections</td></tr>
+        <tr><td><strong>TCP &amp; UDP</strong></td><td>Layer 4</td><td>Controls how data is transported reliably or fast</td></tr>
+        <tr><td><strong>Firewall (basic)</strong></td><td>Layer 3–4</td><td>Filters by IP address and port numbers</td></tr>
+        <tr><td><strong>WAF (Web Firewall)</strong></td><td>Layer 7</td><td>Reads inside HTTP traffic to block attacks</td></tr>
+        <tr><td><strong>Router</strong></td><td>Layer 3</td><td>Routes packets using IP addresses</td></tr>
+        <tr><td><strong>Nginx Reverse Proxy</strong></td><td>Layer 7</td><td>Reads and processes full HTTP requests</td></tr>
+        <tr><td><strong>VPN tunneling</strong></td><td>Layer 3–4</td><td>Wraps IP packets inside new encrypted IP packets</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block usecase">
+    <div class="block-header">📋 Use Cases — When This Knowledge Helps</div>
+    <div class="block-body">
+      <div class="usecase-grid">
+        <div class="usecase-card"><div class="uc-icon">🔍</div><div class="uc-title">Debugging</div><div class="uc-desc">"Is this Layer 1 (cable)? Layer 3 (IP routing)? Layer 7 (bad API endpoint)?" — instantly narrows the issue</div></div>
+        <div class="usecase-card"><div class="uc-icon">🛡️</div><div class="uc-title">Firewall Choice</div><div class="uc-desc">Do you need Layer 3 (block by IP) or Layer 7 (block SQL injection in HTTP)?</div></div>
+        <div class="usecase-card"><div class="uc-icon">⚖️</div><div class="uc-title">Load Balancer</div><div class="uc-desc">Layer 4 LB is faster but dumb. Layer 7 LB routes by URL path. Choose wisely.</div></div>
+        <div class="usecase-card"><div class="uc-icon">🔒</div><div class="uc-title">VPN Design</div><div class="uc-desc">Understanding VPNs as Layer 3 tunnels makes protocol choices clear</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 2</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">Which layer handles IP addresses and routing?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">Which layer does HTTP live in?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">What is "encapsulation" in the OSI model?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">A firewall that blocks SQL injection attacks in HTTP operates at which layer?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">Why was the OSI model invented?</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>Layer 3 — Network</div>
+        <div class="ans-item"><div class="ans-n">A2</div>Layer 7 — Application</div>
+        <div class="ans-item"><div class="ans-n">A3</div>Each layer wraps data with its own header as it travels down the stack toward physical transmission</div>
+        <div class="ans-item"><div class="ans-n">A4</div>Layer 7 (Application) — this is called a WAF (Web Application Firewall)</div>
+        <div class="ans-item"><div class="ans-n">A5</div>To separate concerns — each layer can be changed, debugged, or replaced without affecting other layers</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════ CHAPTER 3 ════ -->
+<section class="chapter" id="ch3">
+  <div class="chapter-header">
+    <div class="part-label">Part 1 — Foundations</div>
+    <div class="chapter-num">// Chapter 03</div>
+    <h2 class="chapter-title">IP Addresses,<br>DNS & Ports</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <p>The internet has <strong>5+ billion connected devices</strong>. Three systems solve the problem of finding the right one:</p>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">❌ Without Them</div><p>No way to address a specific device. No way to identify which service to connect to. No human-friendly names — just raw numbers nobody can memorize.</p></div>
+        <div class="ps-box solution"><div class="ps-label">✅ With Them</div><p><strong>IP</strong> uniquely identifies every device. <strong>DNS</strong> translates names to IPs. <strong>Ports</strong> identify which service (HTTP vs SSH vs DB) on a device.</p></div>
+      </div>
+      <p>Without these three systems, your Flutter app calling <code>https://api.myapp.com/users</code> would have no idea where to go or what service to connect to.</p>
+    </div>
+  </div>
+
+  <div class="block what">
+    <div class="block-header">🔵 Simple Explanation</div>
+    <div class="block-body">
+      <p><strong>IP Address</strong> = Your home's street address — uniquely identifies a device on the internet.<br>
+      <strong>DNS</strong> = Your phone's contacts list — translates a name like <code>google.com</code> into a number like <code>142.250.80.100</code>.<br>
+      <strong>Port</strong> = The apartment number inside the building — tells the server which specific service you want.</p>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">You type in browser:  https://api.myapp.com/users
+                                    │
+                         ┌──────────▼──────────┐
+                         │     DNS LOOKUP       │
+                         │  api.myapp.com       │
+                         │       ↓              │
+                         │  142.250.80.100      │
+                         └──────────┬──────────┘
+                                    │
+                         ┌──────────▼──────────┐
+                         │   IP  +  PORT        │
+                         │  142.250.80.100 : 443│
+                         │  ─────────────   ─── │
+                         │  Street address  Apt  │
+                         │                 (HTTPS)│
+                         └──────────┬──────────┘
+                                    │
+              ┌─────────────────────▼──────────────────────┐
+              │   SERVER at 142.250.80.100                  │
+              │                                            │
+              │   Port  80  │  HTTP Service                │
+              │   Port 443  │  HTTPS Service  ◀── you land │
+              │   Port  22  │  SSH (admin only)            │
+              │   Port 5432 │  PostgreSQL (locked, private)│
+              └────────────────────────────────────────────┘</div>
+      <div class="diagram-caption">IP gets you to the right building. Port gets you to the right room inside.</div>
+    </div>
+  </div>
+
+  <div class="block deepdive">
+    <div class="block-header">🔵 How DNS Resolution Works Step by Step</div>
+    <div class="block-body">
+      <div class="flow">
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">1</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">Browser Cache</div>Has this domain been looked up recently? Use saved result → instant!</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">2</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">OS Cache &amp; Hosts File</div>Check <code>/etc/hosts</code> on your machine</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">3</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">ISP DNS Server</div>Your internet provider's DNS resolver</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">4</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">Root DNS Servers</div>Knows where <code>.com</code>, <code>.org</code>, <code>.io</code> live</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">5</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">TLD Nameserver</div><code>.com</code> server knows where <code>myapp.com</code> lives</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">6</div></div><div class="flow-content"><div class="flow-title">Authoritative DNS</div>Returns the actual IP: <code>142.250.80.100</code> ✅</div></div>
+      </div>
+      <table style="margin-top:20px">
+        <tr><th>Port</th><th>Service</th><th>Security Rule</th></tr>
+        <tr><td><strong>22</strong></td><td>SSH</td><td>⚠️ Restrict to known IPs only</td></tr>
+        <tr><td><strong>80</strong></td><td>HTTP</td><td>Redirect to 443 in production</td></tr>
+        <tr><td><strong>443</strong></td><td>HTTPS</td><td>✅ Always open</td></tr>
+        <tr><td><strong>3306</strong></td><td>MySQL</td><td>🔒 NEVER expose to internet</td></tr>
+        <tr><td><strong>5432</strong></td><td>PostgreSQL</td><td>🔒 NEVER expose to internet</td></tr>
+        <tr><td><strong>6379</strong></td><td>Redis</td><td>🔒 Localhost only</td></tr>
+        <tr><td><strong>51820</strong></td><td>WireGuard VPN</td><td>Open for VPN access</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block usecase">
+    <div class="block-header">📋 Use Cases</div>
+    <div class="block-body">
+      <div class="usecase-grid">
+        <div class="usecase-card"><div class="uc-icon">🚀</div><div class="uc-title">Deploy an API</div><div class="uc-desc">You must open port 443 on your firewall so users can reach HTTPS</div></div>
+        <div class="usecase-card"><div class="uc-icon">🐛</div><div class="uc-title">Debug DNS</div><div class="uc-desc"><code>curl http://142.1.1.1</code> works but domain doesn't → DNS problem, not server problem</div></div>
+        <div class="usecase-card"><div class="uc-icon">🔒</div><div class="uc-title">Security Audit</div><div class="uc-desc">Scan your server: which ports are open? All database ports must be closed to internet</div></div>
+        <div class="usecase-card"><div class="uc-icon">📱</div><div class="uc-title">Flutter Dev</div><div class="uc-desc"><code>localhost:8080</code> = your own machine's IP <code>127.0.0.1</code> at port <code>8080</code></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 3</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">What is the difference between a public and private IP address?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">What does DNS do in one sentence?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">Your Flutter app connects to <code>localhost:3000</code>. What IP address is that?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">Why should you never open port 3306 (MySQL) to the public internet?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">What is a DNS cache and why does it speed things up?</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>Public IPs are reachable from the internet; private IPs only work inside a local network (like your home Wi-Fi)</div>
+        <div class="ans-item"><div class="ans-n">A2</div>DNS translates human-readable domain names (google.com) into machine-readable IP addresses (142.250.80.100)</div>
+        <div class="ans-item"><div class="ans-n">A3</div><code>127.0.0.1</code> — the loopback address, pointing to your own machine</div>
+        <div class="ans-item"><div class="ans-n">A4</div>Anyone on the internet could attempt to connect directly to your database and brute-force it</div>
+        <div class="ans-item"><div class="ans-n">A5</div>A saved copy of previous DNS lookups so your device doesn't ask DNS servers every single time — much faster</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════ CHAPTER 4 ════ -->
+<section class="chapter" id="ch4">
+  <div class="chapter-header">
+    <div class="part-label">Part 1 — Foundations</div>
+    <div class="chapter-num">// Chapter 04</div>
+    <h2 class="chapter-title">TCP vs UDP</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <p>Sending data across the internet is risky. Packets can get <strong>lost</strong>, arrive <strong>out of order</strong>, or arrive <strong>corrupted</strong>. Two different strategies exist:</p>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">The Problem</div><p>Not all data is equal. A missing bank transfer byte is catastrophic. A missing video frame causes a tiny glitch. One-size-fits-all is wrong.</p></div>
+        <div class="ps-box solution"><div class="ps-label">The Solution</div><p><strong>TCP</strong> — guaranteed delivery, ordered, error-checked (slower). <strong>UDP</strong> — fast, no guarantees (lighter). Choose based on what you're sending.</p></div>
+      </div>
+      <p>As a Flutter developer, <code>http.get()</code> uses TCP automatically. But real-time features (gaming, video, live data) may need UDP. Knowing the difference lets you make the right choice.</p>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">TCP — The Reliable Way (like certified mail)
+─────────────────────────────────────────────────────────────
+CLIENT                                               SERVER
+  │                                                     │
+  │──── ① SYN  "can we talk?" ─────────────────────────▶│
+  │◀─── ② SYN-ACK  "yes, ready" ────────────────────────│
+  │──── ③ ACK  "great, starting" ───────────────────────▶│
+  │                                                     │
+  │════ ④ DATA packet 1 of 3 ═══════════════════════════▶│
+  │◀═══ ⑤ ACK "received packet 1" ══════════════════════│
+  │════ ⑥ DATA packet 2 of 3 ═══════════════════════════▶│  ← lost!
+  │════ ⑦ DATA packet 3 of 3 ═══════════════════════════▶│
+  │◀═══ ⑧ "resend packet 2!" ════════════════════════════│
+  │════ ⑨ DATA packet 2 (resent) ═══════════════════════▶│
+  │◀═══ ⑩ ACK "all received!" ══════════════════════════│
+  
+  3-way handshake + acknowledgments = SLOWER but GUARANTEED ✅
+
+
+UDP — The Fast Way (like shouting from a moving car)
+─────────────────────────────────────────────────────────────
+CLIENT                                               SERVER
+  │                                                     │
+  │════ VIDEO FRAME 1 ═══════════════════════════════════▶│ ✅
+  │════ VIDEO FRAME 2 ═══════════════════════════════════▶│ ✅
+  │════ VIDEO FRAME 3 ════════════════════════════╳      │ ✗ lost (ignored)
+  │════ VIDEO FRAME 4 ═══════════════════════════════════▶│ ✅
+  │════ VIDEO FRAME 5 ═══════════════════════════════════▶│ ✅
+  
+  No handshake, no ACK = FAST ⚡ but not guaranteed</div>
+      <div class="diagram-caption">TCP trades speed for reliability. UDP trades reliability for speed. Both are correct — it depends on your use case.</div>
+    </div>
+  </div>
+
+  <div class="block deepdive">
+    <div class="block-header">🔵 Comparison</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Feature</th><th>TCP</th><th>UDP</th></tr>
+        <tr><td>Reliability</td><td>✅ Guaranteed</td><td>❌ Not guaranteed</td></tr>
+        <tr><td>Order</td><td>✅ Always ordered</td><td>❌ May arrive out of order</td></tr>
+        <tr><td>Speed</td><td>Slower (overhead)</td><td>⚡ Much faster</td></tr>
+        <tr><td>Connection</td><td>Required (3-way handshake)</td><td>None — just send</td></tr>
+        <tr><td>Error recovery</td><td>✅ Auto retransmit</td><td>❌ Lost = gone</td></tr>
+        <tr><td>Use case</td><td>APIs, files, SSH, email</td><td>Video, gaming, DNS, VoIP</td></tr>
+      </table>
+      <div class="callout tip" style="margin-top:16px"><strong>Fun Fact:</strong> HTTP/3 (the latest version) switched from TCP to UDP using a new protocol called QUIC. It builds reliability into UDP itself — getting the best of both worlds!</div>
+    </div>
+  </div>
+
+  <div class="block example">
+    <div class="block-header">💻 Real Example</div>
+    <div class="block-body">
+<pre><span class="code-comment">// Flutter's http package uses TCP (HTTP over TCP)</span>
+final response = await http.get(
+  Uri.parse(<span class="code-str">'https://api.myapp.com/users'</span>),
+);
+<span class="code-comment">// TCP guarantees the ENTIRE JSON arrives correctly
+// Missing byte? TCP retransmits automatically</span>
+
+<span class="code-comment">// Real-time chat → WebSocket (also TCP but persistent)</span>
+final channel = WebSocketChannel.connect(
+  Uri.parse(<span class="code-str">'wss://myapp.com/ws'</span>),
+);
+
+<span class="code-comment">// Live streaming / gaming would use UDP at network level
+// (handled by platform, not Flutter's http package)</span></pre>
+    </div>
+  </div>
+
+  <div class="block usecase">
+    <div class="block-header">📋 Use Cases</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Use TCP when…</th><th>Use UDP when…</th></tr>
+        <tr><td>Downloading a file (every byte matters)</td><td>Live video streaming (dropped frame = tiny glitch)</td></tr>
+        <tr><td>REST API calls (need correct response)</td><td>Online multiplayer games (speed &gt; perfection)</td></tr>
+        <tr><td>SSH into a server (every keypress matters)</td><td>Voice/video calls (Zoom, WhatsApp)</td></tr>
+        <tr><td>Sending email (can't lose parts)</td><td>DNS lookups (tiny request, fast matters)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 4</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">What is a 3-way handshake and why does TCP use it?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">Why does video streaming prefer UDP over TCP?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">If a packet is lost in TCP, what happens? What about in UDP?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">Does Flutter's <code>http.get()</code> use TCP or UDP?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">What is HTTP/3 and why does it use UDP?</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>SYN → SYN-ACK → ACK. Establishes that both sides are ready and reachable before any data flows</div>
+        <div class="ans-item"><div class="ans-n">A2</div>A dropped frame causes a minor visual glitch. TCP retransmission would pause the entire stream — far worse than a glitch</div>
+        <div class="ans-item"><div class="ans-n">A3</div>TCP: detects the loss and automatically retransmits. UDP: packet is simply gone, nothing happens</div>
+        <div class="ans-item"><div class="ans-n">A4</div>TCP — HTTP/1.1 and HTTP/2 both run over TCP</div>
+        <div class="ans-item"><div class="ans-n">A5</div>The latest HTTP version that runs on UDP using the QUIC protocol, building reliability into UDP for the best of both worlds</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════ CHAPTER 5 ════ -->
+<section class="chapter" id="ch5">
+  <div class="chapter-header">
+    <div class="part-label">Part 1 — Foundations</div>
+    <div class="chapter-num">// Chapter 05</div>
+    <h2 class="chapter-title">HTTP & HTTPS</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <p>TCP tells us <em>how</em> data is sent reliably. But it doesn't say <em>what</em> the data means. Two computers connected with TCP are like people on a phone call who don't share a language — they can hear each other but can't communicate.</p>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">❌ HTTP without HTTPS</div><p>Your password, token, credit card — all sent as plain text. Any router, ISP, or attacker between you and the server can read it. Called a man-in-the-middle attack.</p></div>
+        <div class="ps-box solution"><div class="ps-label">✅ HTTPS</div><p>All data is encrypted. Even if intercepted, the attacker sees only gibberish. Required for any production app.</p></div>
+      </div>
+      <p>Every Flutter API call is HTTP. Understanding HTTP deeply means you can debug, optimize, and secure every interaction your app has with the world.</p>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">HTTP REQUEST STRUCTURE
+┌────────────────────────────────────────────────────────────┐
+│  METHOD    PATH           VERSION                          │
+│  POST      /api/users     HTTP/1.1                         │
+├────────────────────────────────────────────────────────────┤
+│  HEADERS                                                   │
+│  Host: api.myapp.com                                       │
+│  Authorization: Bearer eyJhbGci...                        │
+│  Content-Type: application/json                            │
+├────────────────────────────────────────────────────────────┤
+│  BODY (empty for GET, contains data for POST/PUT)          │
+│  { "name": "John", "email": "john@example.com" }           │
+└────────────────────────────────────────────────────────────┘
+
+HTTP RESPONSE STRUCTURE
+┌────────────────────────────────────────────────────────────┐
+│  VERSION    STATUS CODE    STATUS TEXT                     │
+│  HTTP/1.1   201            Created                         │
+├────────────────────────────────────────────────────────────┤
+│  HEADERS                                                   │
+│  Content-Type: application/json                            │
+│  Content-Length: 248                                       │
+├────────────────────────────────────────────────────────────┤
+│  BODY                                                      │
+│  { "id": 1, "name": "John", "email": "john@example.com" }  │
+└────────────────────────────────────────────────────────────┘
+
+HTTPS = HTTP + TLS ENCRYPTION (man-in-the-middle can't read it)
+─────────────────────────────────────────────────────────────
+WITHOUT HTTPS:
+  Your app → POST /login password=abc123 → Attacker READS IT 😱
+
+WITH HTTPS:
+  Your app → [X7#mK@!...encrypted...9pQ$] → Attacker sees gibberish ✅</div>
+    </div>
+  </div>
+
+  <div class="block deepdive">
+    <div class="block-header">🔵 HTTP Methods & Status Codes</div>
+    <div class="block-body">
+      <h3 class="section-sub">HTTP Methods</h3>
+      <table>
+        <tr><th>Method</th><th>Action</th><th>Has Body?</th><th>Use For</th></tr>
+        <tr><td><strong>GET</strong></td><td>Read</td><td>No</td><td>Fetch users, get a post</td></tr>
+        <tr><td><strong>POST</strong></td><td>Create</td><td>Yes</td><td>Create user, submit form</td></tr>
+        <tr><td><strong>PUT</strong></td><td>Replace all</td><td>Yes</td><td>Replace entire user record</td></tr>
+        <tr><td><strong>PATCH</strong></td><td>Update partial</td><td>Yes</td><td>Update just the name field</td></tr>
+        <tr><td><strong>DELETE</strong></td><td>Delete</td><td>No</td><td>Remove a record</td></tr>
+      </table>
+      <h3 class="section-sub">Status Codes</h3>
+      <table>
+        <tr><th>Code</th><th>Meaning</th><th>Flutter Action</th></tr>
+        <tr><td><strong>200</strong></td><td>OK — Success</td><td>Parse and display data</td></tr>
+        <tr><td><strong>201</strong></td><td>Created</td><td>Show success, update UI</td></tr>
+        <tr><td><strong>401</strong></td><td>Unauthorized</td><td>Redirect to login screen</td></tr>
+        <tr><td><strong>403</strong></td><td>Forbidden</td><td>Show "no permission" message</td></tr>
+        <tr><td><strong>404</strong></td><td>Not Found</td><td>Show "not found" UI</td></tr>
+        <tr><td><strong>429</strong></td><td>Too Many Requests</td><td>Wait and retry (exponential backoff)</td></tr>
+        <tr><td><strong>500</strong></td><td>Server Error</td><td>Show "something went wrong", log it</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block example">
+    <div class="block-header">💻 Flutter Code Example</div>
+    <div class="block-body">
+<pre>import <span class="code-str">'package:http/http.dart'</span> as http;
+import <span class="code-str">'dart:convert'</span>;
+
+<span class="code-comment">// GET — Read data</span>
+final response = await http.get(
+  Uri.parse(<span class="code-str">'https://api.myapp.com/users/1'</span>),
+  headers: {<span class="code-str">'Authorization'</span>: <span class="code-str">'Bearer $token'</span>},
+);
+if (response.statusCode == <span class="code-val">200</span>) {
+  final data = jsonDecode(response.body);
+} else if (response.statusCode == <span class="code-val">401</span>) {
+  <span class="code-comment">// Token expired → go to login</span>
+}
+
+<span class="code-comment">// POST — Create data</span>
+final post = await http.post(
+  Uri.parse(<span class="code-str">'https://api.myapp.com/users'</span>),
+  headers: {<span class="code-str">'Content-Type'</span>: <span class="code-str">'application/json'</span>},
+  body: jsonEncode({<span class="code-str">'name'</span>: <span class="code-str">'Jane'</span>, <span class="code-str">'email'</span>: <span class="code-str">'jane@example.com'</span>}),
+);
+<span class="code-comment">// 201 = Created ✅</span></pre>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 5</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">What is the difference between GET and POST?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">Your Flutter app receives a 401. What should it do?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">What does HTTPS add on top of HTTP?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">What is the difference between 401 and 403?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">Which method replaces an entire resource vs. partially updating it?</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>GET retrieves data (no body). POST creates data (sends a body with the new resource data)</div>
+        <div class="ans-item"><div class="ans-n">A2</div>Redirect to login — the token is missing or expired, authentication is required</div>
+        <div class="ans-item"><div class="ans-n">A3</div>TLS encryption — all data is scrambled so nobody between client and server can read it</div>
+        <div class="ans-item"><div class="ans-n">A4</div>401 = not authenticated at all (not logged in). 403 = authenticated but no permission for this resource</div>
+        <div class="ans-item"><div class="ans-n">A5</div>PUT replaces the whole resource. PATCH updates only specific fields.</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════════════════ PART 2 ════════════════ -->
+<div class="part-divider" id="part2">
+  <div class="part-n">// Part 02</div>
+  <h2>Security & Privacy</h2>
+  <p>How to control who gets in, what they can see, and where traffic appears to come from.</p>
+</div>
+
+<!-- ════ CHAPTER 6 ════ -->
+<section class="chapter" id="ch6">
+  <div class="chapter-header">
+    <div class="part-label">Part 2 — Security</div>
+    <div class="chapter-num">// Chapter 06</div>
+    <h2 class="chapter-title">Firewalls 🔥</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <p>A server on the internet with no firewall is like a house with no door — anyone can walk in. Without a firewall, attackers can:</p>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">❌ Without Firewall</div><p>Connect to your database (port 3306) and steal or delete data. Brute-force SSH to gain full server access. Flood your server to crash it (DDoS). Exploit any open service.</p></div>
+        <div class="ps-box solution"><div class="ps-label">✅ With Firewall</div><p>Only ports 80 and 443 are open to the world. SSH only accessible from your IP. Database ports completely blocked from the internet. First line of defense.</p></div>
+      </div>
+      <p>A firewall is the security checkpoint that every packet must pass through before reaching your application. It's non-negotiable in production.</p>
+    </div>
+  </div>
+
+  <div class="block analogy">
+    <div class="block-header">🟣 Real Life Analogy</div>
+    <div class="block-body">
+      <p>A firewall is like an <strong>airport security checkpoint</strong>:</p>
+      <table>
+        <tr><th>Airport</th><th>Firewall Equivalent</th></tr>
+        <tr><td>Valid boarding pass + passport</td><td>Packet from an allowed IP to an allowed port</td></tr>
+        <tr><td>No ticket → blocked at security</td><td>Packet to a closed port → DENIED</td></tr>
+        <tr><td>Dangerous items confiscated</td><td>Malicious packets dropped</td></tr>
+        <tr><td>VIP lounge requires separate pass</td><td>SSH only allowed from specific IPs</td></tr>
+        <tr><td>Staff entrance (different rules)</td><td>Internal services bypass firewall</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">THE INTERNET (untrusted — anything can come from here)
+                 │
+    ┌────────────┼────────────────────────────────┐
+    │Hackers trying port 3306 (DB) ❌             │
+    │DDoS flood traffic ❌                        │
+    │Legitimate HTTPS users ✅                    │
+    │Your SSH session (from your IP) ✅           │
+    └────────────┼────────────────────────────────┘
+                 │ all traffic
+                 ▼
+┌────────────────────────────────────────────────────┐
+│                  F I R E W A L L                   │
+│                                                    │
+│  Rule 1: ALLOW  TCP port 443   from any       ✅   │
+│  Rule 2: ALLOW  TCP port 80    from any       ✅   │
+│  Rule 3: ALLOW  TCP port 22    from 203.1.1.5 ✅   │
+│  Rule 4: DENY   TCP port 3306  from any       ❌   │
+│  Rule 5: DENY   ALL            from any       ❌   │
+│                                                    │
+│  ⚡ Rules checked TOP → BOTTOM. First match wins.  │
+└───────────────────────┬────────────────────────────┘
+                        │ only approved traffic passes
+                        ▼
+           ┌────────────────────────────┐
+           │       YOUR SERVER          │
+           │  Nginx  :80/443   ✅       │
+           │  App    :3000     (internal)│
+           │  DB     :5432     (private)│
+           └────────────────────────────┘</div>
+      <div class="diagram-caption">Firewall rules are evaluated top to bottom. The first matching rule wins. Default: deny everything.</div>
+    </div>
+  </div>
+
+  <div class="block deepdive">
+    <div class="block-header">🔵 Types of Firewalls</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Type</th><th>OSI Layer</th><th>What It Checks</th><th>Use Case</th></tr>
+        <tr><td><strong>Packet Filter</strong></td><td>L3–4</td><td>Source IP, dest IP, port</td><td>Basic port blocking</td></tr>
+        <tr><td><strong>Stateful</strong></td><td>L4–5</td><td>Full connection state</td><td>Standard server protection</td></tr>
+        <tr><td><strong>WAF (Web App)</strong></td><td>L7</td><td>HTTP content, SQL injection, XSS</td><td>Web app security</td></tr>
+        <tr><td><strong>Next-Gen (NGFW)</strong></td><td>All</td><td>Everything + deep inspection</td><td>Enterprise security</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block example">
+    <div class="block-header">💻 Real Example — ufw on Linux</div>
+    <div class="block-body">
+<pre><span class="code-comment"># Set defaults: deny all in, allow all out</span>
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+<span class="code-comment"># Allow web traffic</span>
+sudo ufw allow 80/tcp      <span class="code-comment"># HTTP</span>
+sudo ufw allow 443/tcp     <span class="code-comment"># HTTPS</span>
+
+<span class="code-comment"># Allow SSH ONLY from your IP (replace with your real IP)</span>
+sudo ufw allow from 203.0.113.5 to any port 22
+
+<span class="code-comment"># Block database from internet (app connects via localhost)</span>
+sudo ufw deny 5432/tcp
+
+<span class="code-comment"># Enable firewall</span>
+sudo ufw enable
+
+<span class="code-comment"># Check rules</span>
+sudo ufw status verbose</pre>
+    </div>
+  </div>
+
+  <div class="block usecase">
+    <div class="block-header">📋 Use Cases</div>
+    <div class="block-body">
+      <div class="usecase-grid">
+        <div class="usecase-card"><div class="uc-icon">🔑</div><div class="uc-title">Secure SSH</div><div class="uc-desc">Block SSH from everywhere except your IP — prevents brute-force attacks on port 22</div></div>
+        <div class="usecase-card"><div class="uc-icon">🗃️</div><div class="uc-title">Protect Database</div><div class="uc-desc">Block ports 3306/5432 from the internet entirely — DB should only be reachable internally</div></div>
+        <div class="usecase-card"><div class="uc-icon">🕵️</div><div class="uc-title">Block Attackers</div><div class="uc-desc">Instantly add a DENY rule for an attacker's IP address</div></div>
+        <div class="usecase-card"><div class="uc-icon">☁️</div><div class="uc-title">Cloud Security</div><div class="uc-desc">AWS Security Groups, GCP VPC Firewall Rules, Azure NSGs — all firewalls in the cloud</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 6</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">What is the main purpose of a firewall?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">What is the difference between a stateful and a packet filter firewall?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">What type of firewall protects against SQL injection attacks?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">Why should database ports never be open to the internet?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">In a list of firewall rules, which rule takes effect when multiple match?</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>Controls which network traffic is allowed to reach your server and which is dropped</div>
+        <div class="ans-item"><div class="ans-n">A2</div>Packet filter checks each packet alone (IP/port). Stateful tracks entire connection state — knows if a packet belongs to an established session</div>
+        <div class="ans-item"><div class="ans-n">A3</div>WAF (Web Application Firewall) operating at Layer 7</div>
+        <div class="ans-item"><div class="ans-n">A4</div>Attackers could directly connect to the database and attempt brute force, data theft, or deletion</div>
+        <div class="ans-item"><div class="ans-n">A5</div>The FIRST matching rule wins — rules are evaluated top to bottom</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════ CHAPTER 7 ════ -->
+<section class="chapter" id="ch7">
+  <div class="chapter-header">
+    <div class="part-label">Part 2 — Security</div>
+    <div class="chapter-num">// Chapter 07</div>
+    <h2 class="chapter-title">Forward Proxy</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <p>Three real-world problems that forward proxies solve:</p>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">Problem 1 — Privacy</div><p>Every website sees your real IP and location. You can be tracked, profiled, and targeted.</p></div>
+        <div class="ps-box solution"><div class="ps-label">Solution</div><p>Route through a proxy — websites see the proxy's IP, not yours. Your identity is hidden.</p></div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">Problem 2 — Control</div><p>A company can't prevent 1,000 employees from visiting social media individually on their own browsers.</p></div>
+        <div class="ps-box solution"><div class="ps-label">Solution</div><p>Force all traffic through a proxy that applies rules. Block certain domains, log all traffic, filter content.</p></div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">Problem 3 — Bandwidth</div><p>1,000 employees all download the same 500MB update = 500GB of bandwidth wasted.</p></div>
+        <div class="ps-box solution"><div class="ps-label">Solution</div><p>Proxy caches the first download and serves the rest locally = 500MB total. Huge savings.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block what">
+    <div class="block-header">🔵 Simple Explanation</div>
+    <div class="block-body">
+      <p>A <strong>forward proxy</strong> is a middleman between <strong>your device</strong> and the internet. You talk to the proxy → proxy talks to websites → websites see only the proxy's IP. The client uses it intentionally. The destination server doesn't know the real client exists.</p>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">WITHOUT FORWARD PROXY
+──────────────────────────────────────────────────────────────
+Your Device (IP: 203.1.1.1) ──────────────────────▶ Website
+                                                    sees: 203.1.1.1
+                                                    (your real IP! 😨)
+
+WITH FORWARD PROXY
+──────────────────────────────────────────────────────────────
+Your Device          Forward Proxy           Website
+(IP: 203.1.1.1) ───▶ (IP: 50.0.0.1) ──────▶ sees: 50.0.0.1
+                                              (proxy IP, not yours ✅)
+
+OFFICE FORWARD PROXY — CONTENT FILTERING
+──────────────────────────────────────────────────────────────
+                   ┌──────────────────────────────────────┐
+Employee 1 ────────▶                                      │
+Employee 2 ────────▶   FORWARD PROXY / FILTER             │──▶ Allowed ✅
+Employee 3 ────────▶   • Blocks social media              │──▶ Blocked ❌
+Employee 4 ────────▶   • Logs all activity                │
+                   │   • Caches common downloads          │
+                   └──────────────────────────────────────┘
+              All employees share ONE exit point to the internet</div>
+    </div>
+  </div>
+
+  <div class="block deepdive">
+    <div class="block-header">🔵 Types of Forward Proxies</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Type</th><th>Hides Your IP?</th><th>Client Knows?</th><th>Use Case</th></tr>
+        <tr><td><strong>Anonymous</strong></td><td>Yes</td><td>Yes</td><td>Privacy, bypass geo-blocks</td></tr>
+        <tr><td><strong>Transparent</strong></td><td>No</td><td>No</td><td>Caching, monitoring (ISPs)</td></tr>
+        <tr><td><strong>High Anonymity</strong></td><td>Yes + hides proxy</td><td>Yes</td><td>Maximum privacy</td></tr>
+        <tr><td><strong>SOCKS5</strong></td><td>Yes</td><td>Yes</td><td>Any traffic type, not just HTTP</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block usecase">
+    <div class="block-header">📋 Use Cases</div>
+    <div class="block-body">
+      <div class="usecase-grid">
+        <div class="usecase-card"><div class="uc-icon">🏢</div><div class="uc-title">Corporate Filtering</div><div class="uc-desc">Block social media, log activity, enforce acceptable use policy for all employees</div></div>
+        <div class="usecase-card"><div class="uc-icon">🌍</div><div class="uc-title">Geo Bypass</div><div class="uc-desc">"This content isn't available in your country" — proxy routes through another country</div></div>
+        <div class="usecase-card"><div class="uc-icon">💾</div><div class="uc-title">Bandwidth Cache</div><div class="uc-desc">Schools and offices save huge bandwidth caching common downloads</div></div>
+        <div class="usecase-card"><div class="uc-icon">🕵️</div><div class="uc-title">Web Scraping</div><div class="uc-desc">Rotate proxy IPs to avoid being blocked when scraping data from websites</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 7</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">What IP does the destination server see when you use a forward proxy?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">What is the difference between a transparent and an anonymous proxy?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">How does a company use a forward proxy to control employees?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">How does a forward proxy save bandwidth in an office?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">Complete: Forward proxy protects the ___. Reverse proxy protects the ___.</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>The proxy's IP — your real IP is completely hidden from the destination</div>
+        <div class="ans-item"><div class="ans-n">A2</div>Transparent: client doesn't know it exists, doesn't hide IP. Anonymous: client configures it intentionally, hides IP.</div>
+        <div class="ans-item"><div class="ans-n">A3</div>Route all employee internet traffic through a proxy with rules (block certain domains, log activity)</div>
+        <div class="ans-item"><div class="ans-n">A4</div>Caches downloaded files — if 100 employees download the same file, only one real download from the internet occurs</div>
+        <div class="ans-item"><div class="ans-n">A5</div>Client; Server</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════ CHAPTER 8 ════ -->
+<section class="chapter" id="ch8">
+  <div class="chapter-header">
+    <div class="part-label">Part 2 — Security</div>
+    <div class="chapter-num">// Chapter 08</div>
+    <h2 class="chapter-title">Reverse Proxy</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <p>As your Flutter backend grows, you face real production problems that a reverse proxy solves elegantly:</p>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">Problem 1 — Scale</div><p>One server can't handle 1 million users. But your app only points to one URL.</p></div>
+        <div class="ps-box solution"><div class="ps-label">Solution</div><p>Reverse proxy distributes requests across 10 servers. Your app URL never changes.</p></div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">Problem 2 — SSL</div><p>Managing SSL certificates on 10 backend servers is a maintenance nightmare.</p></div>
+        <div class="ps-box solution"><div class="ps-label">Solution</div><p>Handle SSL once at the proxy. Backends use plain HTTP internally — simple.</p></div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">Problem 3 — Security</div><p>Your server's real IP is public. Attackers can bypass your firewall and DDoS it directly.</p></div>
+        <div class="ps-box solution"><div class="ps-label">Solution</div><p>Reverse proxy's IP is public. Server's real IP is hidden. Attackers hit only the proxy.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block analogy">
+    <div class="block-header">🟣 Real Life Analogy</div>
+    <div class="block-body">
+      <p>A reverse proxy is like a <strong>hotel reception desk</strong>:</p>
+      <table>
+        <tr><th>Hotel</th><th>Reverse Proxy Equivalent</th></tr>
+        <tr><td>All guests talk only to reception</td><td>All clients talk only to the proxy</td></tr>
+        <tr><td>Reception routes to kitchen, housekeeping, maintenance</td><td>Proxy routes to API servers, static files, admin</td></tr>
+        <tr><td>Guests never contact kitchen directly</td><td>Clients never know which backend server responded</td></tr>
+        <tr><td>Kitchen can change phone number — guests don't know</td><td>Backend server IP can change — clients don't know</td></tr>
+        <tr><td>If kitchen is busy, reception uses backup</td><td>If server is down, proxy routes to another one</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">ALL USERS → https://myapp.com (one public URL)
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────────┐
+│                  REVERSE PROXY (Nginx)                       │
+│                                                              │
+│  ① Receives HTTPS → handles SSL (decrypts)                   │
+│  ② Routes by path:                                           │
+│     /api/*      → Backend API servers (load balanced)        │
+│     /static/*   → Serves files from disk directly            │
+│  ③ Adds security headers                                     │
+│  ④ Compresses responses (gzip)                               │
+│  ⑤ Rate limits: 100 req/min per IP                          │
+│  ⑥ Real client IP passed via X-Real-IP header               │
+└────────┬──────────────────────┬───────────────────────────────┘
+         │                      │
+┌────────▼────────┐    ┌────────▼────────┐
+│  API Server 1   │    │  API Server 2   │  ← Hidden private IPs
+│  Node.js :3000  │    │  Node.js :3001  │  ← Never exposed
+│  Internal only  │    │  Internal only  │
+└────────┬────────┘    └────────┬────────┘
+         └────────────┬─────────┘
+                      ▼
+              ┌──────────────┐
+              │  PostgreSQL  │
+              │  (private,   │
+              │  no public IP│
+              └──────────────┘
+
+SSL TERMINATION:
+Client ──HTTPS──▶ Nginx ──HTTP──▶ Node.js
+                 (decrypts)  (plain internal — simple!)</div>
+    </div>
+  </div>
+
+  <div class="block example">
+    <div class="block-header">💻 Nginx Reverse Proxy Config</div>
+    <div class="block-body">
+<pre><span class="code-comment"># Pool of backend servers</span>
+upstream api_servers {
+    least_conn;
+    server 10.0.0.1:<span class="code-val">3000</span> weight=<span class="code-val">3</span>;
+    server 10.0.0.2:<span class="code-val">3000</span> weight=<span class="code-val">1</span>;
+    keepalive <span class="code-val">32</span>;
+}
+
+server {
+    listen <span class="code-val">443</span> ssl;
+    server_name myapp.com;
+
+    <span class="code-comment"># ① SSL Termination</span>
+    ssl_certificate /etc/letsencrypt/live/myapp.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/myapp.com/privkey.pem;
+
+    <span class="code-comment"># ② Serve static files directly (no backend needed = fast)</span>
+    location /static/ {
+        root /var/www/myapp;
+        expires <span class="code-val">30d</span>;
+    }
+
+    <span class="code-comment"># ③ Proxy API requests to backend servers</span>
+    location /api/ {
+        proxy_pass http://api_servers;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $host;
+    }
+}</pre>
+    </div>
+  </div>
+
+  <div class="block usecase">
+    <div class="block-header">📋 Use Cases</div>
+    <div class="block-body">
+      <div class="usecase-grid">
+        <div class="usecase-card"><div class="uc-icon">⚖️</div><div class="uc-title">Load Balancing</div><div class="uc-desc">Distribute traffic across multiple backend servers for scale</div></div>
+        <div class="usecase-card"><div class="uc-icon">🔒</div><div class="uc-title">SSL Termination</div><div class="uc-desc">One cert, one place — backends stay simple with plain HTTP</div></div>
+        <div class="usecase-card"><div class="uc-icon">🎭</div><div class="uc-title">Hide Servers</div><div class="uc-desc">Server's real IP never exposed — attackers can't target it directly</div></div>
+        <div class="usecase-card"><div class="uc-icon">🚀</div><div class="uc-title">Zero-Downtime Deploy</div><div class="uc-desc">Update servers one at a time while proxy routes to healthy ones</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 8</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">What is SSL termination and why is it useful?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">How does a reverse proxy help with scaling?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">What does the X-Real-IP header do?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">Can a reverse proxy serve static files without the backend? Why is this good?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">Key difference between forward and reverse proxy in one sentence?</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>Proxy handles HTTPS decryption so backends only use plain HTTP — simplifies SSL cert management to one place</div>
+        <div class="ans-item"><div class="ans-n">A2</div>Distributes requests across multiple backend servers so no single server is overwhelmed</div>
+        <div class="ans-item"><div class="ans-n">A3</div>Passes the real client IP to the backend — otherwise backend only sees the proxy's IP</div>
+        <div class="ans-item"><div class="ans-n">A4</div>Yes — serves files directly from disk, much faster and uses no app server resources</div>
+        <div class="ans-item"><div class="ans-n">A5</div>Forward proxy hides the client; reverse proxy hides the server</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════ CHAPTER 9 ════ -->
+<section class="chapter" id="ch9">
+  <div class="chapter-header">
+    <div class="part-label">Part 2 — Security</div>
+    <div class="chapter-num">// Chapter 09</div>
+    <h2 class="chapter-title">VPN — Virtual<br>Private Network</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">Problem 1 — Remote Work</div><p>Your database is on a private network. A developer at home can't reach it. But opening the database port to the internet is dangerous.</p></div>
+        <div class="ps-box solution"><div class="ps-label">Solution</div><p>Developer connects via VPN → appears to be inside the private network → accesses the database safely without exposing it to the internet.</p></div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">Problem 2 — Public Wi-Fi</div><p>At a coffee shop, anyone on the same Wi-Fi can run a packet sniffer and read your network traffic — passwords, tokens, API calls.</p></div>
+        <div class="ps-box solution"><div class="ps-label">Solution</div><p>VPN encrypts all traffic in a tunnel. The coffee shop Wi-Fi sees only encrypted gibberish. Nobody can read your data.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block analogy">
+    <div class="block-header">🟣 Real Life Analogy</div>
+    <div class="block-body">
+      <p>Think of the internet as a public highway where everyone can see what's in your car.</p>
+      <table>
+        <tr><th>Without VPN</th><th>With VPN</th></tr>
+        <tr><td>Your car drives on a public highway</td><td>Your car enters a private underground tunnel</td></tr>
+        <tr><td>Anyone on the road can see what's in your car</td><td>Nobody above ground knows you're there</td></tr>
+        <tr><td>Your destination is visible to everyone</td><td>Only the tunnel exit knows where you came from</td></tr>
+        <tr><td>ISP can log all your traffic</td><td>ISP only sees encrypted data to VPN server</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">WITHOUT VPN:
+Your Phone ──────── Public Internet ──────────── Website
+           ISP sees your traffic. Content readable.
+
+WITH VPN:
+Your Phone ══[Encrypted Tunnel]══ VPN Server ──── Website
+           ISP sees only                Website sees
+           encrypted data               VPN server IP
+           to VPN server                not yours
+
+REMOTE ACCESS VPN — Developer from Home:
+─────────────────────────────────────────────────────────
+Dev Laptop ══════════════════════════▶ VPN Server
+  (home)      Encrypted tunnel          │
+                                        │ Now "inside" the network
+                                        ├── Database :5432 ✅
+                                        ├── Internal APIs ✅
+                                        └── Admin tools ✅
+
+SITE-TO-SITE VPN — Two Offices Connected:
+─────────────────────────────────────────────────────────
+NYC Office ════════════ Permanent VPN Tunnel ════════════ London Office
+10.0.0.0/24                                              10.1.0.0/24
+  │                                                           │
+  └── Both offices share resources as if on same LAN ────────┘
+
+VPN TUNNELING — What "tunnel" actually means:
+─────────────────────────────────────────────────────────
+Your original packet:
+┌─────────────────────────────────────┐
+│ IP: src=yourIP, dst=websiteIP       │
+│ Data: GET /my-account               │
+└─────────────────────────────────────┘
+
+After VPN wraps it:
+┌───────────────────────────────────────────────────────┐
+│ Outer IP: src=yourIP, dst=VPN_server_IP  ← visible   │
+│ ┌─────────────────────────────────────┐              │
+│ │ ENCRYPTED: original packet inside  │  ← invisible │
+│ │ IP: yourIP → websiteIP             │              │
+│ │ Data: GET /my-account              │              │
+│ └─────────────────────────────────────┘              │
+└───────────────────────────────────────────────────────┘</div>
+    </div>
+  </div>
+
+  <div class="block deepdive">
+    <div class="block-header">🔵 VPN Protocols Compared</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Protocol</th><th>Speed</th><th>Security</th><th>Recommendation</th></tr>
+        <tr><td><strong>WireGuard</strong></td><td>⚡ Fastest</td><td>Excellent</td><td>✅ Best choice today</td></tr>
+        <tr><td><strong>OpenVPN</strong></td><td>Medium</td><td>Very Good</td><td>✅ Open source, proven</td></tr>
+        <tr><td><strong>IKEv2/IPSec</strong></td><td>Fast</td><td>Good</td><td>✅ Great for mobile</td></tr>
+        <tr><td><strong>L2TP/IPSec</strong></td><td>Slow</td><td>Medium</td><td>❌ Avoid — outdated</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block usecase">
+    <div class="block-header">📋 Use Cases</div>
+    <div class="block-body">
+      <div class="usecase-grid">
+        <div class="usecase-card"><div class="uc-icon">🏠</div><div class="uc-title">Remote Work</div><div class="uc-desc">Access company databases and internal tools securely from home</div></div>
+        <div class="usecase-card"><div class="uc-icon">☕</div><div class="uc-title">Public Wi-Fi</div><div class="uc-desc">Encrypt all traffic at the coffee shop — nobody can sniff your passwords</div></div>
+        <div class="usecase-card"><div class="uc-icon">🏢</div><div class="uc-title">Site-to-Site</div><div class="uc-desc">Permanently connect two office networks as if they're the same LAN</div></div>
+        <div class="usecase-card"><div class="uc-icon">🔐</div><div class="uc-title">Admin Access</div><div class="uc-desc">Admin panels only accessible through VPN — never exposed to internet</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 9</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">What does VPN "tunneling" mean technically?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">Difference between Remote Access VPN and Site-to-Site VPN?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">Why is public Wi-Fi safer with a VPN?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">Which VPN protocol is recommended for new setups today?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">What does your ISP see when you're connected to a VPN?</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>Your original packet is encrypted and wrapped inside a new packet addressed to the VPN server</div>
+        <div class="ans-item"><div class="ans-n">A2</div>Remote Access: one device connects to a network. Site-to-Site: two entire networks permanently joined together</div>
+        <div class="ans-item"><div class="ans-n">A3</div>All traffic is encrypted inside the tunnel — Wi-Fi snooper sees only encrypted gibberish, not your actual data</div>
+        <div class="ans-item"><div class="ans-n">A4</div>WireGuard — modern, fastest, simplest configuration</div>
+        <div class="ans-item"><div class="ans-n">A5</div>Only that you're sending encrypted data to a VPN server IP — they cannot see content or destination</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════════════════ PART 3 ════════════════ -->
+<div class="part-divider" id="part3">
+  <div class="part-n">// Part 03</div>
+  <h2>Servers & Infrastructure</h2>
+  <p>Where your backend actually lives and how to make it fast, reliable, and global.</p>
+</div>
+
+<!-- ════ CHAPTER 10 ════ -->
+<section class="chapter" id="ch10">
+  <div class="chapter-header">
+    <div class="part-label">Part 3 — Infrastructure</div>
+    <div class="chapter-num">// Chapter 10</div>
+    <h2 class="chapter-title">VPS — Virtual<br>Private Server</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <p>Your Flutter app needs a backend. Where does it live?</p>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">❌ Your Laptop</div><p>Off when you sleep. Crashes. Changes IP. Has no uptime. Completely unsuitable for production.</p></div>
+        <div class="ps-box solution"><div class="ps-label">✅ VPS</div><p>Always on. Fixed IP. Full control. Affordable. Install anything. The standard starting point for all real backends.</p></div>
+      </div>
+      <p>A VPS is where everything else in this book actually runs — your Nginx, your Node.js API, your PostgreSQL, your WireGuard VPN. Without a place to deploy, all the other knowledge is theoretical.</p>
+    </div>
+  </div>
+
+  <div class="block analogy">
+    <div class="block-header">🟣 Real Life Analogy</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Apartment Building</th><th>VPS Equivalent</th></tr>
+        <tr><td>The entire building structure</td><td>The physical server in a data center</td></tr>
+        <tr><td>Your apartment</td><td>Your VPS (your slice of the server)</td></tr>
+        <tr><td>Your own front door key</td><td>SSH key access</td></tr>
+        <tr><td>Your own space to decorate</td><td>Install any software you want</td></tr>
+        <tr><td>Your own mailbox</td><td>Your own IP address</td></tr>
+        <tr><td>Neighbor can't enter your apartment</td><td>VPS instances are fully isolated</td></tr>
+        <tr><td>You're renting, not owning</td><td>You pay monthly — no hardware to maintain</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">PHYSICAL SERVER IN DATA CENTER
+┌──────────────────────────────────────────────────────────────┐
+│  PHYSICAL SERVER: 128 CPUs │ 512 GB RAM │ 20 TB SSD          │
+│  HYPERVISOR (KVM) — divides into virtual machines            │
+│                                                              │
+│  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐ │
+│  │  YOUR VPS      │  │  Other VPS     │  │  Other VPS     │ │
+│  │  4 CPU cores   │  │  2 CPU cores   │  │  8 CPU cores   │ │
+│  │  8 GB RAM      │  │  4 GB RAM      │  │  16 GB RAM     │ │
+│  │  160 GB SSD    │  │  80 GB SSD     │  │  320 GB SSD    │ │
+│  │  Ubuntu 22.04  │  │  Debian 12     │  │  CentOS 9      │ │
+│  │  IP:104.1.1.1  │  │  IP:104.1.1.2  │  │  IP:104.1.1.3  │ │
+│  │  ISOLATED ✅   │  │  ISOLATED ✅   │  │  ISOLATED ✅   │ │
+│  └────────────────┘  └────────────────┘  └────────────────┘ │
+└──────────────────────────────────────────────────────────────┘
+
+WHAT RUNS ON YOUR VPS
+────────────────────────────────────────────────────────────────
+YOUR VPS (104.1.1.1)
+├── ufw Firewall        (Chapter 6 — protects everything)
+├── Nginx               (Chapter 8 — reverse proxy, port 80/443)
+├── Node.js API         (port 3000, internal only)
+├── PostgreSQL          (port 5432, localhost only)
+├── Redis               (port 6379, localhost only)
+├── WireGuard VPN       (Chapter 9 — admin access)
+└── Let's Encrypt SSL   (Chapter 13 — free HTTPS)</div>
+    </div>
+  </div>
+
+  <div class="block example">
+    <div class="block-header">💻 VPS Setup From Scratch</div>
+    <div class="block-body">
+<pre><span class="code-comment"># 1. SSH into your new VPS</span>
+ssh root@YOUR_VPS_IP
+
+<span class="code-comment"># 2. Update system</span>
+sudo apt update && sudo apt upgrade -y
+
+<span class="code-comment"># 3. Create non-root user (never work as root)</span>
+adduser developer && usermod -aG sudo developer
+
+<span class="code-comment"># 4. Secure SSH</span>
+<span class="code-comment"># Edit /etc/ssh/sshd_config:</span>
+<span class="code-comment"># PermitRootLogin no</span>
+<span class="code-comment"># PasswordAuthentication no</span>
+
+<span class="code-comment"># 5. Firewall</span>
+sudo ufw allow 22/tcp && sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp && sudo ufw enable
+
+<span class="code-comment"># 6. Install Nginx</span>
+sudo apt install nginx -y && sudo systemctl enable nginx
+
+<span class="code-comment"># 7. Install Node.js + pm2</span>
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
+sudo apt install nodejs -y && npm install -g pm2
+
+<span class="code-comment"># 8. Deploy your API</span>
+git clone https://github.com/you/yourapi.git
+cd yourapi && npm install
+pm2 start src/index.js --name <span class="code-str">"api"</span>
+pm2 startup && pm2 save   <span class="code-comment"># Auto-restart on reboot</span>
+
+<span class="code-comment"># 9. Free SSL</span>
+sudo apt install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d yourdomain.com</pre>
+    </div>
+  </div>
+
+  <div class="block usecase">
+    <div class="block-header">📋 Popular VPS Providers</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Provider</th><th>Best For</th><th>Starting Price</th></tr>
+        <tr><td><strong>DigitalOcean</strong></td><td>Beginners, excellent docs</td><td>~$4/mo</td></tr>
+        <tr><td><strong>Hetzner</strong></td><td>Best value in Europe</td><td>~€3/mo</td></tr>
+        <tr><td><strong>Vultr</strong></td><td>Many global locations</td><td>~$2.50/mo</td></tr>
+        <tr><td><strong>Linode/Akamai</strong></td><td>Developer-friendly</td><td>~$5/mo</td></tr>
+        <tr><td><strong>AWS EC2</strong></td><td>Enterprise, highly scalable</td><td>~$8/mo</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 10</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">What is a hypervisor?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">Why should you NOT run your server as the root user?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">What is pm2 used for?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">What does <code>ufw default deny incoming</code> do?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">Name three services you'd run on a VPS for a Flutter app backend.</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>Software that creates and manages multiple virtual machines on one physical server (e.g., KVM, VMware)</div>
+        <div class="ans-item"><div class="ans-n">A2</div>Root has unlimited power — a single bug or security breach could destroy everything. A regular user limits damage.</div>
+        <div class="ans-item"><div class="ans-n">A3</div>A process manager that keeps Node.js running, restarts it on crashes, and starts it on server reboot</div>
+        <div class="ans-item"><div class="ans-n">A4</div>Blocks ALL incoming connections unless explicitly allowed — secure by default</div>
+        <div class="ans-item"><div class="ans-n">A5</div>Any three: Nginx, Node.js API, PostgreSQL, Redis, Certbot/SSL, WireGuard VPN, pm2</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════ CHAPTER 11 ════ -->
+<section class="chapter" id="ch11">
+  <div class="chapter-header">
+    <div class="part-label">Part 3 — Infrastructure</div>
+    <div class="chapter-num">// Chapter 11</div>
+    <h2 class="chapter-title">Load Balancing</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">Problem 1 — Capacity</div><p>One server handles ~1,000 req/sec max. Your app goes viral: 50,000 req/sec. Server overloads and crashes. All users get errors.</p></div>
+        <div class="ps-box solution"><div class="ps-label">Solution</div><p>50 servers × 1,000 req/sec = 50,000 capacity. Load balancer distributes evenly. No single server overwhelmed.</p></div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">Problem 2 — Availability</div><p>Server crashes at 3am. All users get errors until someone wakes up to fix it.</p></div>
+        <div class="ps-box solution"><div class="ps-label">Solution</div><p>Load balancer health checks detect failure in 10 seconds. Routes traffic to other servers. Users see nothing.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">1 MILLION REQUESTS/DAY → myapp.com
+                    │
+                    ▼
+┌──────────────────────────────────────────────────────────┐
+│               LOAD BALANCER                              │
+│  Algorithm: Least Connections                            │
+│  Health checks every 10 seconds:                         │
+│    ✅ Server 1 — healthy                                │
+│    ✅ Server 2 — healthy                                │
+│    ❌ Server 3 — unhealthy → REMOVED FROM POOL          │
+│    ✅ Server 4 — healthy                                │
+└──────┬──────────────┬──────────────────────┬────────────┘
+       │              │                      │
+┌──────▼──────┐ ┌─────▼──────┐        ┌─────▼──────┐
+│  Server 1   │ │  Server 2  │  ✗     │  Server 4  │
+│  Node.js    │ │  Node.js   │        │  Node.js   │
+│  330K/day   │ │  330K/day  │        │  340K/day  │
+└─────────────┘ └────────────┘        └────────────┘
+
+ALGORITHMS:
+
+① Round Robin          ② Least Connections    ③ IP Hash
+Req1 → Server A        Server A: 500 conns     192.168.1.5 → always A
+Req2 → Server B        Server B:  12 conns ←  192.168.1.8 → always B
+Req3 → Server C        Server C: 350 conns     (sticky sessions)
+Req4 → Server A        → next goes to B</div>
+    </div>
+  </div>
+
+  <div class="block deepdive">
+    <div class="block-header">🔵 Health Checks</div>
+    <div class="block-body">
+      <p>Every 10 seconds, the load balancer checks if servers are alive:</p>
+<pre><span class="code-comment"># Load balancer probes: GET /health</span>
+<span class="code-comment"># Server responds:</span>
+{ <span class="code-str">"status"</span>: <span class="code-str">"ok"</span>, <span class="code-str">"timestamp"</span>: <span class="code-val">1720000000000</span> }
+<span class="code-comment"># 200 OK → keep in pool ✅
+# timeout → remove from pool ❌
+# Server recovers → add back ✅</span></pre>
+      <table style="margin-top:16px">
+        <tr><th>Type</th><th>Sees</th><th>Can Route By</th></tr>
+        <tr><td><strong>Layer 4 LB</strong></td><td>IP + Port only</td><td>IP, port — fast but dumb</td></tr>
+        <tr><td><strong>Layer 7 LB</strong></td><td>Full HTTP request</td><td>URL path, headers, cookies — flexible</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block usecase">
+    <div class="block-header">📋 Use Cases</div>
+    <div class="block-body">
+      <div class="usecase-grid">
+        <div class="usecase-card"><div class="uc-icon">📈</div><div class="uc-title">Handle Scale</div><div class="uc-desc">Add more servers as traffic grows without changing your app's URL</div></div>
+        <div class="usecase-card"><div class="uc-icon">🛡️</div><div class="uc-title">High Availability</div><div class="uc-desc">Server crashes → health check fails → traffic rerouted in 10 seconds</div></div>
+        <div class="usecase-card"><div class="uc-icon">🚀</div><div class="uc-title">Zero-Downtime Deploy</div><div class="uc-desc">Update servers one at a time while LB routes to the others</div></div>
+        <div class="usecase-card"><div class="uc-icon">🧪</div><div class="uc-title">A/B Testing</div><div class="uc-desc">Send 10% traffic to the new version, 90% to stable</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 11</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">What two problems does load balancing solve?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">Difference between Round Robin and Least Connections?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">What happens to users when a health check fails on one server?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">When would you use sticky sessions (IP Hash)?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">What is the key difference between Layer 4 and Layer 7 load balancing?</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>1) Capacity — distributes traffic so no server is overwhelmed. 2) Availability — routes around failed servers</div>
+        <div class="ans-item"><div class="ans-n">A2</div>Round Robin cycles in order. Least Connections sends to whoever has the fewest active connections.</div>
+        <div class="ans-item"><div class="ans-n">A3</div>Nothing — the LB removes the failed server from the pool and routes all traffic to healthy ones</div>
+        <div class="ans-item"><div class="ans-n">A4</div>When user session data is stored on one specific server (not shared DB/Redis) — same user must hit same server</div>
+        <div class="ans-item"><div class="ans-n">A5</div>Layer 4 routes by IP/port (faster). Layer 7 reads the full HTTP request and can route by URL path, headers, cookies.</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════ CHAPTER 12 ════ -->
+<section class="chapter" id="ch12">
+  <div class="chapter-header">
+    <div class="part-label">Part 3 — Infrastructure</div>
+    <div class="chapter-num">// Chapter 12</div>
+    <h2 class="chapter-title">CDN — Content<br>Delivery Network</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">❌ Without CDN</div><p>Your server is in New York. A user in Tokyo makes every request travel ~13,000 km. That's ~150ms round-trip just for distance — before any processing. For images loaded on every screen, this adds up to a slow, painful app.</p></div>
+        <div class="ps-box solution"><div class="ps-label">✅ With CDN</div><p>Your images are cached on a server in Tokyo. User in Tokyo gets them in ~5ms from the nearest edge server. 30x faster. Users worldwide feel like the server is next door.</p></div>
+      </div>
+      <p>Static content (images, CSS, JS, fonts) is the same for every user. There is no reason to serve it from one location when you can have 300+ copies around the world.</p>
+    </div>
+  </div>
+
+  <div class="block analogy">
+    <div class="block-header">🟣 Real Life Analogy</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Without CDN</th><th>With CDN</th></tr>
+        <tr><td>One pizza shop in New York serving the world</td><td>Franchise locations in every city</td></tr>
+        <tr><td>Tokyo order: 14-hour delivery 😭</td><td>Tokyo order: 20-minute local delivery 🚀</td></tr>
+        <tr><td>Viral moment → one shop overwhelmed</td><td>Viral moment → all 300 edges share load</td></tr>
+        <tr><td>Shop goes down → all orders fail</td><td>One edge down → routed to next closest</td></tr>
+      </table>
+      <p>The CDN "locations" are called <strong>edge servers</strong> or <strong>PoPs (Points of Presence)</strong>. Cloudflare alone has 300+ PoPs worldwide.</p>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">                     🌍 ORIGIN SERVER (New York — your VPS)
+                              │
+          ┌───────────────────┼──────────────────┐
+          │                   │                  │
+          ▼                   ▼                  ▼
+    🌎 Americas          🌍 Europe          🌏 Asia-Pacific
+    ├─ New York PoP      ├─ London PoP      ├─ Tokyo PoP
+    ├─ São Paulo PoP     ├─ Frankfurt PoP   ├─ Singapore PoP
+    └─ Toronto PoP       └─ Dubai PoP       └─ Sydney PoP
+
+
+HOW A CDN REQUEST WORKS:
+─────────────────────────────────────────────────────────────────
+User in Tokyo: GET https://myapp.com/images/logo.png
+
+① DNS → routes to nearest CDN edge (Tokyo PoP)
+
+② CDN checks cache:
+   ┌─────────────────────────────────────────────────────┐
+   │  CACHE HIT?                                         │
+   │  YES → Return immediately (5ms) ✅ DONE             │
+   │                                                     │
+   │  CACHE MISS?                                        │
+   │  → Fetch from origin (New York): 150ms             │
+   │  → Cache the copy at Tokyo edge                    │
+   │  → Return to user (155ms — once only)              │
+   └─────────────────────────────────────────────────────┘
+
+③ Every future request from Tokyo → cache HIT → 5ms ✅
+
+WHAT TO CACHE vs. NOT CACHE:
+─────────────────────────────────────────────────────────────────
+✅ Cache (same for all users):      ❌ Don't cache (user-specific):
+   images/     → 1 year               /api/users/me  → personal data
+   *.css        → 30 days             /api/feed      → different per user
+   *.js         → 30 days             /checkout      → real-time inventory
+   fonts/       → 1 year</div>
+    </div>
+  </div>
+
+  <div class="block example">
+    <div class="block-header">💻 Cache Headers in Node.js</div>
+    <div class="block-body">
+<pre><span class="code-comment">// Static files → cache 1 year</span>
+app.use(<span class="code-str">'/static'</span>, express.static(<span class="code-str">'public'</span>, {
+  maxAge: <span class="code-str">'1y'</span>, immutable: true
+}));
+
+<span class="code-comment">// User data → never cache on CDN</span>
+app.get(<span class="code-str">'/api/users/me'</span>, (req, res) => {
+  res.set(<span class="code-str">'Cache-Control'</span>, <span class="code-str">'private, no-store'</span>);
+  res.json(userData);
+});
+
+<span class="code-comment">// Public trending data → cache 1 hour</span>
+app.get(<span class="code-str">'/api/trending'</span>, (req, res) => {
+  res.set(<span class="code-str">'Cache-Control'</span>, <span class="code-str">'public, max-age=3600'</span>);
+  res.json(trendingData);
+});</pre>
+<pre><span class="code-comment">// Flutter: use CDN URL for images</span>
+<span class="code-comment">// ❌ Slow: from origin server</span>
+Image.network(<span class="code-str">'https://api.myapp.com/images/logo.png'</span>)
+
+<span class="code-comment">// ✅ Fast: from nearest CDN edge</span>
+Image.network(<span class="code-str">'https://cdn.myapp.com/images/logo.png'</span>)</pre>
+    </div>
+  </div>
+
+  <div class="block usecase">
+    <div class="block-header">📋 Use Cases</div>
+    <div class="block-body">
+      <div class="usecase-grid">
+        <div class="usecase-card"><div class="uc-icon">🌍</div><div class="uc-title">Global App Speed</div><div class="uc-desc">Users everywhere get assets from their nearest edge — fast regardless of origin location</div></div>
+        <div class="usecase-card"><div class="uc-icon">🌊</div><div class="uc-title">Traffic Spikes</div><div class="uc-desc">Viral moment? CDN serves cached content — your origin barely gets touched</div></div>
+        <div class="usecase-card"><div class="uc-icon">🛡️</div><div class="uc-title">DDoS Protection</div><div class="uc-desc">Cloudflare absorbs attack traffic at edge before it reaches your server</div></div>
+        <div class="usecase-card"><div class="uc-icon">💸</div><div class="uc-title">Bandwidth Cost</div><div class="uc-desc">CDN serves most traffic — reduces your origin server's bandwidth bill dramatically</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 12</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">What is the main benefit of a CDN?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">What is a cache hit vs. a cache miss?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">Why should you NOT cache <code>/api/users/me</code> on a CDN?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">What does <code>Cache-Control: public, max-age=31536000</code> mean?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">What is a PoP?</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>Delivers content faster by serving it from servers geographically closest to the user</div>
+        <div class="ans-item"><div class="ans-n">A2</div>Cache hit: content found in CDN edge, served instantly. Cache miss: CDN must fetch from origin server first.</div>
+        <div class="ans-item"><div class="ans-n">A3</div>It's personal user data — unique per user, cannot be shared with other users</div>
+        <div class="ans-item"><div class="ans-n">A4</div>Cache this file publicly for 1 year (31,536,000 seconds)</div>
+        <div class="ans-item"><div class="ans-n">A5</div>Point of Presence — a CDN edge server location in a specific geographic area</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════ CHAPTER 13 ════ -->
+<section class="chapter" id="ch13">
+  <div class="chapter-header">
+    <div class="part-label">Part 3 — Infrastructure</div>
+    <div class="chapter-num">// Chapter 13</div>
+    <h2 class="chapter-title">SSL / TLS &<br>Certificates</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <p>HTTP sends everything as plain text. Anyone between you and the server — ISP, coffee shop Wi-Fi router, a government, a hacker — can read it:</p>
+      <pre style="margin:12px 0">Your password:    password123          ← visible to anyone
+Your token:       Bearer eyJhbGci...   ← visible to anyone
+Your credit card: 4111-1111-1111-1111  ← visible to anyone</pre>
+      <div class="ps-row">
+        <div class="ps-box problem"><div class="ps-label">❌ Without TLS</div><p>Man-in-the-middle attack: attacker sits between you and server, reads everything, can even modify your requests undetected.</p></div>
+        <div class="ps-box solution"><div class="ps-label">✅ With TLS</div><p>All data is encrypted. Even if intercepted, attacker sees only gibberish. Certificate proves the server is who it claims to be — not an impersonator.</p></div>
+      </div>
+      <div class="callout warning"><strong>Rule:</strong> Never use HTTP in production for anything. Every Flutter app talking to a backend must use HTTPS. Always.</div>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Visual Diagram</div>
+    <div class="block-body">
+      <div class="diagram-box">TLS HANDSHAKE — ESTABLISHING SECURE CONNECTION
+────────────────────────────────────────────────────────────────────
+Flutter App                                          Server
+    │                                                    │
+    │──── ① ClientHello ─────────────────────────────────▶│
+    │     "I support TLS 1.3, these cipher suites"        │
+    │                                                    │
+    │◀─── ② ServerHello + Certificate ───────────────────│
+    │     "Use AES-256. Here's my identity proof."        │
+    │                                                    │
+    │     ③ Flutter verifies certificate:                 │
+    │        ✅ Issued by trusted CA?                    │
+    │        ✅ Domain matches myapp.com?                │
+    │        ✅ Not expired?                             │
+    │        ✅ Not revoked?                             │
+    │                                                    │
+    │──── ④ Key Exchange (encrypted) ────────────────────▶│
+    │     Only server can decrypt this                    │
+    │                                                    │
+    │════ ⑤ All app data ENCRYPTED ══════════════════════▶│
+    │════ ⑥ Response ENCRYPTED ══════════════════════════│
+    │     Attacker sees only: X7#mK@9!pQ2&...            │
+
+CERTIFICATE CHAIN OF TRUST
+────────────────────────────────────────────────────────────────────
+┌─────────────────────────────────┐
+│  ROOT CA                        │ ← Built into every browser/OS
+│  (e.g., DigiCert Root G3)       │   "These are trusted authorities"
+└──────────────┬──────────────────┘
+               │ digitally signs
+┌──────────────▼──────────────────┐
+│  INTERMEDIATE CA                │
+│  (e.g., Let's Encrypt R3)       │
+└──────────────┬──────────────────┘
+               │ issues certificate for
+┌──────────────▼──────────────────┐
+│  YOUR CERTIFICATE               │
+│  Domain:  myapp.com             │
+│  Valid:   Jun 2025 – Sep 2025   │
+│  Issuer:  Let's Encrypt R3      │
+└─────────────────────────────────┘
+Browser traces chain back to trusted Root CA → 🔒 Trusted</div>
+    </div>
+  </div>
+
+  <div class="block example">
+    <div class="block-header">💻 Free SSL with Let's Encrypt</div>
+    <div class="block-body">
+<pre><span class="code-comment"># Install Certbot</span>
+sudo apt install certbot python3-certbot-nginx -y
+
+<span class="code-comment"># Get certificate — Certbot verifies domain ownership automatically</span>
+sudo certbot --nginx -d myapp.com -d www.myapp.com
+
+<span class="code-comment"># Certbot automatically:
+# ✅ Verifies you own the domain
+# ✅ Issues the certificate
+# ✅ Configures Nginx
+# ✅ Sets up auto-renewal (cron job)</span>
+
+<span class="code-comment"># Test renewal</span>
+sudo certbot renew --dry-run</pre>
+<pre><span class="code-comment">// Flutter validates TLS automatically
+// Invalid cert → throws HandshakeException</span>
+try {
+  final response = await http.get(Uri.parse(<span class="code-str">'https://api.myapp.com'</span>));
+} on HandshakeException catch (e) {
+  <span class="code-comment">// Cert expired, wrong domain, or self-signed</span>
+  print(<span class="code-str">'TLS Error: $e'</span>);
+}</pre>
+    </div>
+  </div>
+
+  <div class="block usecase">
+    <div class="block-header">📋 Use Cases</div>
+    <div class="block-body">
+      <div class="usecase-grid">
+        <div class="usecase-card"><div class="uc-icon">🔑</div><div class="uc-title">Login Endpoints</div><div class="uc-desc">TLS required — passwords must never travel as plain text</div></div>
+        <div class="usecase-card"><div class="uc-icon">💳</div><div class="uc-title">Payments</div><div class="uc-desc">TLS required for PCI DSS compliance — no exceptions</div></div>
+        <div class="usecase-card"><div class="uc-icon">📱</div><div class="uc-title">Flutter APIs</div><div class="uc-desc">All production API calls — tokens and data must be encrypted in transit</div></div>
+        <div class="usecase-card"><div class="uc-icon">🌐</div><div class="uc-title">SEO</div><div class="uc-desc">Google penalizes HTTP sites. HTTPS is required for modern web ranking.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Mini Quiz — Chapter 13</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">What two things does TLS provide (not just encryption)?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">What is a Certificate Authority?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">What happens during a TLS handshake before any data is sent?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">What tool provides free SSL certificates?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">Your Flutter app throws a <code>HandshakeException</code>. What are possible causes?</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>1) Encryption — data scrambled in transit. 2) Authentication — certificate proves the server is who it claims to be.</div>
+        <div class="ans-item"><div class="ans-n">A2</div>A trusted organization that verifies domain ownership and issues SSL certificates. Browsers ship with a built-in list of trusted CAs.</div>
+        <div class="ans-item"><div class="ans-n">A3</div>Cipher negotiation, server presents certificate, client verifies it, both exchange encryption keys, then encrypted communication begins</div>
+        <div class="ans-item"><div class="ans-n">A4</div>Let's Encrypt (via Certbot) — free, automated, trusted by all browsers</div>
+        <div class="ans-item"><div class="ans-n">A5</div>Expired certificate, self-signed cert not trusted, domain name mismatch, or revoked certificate</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════════════════ PART 4 ════════════════ -->
+<div class="part-divider" id="part4">
+  <div class="part-n">// Part 04</div>
+  <h2>System Design</h2>
+  <p>Combining every component from this book into a real production architecture.</p>
+</div>
+
+<!-- ════ CHAPTER 14 ════ -->
+<section class="chapter" id="ch14">
+  <div class="chapter-header">
+    <div class="part-label">Part 4 — System Design</div>
+    <div class="chapter-num">// Chapter 14</div>
+    <h2 class="chapter-title">Putting It<br>All Together</h2>
+    <div class="chapter-divider"></div>
+  </div>
+
+  <div class="block why">
+    <div class="block-header">🔴 Why Do We Need This?</div>
+    <div class="block-body">
+      <p>Knowing individual components is not enough. A real system designer knows how they connect, why each piece is in that exact position, and what happens when something breaks.</p>
+      <p>This chapter is your graduation exercise. We design a complete backend for a Flutter social media app — using every concept from every previous chapter. Every single decision is explained with a <em>"why."</em></p>
+    </div>
+  </div>
+
+  <div class="block diagram">
+    <div class="block-header">📊 Complete Production Architecture</div>
+    <div class="block-body">
+      <div class="diagram-box">USERS WORLDWIDE
+┌────────────────┐  ┌────────────────┐  ┌────────────────┐
+│  Flutter App   │  │  Flutter App   │  │  Flutter App   │
+│   (Tokyo)      │  │  (New York)    │  │   (London)     │
+└───────┬────────┘  └───────┬────────┘  └───────┬────────┘
+        └──────────────────┬┴────────────────────┘
+                           │ HTTPS → myapp.com
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LAYER 1 — CLOUDFLARE   (Ch.3 DNS + Ch.12 CDN + Ch.6 WAF + Ch.13 TLS)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┌─────────────────────────────────────────────────────────────┐
+│  ✅ DNS: routes to nearest Cloudflare edge              Ch3 │
+│  ✅ CDN: images/CSS/JS from 300+ edge locations        Ch12 │
+│  ✅ WAF: blocks SQLi, XSS, DDoS before reaching origin  Ch6 │
+│  ✅ TLS: SSL certificate for myapp.com                 Ch13 │
+│  ✅ Rate Limiting: 100 req/min per IP                       │
+└───────────────────────────┬─────────────────────────────────┘
+                            │ Only legit non-cached traffic
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LAYER 2 — NGINX REVERSE PROXY                           (Ch. 8)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┌─────────────────────────────────────────────────────────────┐
+│  ✅ SSL Termination: HTTPS → HTTP internally                │
+│  ✅ Route: /api/* → servers │ /ws/* → WebSocket server      │
+│  ✅ Gzip compression │ Static files from disk               │
+└────────────┬────────────────────────┬───────────────────────┘
+             │                        │
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LAYER 3 — LOAD BALANCER + API SERVERS             (Ch.11 + Ch.10)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┌────────────────────────┐          ┌──────────────────────┐
+│  LOAD BALANCER (Nginx) │          │  WebSocket Server    │
+│  Least Connections     │          │  (real-time notifs)  │
+│  Health checks: 10s    │          └──────────────────────┘
+└──────────┬──────┬──────┘
+     ┌─────▼───┐ ┌▼──────┐
+     │API Srv 1│ │API Srv2│  ← Separate VPS instances
+     │Node.js  │ │Node.js │  ← ufw firewall protected (Ch.6)
+     │:3000    │ │:3001   │
+     └─────────┘ └────────┘
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+LAYER 4 — DATA LAYER         (all private, no public IP) (Ch.10)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
+│PostgreSQL│  │  Redis   │  │  S3/R2   │  │  Kafka   │
+│(users,   │  │(sessions,│  │(photos,  │  │(message  │
+│ auth,    │  │ cache,   │  │ videos)  │  │ queue)   │
+│ follows) │  │ feed)    │  │CDN-backed│  │          │
+└──────────┘  └──────────┘  └──────────┘  └──────────┘
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ADMIN ACCESS — VPN ONLY                                 (Ch. 9)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Dev Laptop ══ WireGuard VPN ══▶ Private Network ──▶ Database
+             Encrypted tunnel   (not on internet)    SSH access</div>
+      <div class="diagram-caption">Every layer maps to a chapter in this book. Nothing is here without a reason.</div>
+    </div>
+  </div>
+
+  <div class="block deepdive">
+    <div class="block-header">🔵 Every Component — The "Why"</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Component</th><th>Chapter</th><th>Why It's Here</th></tr>
+        <tr><td><strong>Cloudflare DNS</strong></td><td>Ch. 3</td><td>Routes users to nearest edge automatically</td></tr>
+        <tr><td><strong>Cloudflare CDN</strong></td><td>Ch. 12</td><td>Images/assets delivered fast worldwide from 300+ edges</td></tr>
+        <tr><td><strong>Cloudflare WAF</strong></td><td>Ch. 6</td><td>Blocks attacks before they ever reach your server</td></tr>
+        <tr><td><strong>TLS Certificate</strong></td><td>Ch. 13</td><td>Encrypts all HTTPS traffic, authenticates your domain</td></tr>
+        <tr><td><strong>Nginx Reverse Proxy</strong></td><td>Ch. 8</td><td>SSL termination, routing, gzip, rate limiting</td></tr>
+        <tr><td><strong>Load Balancer</strong></td><td>Ch. 11</td><td>Distributes API traffic, routes around failed servers</td></tr>
+        <tr><td><strong>ufw Firewall (VPS)</strong></td><td>Ch. 6</td><td>Only ports 80/443/22 open. All else blocked.</td></tr>
+        <tr><td><strong>VPS Servers</strong></td><td>Ch. 10</td><td>Where every service actually runs</td></tr>
+        <tr><td><strong>Redis Cache</strong></td><td>Ch. 12</td><td>Fast session lookup + feed caching in memory</td></tr>
+        <tr><td><strong>PostgreSQL</strong></td><td>Ch. 3</td><td>Persistent, reliable storage for users/follows/auth</td></tr>
+        <tr><td><strong>S3/R2 Storage</strong></td><td>Ch. 10</td><td>Store photos/videos separate from compute</td></tr>
+        <tr><td><strong>Message Queue</strong></td><td>Ch. 11</td><td>Async notifications without blocking API response</td></tr>
+        <tr><td><strong>WireGuard VPN</strong></td><td>Ch. 9</td><td>Secure admin access — DB never exposed to internet</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block example">
+    <div class="block-header">💻 A Request Journey — Login From Tokyo</div>
+    <div class="block-body">
+      <div class="flow">
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">1</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">Flutter App</div><code>POST https://myapp.com/api/auth/login</code> with encrypted credentials</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">2</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">DNS (Ch.3)</div><code>myapp.com → Cloudflare Tokyo edge IP</code> — routes to nearest PoP (5ms)</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">3</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">Cloudflare WAF (Ch.6)</div>SQL injection check ✅ Rate limit check (3 logins/min) ✅ Forward to origin</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">4</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">TLS (Ch.13)</div>HTTPS decrypted at Cloudflare. Forwarded as plain HTTP internally.</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">5</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">Nginx Reverse Proxy (Ch.8)</div>Routes <code>/api/*</code> to load balancer. Adds <code>X-Real-IP</code> header.</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">6</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">Load Balancer (Ch.11)</div>Least connections → API Server 1 (42 conns) over Server 2 (88 conns)</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">7</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">Firewall on VPS (Ch.6)</div>Request from Nginx internal IP → ALLOW ✅</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">8</div><div class="flow-line"></div></div><div class="flow-content"><div class="flow-title">Node.js API (Ch.10)</div>Check Redis: is IP banned? No. Check PostgreSQL: user exists? ✅ Password matches? ✅ Generate JWT. Save to Redis.</div></div>
+        <div class="flow-item"><div class="flow-left"><div class="flow-dot">9</div></div><div class="flow-content"><div class="flow-title">Flutter App — Total: ~85ms 🚀</div>Saves JWT. Navigates to home screen. Tokyo → New York → back in 85ms.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block deepdive">
+    <div class="block-header">🔵 When Things Break — Failure Scenarios</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Failure</th><th>What Happens</th><th>User Impact</th></tr>
+        <tr><td><strong>API Server 1 crashes</strong></td><td>Health check fails after 10s → removed from pool → all traffic to Server 2</td><td>None — maybe 10s slowdown</td></tr>
+        <tr><td><strong>Database down</strong></td><td>API returns 503 for write operations. Redis still handles session reads.</td><td>Partial degradation — read-only</td></tr>
+        <tr><td><strong>DDoS attack</strong></td><td>Cloudflare detects abnormal pattern → mitigation triggers at edge</td><td>None — attack never reaches origin</td></tr>
+        <tr><td><strong>SSL cert expires</strong></td><td>Certbot auto-renews every 90 days (Let's Encrypt)</td><td>None if renewal is working</td></tr>
+        <tr><td><strong>Redis down</strong></td><td>Sessions fail → users must re-login. API falls back to DB queries.</td><td>Slower responses, re-login</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block quiz">
+    <div class="block-header">🧪 Final Quiz — Chapter 14</div>
+    <div class="block-body">
+      <div class="quiz-q"><div class="q-label">Q1</div><div class="q-text">Why does Cloudflare sit in front of everything, including your own Nginx?</div></div>
+      <div class="quiz-q"><div class="q-label">Q2</div><div class="q-text">Why are all database servers on private IPs with no public access?</div></div>
+      <div class="quiz-q"><div class="q-label">Q3</div><div class="q-text">Why is Redis used alongside PostgreSQL? What does each one do?</div></div>
+      <div class="quiz-q"><div class="q-label">Q4</div><div class="q-text">API Server 1 crashes at 3am. What exactly happens to users?</div></div>
+      <div class="quiz-q"><div class="q-label">Q5</div><div class="q-text">A developer needs to access the production database from home. How, and why that way?</div></div>
+      <details class="quiz-answers">
+        <summary>▶ Reveal Answers</summary>
+        <div class="ans-item"><div class="ans-n">A1</div>Cloudflare handles CDN (global speed), WAF (attack blocking), DDoS protection, and SSL — all at the edge before touching your infrastructure</div>
+        <div class="ans-item"><div class="ans-n">A2</div>Security — databases should never be directly reachable from the internet; only the API servers (already protected) can connect to them internally</div>
+        <div class="ans-item"><div class="ans-n">A3</div>Redis: fast in-memory for session lookups and feed cache (milliseconds). PostgreSQL: persistent, durable storage for all permanent data (users, follows, posts)</div>
+        <div class="ans-item"><div class="ans-n">A4</div>Load balancer's health check detects the failure and routes all traffic to Server 2 automatically. Users experience nothing — maybe a few slow requests during the 10s detection window.</div>
+        <div class="ans-item"><div class="ans-n">A5</div>Connect via WireGuard VPN → appear as an internal network device → access the database on its private IP. This way the database port is never open to the internet.</div>
+      </details>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<!-- ════════════════ APPENDIX ════════════════ -->
+<div class="part-divider" id="appendix">
+  <div class="part-n">// Appendix</div>
+  <h2>Reference Material</h2>
+  <p>Cheatsheets, glossary, and your next steps.</p>
+</div>
+
+<section class="chapter" id="app-a">
+  <div class="chapter-header">
+    <div class="chapter-num">// Appendix A</div>
+    <h2 class="chapter-title">Glossary</h2>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="block what">
+    <div class="block-header">📖 Key Terms</div>
+    <div class="block-body">
+      <div class="gloss-item"><span class="gloss-term">API</span><span>Rules for how programs communicate — the language your Flutter app speaks to a backend</span></div>
+      <div class="gloss-item"><span class="gloss-term">CDN</span><span>Content Delivery Network — global cached copies of your assets served from the nearest edge</span></div>
+      <div class="gloss-item"><span class="gloss-term">Certificate</span><span>Digital ID card proving a server's identity, issued by a trusted Certificate Authority</span></div>
+      <div class="gloss-item"><span class="gloss-term">Client</span><span>The device making requests — your Flutter app, a browser</span></div>
+      <div class="gloss-item"><span class="gloss-term">DDoS</span><span>Distributed Denial of Service — flooding a server with fake traffic to crash it</span></div>
+      <div class="gloss-item"><span class="gloss-term">DNS</span><span>Domain Name System — translates human names (google.com) to IP addresses</span></div>
+      <div class="gloss-item"><span class="gloss-term">Encryption</span><span>Scrambling data so only the intended recipient can read it</span></div>
+      <div class="gloss-item"><span class="gloss-term">Firewall</span><span>Controls which network traffic is allowed to reach your server</span></div>
+      <div class="gloss-item"><span class="gloss-term">Forward Proxy</span><span>Middleman for clients — hides client's identity from the destination server</span></div>
+      <div class="gloss-item"><span class="gloss-term">HTTP</span><span>HyperText Transfer Protocol — the language of the web</span></div>
+      <div class="gloss-item"><span class="gloss-term">HTTPS</span><span>HTTP with TLS encryption — secure, required in production</span></div>
+      <div class="gloss-item"><span class="gloss-term">Hypervisor</span><span>Software that divides a physical server into multiple virtual machines (VPS)</span></div>
+      <div class="gloss-item"><span class="gloss-term">IP Address</span><span>Unique numerical address for every device on a network</span></div>
+      <div class="gloss-item"><span class="gloss-term">Load Balancer</span><span>Distributes incoming traffic across multiple backend servers</span></div>
+      <div class="gloss-item"><span class="gloss-term">Localhost</span><span>IP 127.0.0.1 — your own machine. Used in Flutter dev: localhost:3000</span></div>
+      <div class="gloss-item"><span class="gloss-term">Nginx</span><span>Popular web server used as reverse proxy, load balancer, and static file server</span></div>
+      <div class="gloss-item"><span class="gloss-term">OSI Model</span><span>7-layer framework organizing how network communication works</span></div>
+      <div class="gloss-item"><span class="gloss-term">Packet</span><span>A small chunk of data with source, destination, sequence number, and payload</span></div>
+      <div class="gloss-item"><span class="gloss-term">Port</span><span>Number identifying a specific service on a server (80=HTTP, 443=HTTPS, 22=SSH)</span></div>
+      <div class="gloss-item"><span class="gloss-term">PoP</span><span>Point of Presence — a CDN edge server in a specific geographic location</span></div>
+      <div class="gloss-item"><span class="gloss-term">Protocol</span><span>A set of agreed-upon rules for communication between computers</span></div>
+      <div class="gloss-item"><span class="gloss-term">Reverse Proxy</span><span>Middleman for servers — hides server identity from clients, adds load balancing</span></div>
+      <div class="gloss-item"><span class="gloss-term">Router</span><span>Device that reads a packet's destination IP and forwards it in the right direction</span></div>
+      <div class="gloss-item"><span class="gloss-term">Server</span><span>A computer that responds to requests from clients</span></div>
+      <div class="gloss-item"><span class="gloss-term">SSL/TLS</span><span>Encryption protocol used in HTTPS — TLS is the modern name, SSL is old but common</span></div>
+      <div class="gloss-item"><span class="gloss-term">TCP</span><span>Reliable, ordered data transfer protocol — used by HTTP, SSH, email</span></div>
+      <div class="gloss-item"><span class="gloss-term">TLS Handshake</span><span>The process of establishing an encrypted connection before data flows</span></div>
+      <div class="gloss-item"><span class="gloss-term">UDP</span><span>Fast, unordered, unreliable protocol — used by video streaming, gaming, DNS</span></div>
+      <div class="gloss-item"><span class="gloss-term">VPN</span><span>Virtual Private Network — encrypted tunnel over the public internet</span></div>
+      <div class="gloss-item"><span class="gloss-term">VPS</span><span>Virtual Private Server — a cloud computer you rent and fully control</span></div>
+      <div class="gloss-item"><span class="gloss-term">WAF</span><span>Web Application Firewall — protects HTTP apps at Layer 7 from SQLi, XSS, etc.</span></div>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<section class="chapter" id="app-b">
+  <div class="chapter-header">
+    <div class="chapter-num">// Appendix B</div>
+    <h2 class="chapter-title">Ports Cheatsheet</h2>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="block what">
+    <div class="block-header">🔌 Common Ports</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Port</th><th>Service</th><th>Security Rule</th></tr>
+        <tr><td><strong>21</strong></td><td>FTP</td><td>⚠️ Avoid — use SFTP (port 22) instead</td></tr>
+        <tr><td><strong>22</strong></td><td>SSH</td><td>⚠️ Restrict to known IPs only. Never open to all.</td></tr>
+        <tr><td><strong>25</strong></td><td>SMTP (Email Send)</td><td>Only if running a mail server</td></tr>
+        <tr><td><strong>53</strong></td><td>DNS</td><td>Open on DNS servers, internal only otherwise</td></tr>
+        <tr><td><strong>80</strong></td><td>HTTP</td><td>Open — but redirect all traffic to 443</td></tr>
+        <tr><td><strong>443</strong></td><td>HTTPS</td><td>✅ Always open in production</td></tr>
+        <tr><td><strong>3306</strong></td><td>MySQL</td><td>🔒 NEVER open to internet</td></tr>
+        <tr><td><strong>5432</strong></td><td>PostgreSQL</td><td>🔒 NEVER open to internet</td></tr>
+        <tr><td><strong>6379</strong></td><td>Redis</td><td>🔒 Localhost only</td></tr>
+        <tr><td><strong>8080</strong></td><td>HTTP Alt</td><td>Dev servers only — not production</td></tr>
+        <tr><td><strong>27017</strong></td><td>MongoDB</td><td>🔒 NEVER open to internet</td></tr>
+        <tr><td><strong>51820</strong></td><td>WireGuard VPN</td><td>Open for VPN server access</td></tr>
+      </table>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<section class="chapter" id="app-c">
+  <div class="chapter-header">
+    <div class="chapter-num">// Appendix C</div>
+    <h2 class="chapter-title">HTTP Status Codes</h2>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="block what">
+    <div class="block-header">📡 Status Codes & Flutter Actions</div>
+    <div class="block-body">
+      <table>
+        <tr><th>Code</th><th>Meaning</th><th>Flutter Action</th></tr>
+        <tr><td><strong>200</strong></td><td>✅ OK</td><td>Parse and display data</td></tr>
+        <tr><td><strong>201</strong></td><td>✅ Created</td><td>Show success toast, update state</td></tr>
+        <tr><td><strong>204</strong></td><td>✅ No Content</td><td>Success (DELETE) — update UI to remove item</td></tr>
+        <tr><td><strong>301</strong></td><td>🔁 Moved Permanently</td><td>Update stored URL; HTTP client auto-follows</td></tr>
+        <tr><td><strong>304</strong></td><td>🔁 Not Modified</td><td>Use cached response — no new data needed</td></tr>
+        <tr><td><strong>400</strong></td><td>❌ Bad Request</td><td>Show validation errors from response body</td></tr>
+        <tr><td><strong>401</strong></td><td>❌ Unauthorized</td><td>Token expired or missing → redirect to login</td></tr>
+        <tr><td><strong>403</strong></td><td>❌ Forbidden</td><td>Logged in but no permission → show error UI</td></tr>
+        <tr><td><strong>404</strong></td><td>❌ Not Found</td><td>Show "not found" screen or empty state</td></tr>
+        <tr><td><strong>429</strong></td><td>❌ Too Many Requests</td><td>Wait and retry with exponential backoff</td></tr>
+        <tr><td><strong>500</strong></td><td>💥 Server Error</td><td>Show "something went wrong", log to Sentry</td></tr>
+        <tr><td><strong>502</strong></td><td>💥 Bad Gateway</td><td>Backend is down — show retry button</td></tr>
+        <tr><td><strong>503</strong></td><td>💥 Unavailable</td><td>Server overloaded — wait and retry</td></tr>
+        <tr><td><strong>504</strong></td><td>💥 Gateway Timeout</td><td>Backend too slow — show timeout error</td></tr>
+      </table>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<section class="chapter" id="app-d">
+  <div class="chapter-header">
+    <div class="chapter-num">// Appendix D</div>
+    <h2 class="chapter-title">Progress Tracker</h2>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="block quiz">
+    <div class="block-header">📊 Track Your Learning</div>
+    <div class="block-body">
+      <p style="margin-bottom:16px;font-size:13px;color:var(--text-dim)"><strong>Rule:</strong> Score below 4/5 on a chapter → re-read before moving to the next one.</p>
+      <table class="progress-table">
+        <tr><th>Ch.</th><th>Topic</th><th>Read</th><th>Quiz Score</th><th>Reviewed</th></tr>
+        <tr><td>1</td><td>Internet & How It Works</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>2</td><td>OSI Model</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>3</td><td>IP, DNS & Ports</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>4</td><td>TCP vs UDP</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>5</td><td>HTTP &amp; HTTPS</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>6</td><td>Firewalls</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>7</td><td>Forward Proxy</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>8</td><td>Reverse Proxy</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>9</td><td>VPN</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>10</td><td>VPS</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>11</td><td>Load Balancing</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>12</td><td>CDN</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>13</td><td>SSL / TLS</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+        <tr><td>14</td><td>System Design</td><td>☐</td><td><input class="score-input" placeholder="__ /5"/></td><td>☐</td></tr>
+      </table>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+<section class="chapter" id="app-e">
+  <div class="chapter-header">
+    <div class="chapter-num">// Appendix E</div>
+    <h2 class="chapter-title">What to Learn Next</h2>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="block what">
+    <div class="block-header">🗺️ Your Continued Path</div>
+    <div class="block-body">
+      <div class="usecase-grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr))">
+        <div class="usecase-card"><div class="uc-icon">🐳</div><div class="uc-title">Docker (Next)</div><div class="uc-desc">Package your app + all dependencies in one portable container. No more "works on my machine."</div></div>
+        <div class="usecase-card"><div class="uc-icon">⚙️</div><div class="uc-title">Docker Compose</div><div class="uc-desc">Run your whole stack (app + DB + Redis) with one command.</div></div>
+        <div class="usecase-card"><div class="uc-icon">🔄</div><div class="uc-title">CI/CD — GitHub Actions</div><div class="uc-desc">Auto-deploy your code every time you push to GitHub.</div></div>
+        <div class="usecase-card"><div class="uc-icon">☸️</div><div class="uc-title">Kubernetes</div><div class="uc-desc">Orchestrate hundreds of containers, auto-scale, and self-heal. (Advanced)</div></div>
+        <div class="usecase-card"><div class="uc-icon">📊</div><div class="uc-title">Database Design</div><div class="uc-desc">Design databases for millions of rows — indexing, sharding, replication.</div></div>
+        <div class="usecase-card"><div class="uc-icon">📨</div><div class="uc-title">Message Queues</div><div class="uc-desc">Kafka, RabbitMQ — async event-driven microservice communication.</div></div>
+        <div class="usecase-card"><div class="uc-icon">📈</div><div class="uc-title">Monitoring</div><div class="uc-desc">Prometheus, Grafana, Sentry — know when things break before users do.</div></div>
+        <div class="usecase-card"><div class="uc-icon">☁️</div><div class="uc-title">AWS Certification</div><div class="uc-desc">Solutions Architect Associate — validates skills, opens doors. 6–8 weeks.</div></div>
+      </div>
+      <table style="margin-top:24px">
+        <tr><th>Resource</th><th>Best For</th></tr>
+        <tr><td><strong>ByteByteGo</strong> (YouTube)</td><td>Best system design visuals anywhere</td></tr>
+        <tr><td><strong>NetworkChuck</strong> (YouTube)</td><td>Fun, hands-on practical networking</td></tr>
+        <tr><td><strong>TechWorldWithNana</strong> (YouTube)</td><td>Docker, Kubernetes, DevOps</td></tr>
+        <tr><td><strong>roadmap.sh/devops</strong></td><td>Complete structured learning path</td></tr>
+        <tr><td><strong>DigitalOcean Tutorials</strong></td><td>Best practical VPS/Linux guides</td></tr>
+        <tr><td><strong>Designing Data-Intensive Apps</strong> (book)</td><td>The bible of backend system design</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="block why" style="margin-top:32px">
+    <div class="block-header" style="font-size:14px">🎓 Congratulations</div>
+    <div class="block-body">
+      <p>You started knowing only Flutter and HTTP calls. Now you understand how the entire internet works — end to end.</p>
+      <p>Every API call your Flutter app makes, you can now trace: <strong>DNS → TLS → CDN → Firewall → Reverse Proxy → Load Balancer → Server → Database.</strong></p>
+      <p>That is not beginner knowledge. That is what system designers are paid for.</p>
+      <div class="callout tip"><strong>The best way to remember this: deploy something real.</strong> Buy a $4 DigitalOcean VPS. Set up Nginx. Deploy your Flutter backend. Add a firewall. Add SSL. That one afternoon will lock in more than weeks of reading.</div>
+    </div>
+  </div>
+  <a class="back-to-toc" href="#preface">↑ Back to Table of Contents</a>
+</section>
+
+</main>
+
+<script>
+// Active sidebar highlighting on scroll
+const sections = document.querySelectorAll('section[id], div[id^="part"], div[id="appendix"]');
+const tocLinks = document.querySelectorAll('.toc-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      tocLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + id) {
+          link.classList.add('active');
+        }
+      });
+    }
+  });
+}, { threshold: 0.15, rootMargin: '-60px 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
