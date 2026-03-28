@@ -1,40 +1,39 @@
-# Table of Contents
+# Scrum Tech Lead Guide
 
-1. [Introduction](#introduction)
-2. [Roles and Responsibilities](#roles-and-responsibilities)
-3. [Agile Methodologies](#agile-methodologies)
-4. [Scrum Basics](#scrum-basics)
-5. [Tools and Techniques](#tools-and-techniques)
-6. [Conclusion](#conclusion)
+## Table of Contents
+- [Introduction](#introduction)
+- [Roles and Responsibilities](#roles-and-responsibilities)
+- [Meeting Guidelines](#meeting-guidelines)
+- [Deliverables](#deliverables)
+- [Best Practices](#best-practices)
 
-# Introduction
+## Introduction
+This document serves as a guide for Scrum Tech Leads to help manage their roles effectively. For any queries, feel free to reach out.
 
-Welcome to the Scrum Tech Lead guide. This document serves to guide tech leads on how to effectively use the Scrum framework in tech projects.
+[Go to top](#table-of-contents)
 
-# Roles and Responsibilities
+## Roles and Responsibilities
+1. Facilitate scrum ceremonies.
+2. Liaise between technical teams and management.
+3. Ensure best practices are adhered to.
 
-- Tech Lead
-- Scrum Master
-- Product Owner
+[Go to top](#table-of-contents)
 
-# Agile Methodologies
+## Meeting Guidelines
+- Daily Stand-ups: Keep them short and focused.
+- Sprint Planning: Ensure all members know their tasks.
+- Retrospectives: Discuss what went well and what can improve.
 
-Agile is a project management methodology that promotes iterative development. 
+[Go to top](#table-of-contents)
 
-# Scrum Basics
+## Deliverables
+1. Manage and distribute tasks effectively.
+2. Produce sprint reports that summarize progress.
 
-Scrum is an Agile framework that facilitates teams in delivering high-quality products. 
+[Go to top](#table-of-contents)
 
-## Go to top (↑ উপরে যান)
+## Best Practices
+- Always communicate openly with your team.
+- Listen to feedback and iterate on your practices.
 
-# Tools and Techniques
-
-This section covers various tools and techniques that tech leads can use. 
-
-### Go to top (↑ উপরে যান)
-
-# Conclusion
-
-In conclusion, this guide highlights the essential aspects of being a successful Scrum Tech Lead. 
-
-### Go to top (↑ উপরে যান)
+[Go to top](#table-of-contents)
