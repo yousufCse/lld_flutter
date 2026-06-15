@@ -59,3 +59,6 @@ app.*.map.json
 *.freezed.dart
 *.config.dart
 *.g.dart
+
+# others
+/docs/FATS/
